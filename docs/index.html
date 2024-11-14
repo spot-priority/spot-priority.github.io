@@ -68,8 +68,55 @@
 </section>
 
 <section>
-    <h2>Example of Using SPOT</h2>
-    <!-- Insert scenarios here in a list or table format for better readability -->
+    <h2>Example Scenarios of the SPOT Framework in Action</h2>
+
+    <h3>Scenario 1: Straightforward Triage</h3>
+    <p><strong>Tasks</strong>:</p>
+    <ul>
+        <li>Authentication failure affecting 70% of users.</li>
+        <li>Backend processing delay affecting data availability.</li>
+        <li>Server health warnings, with no current user impact.</li>
+    </ul>
+    <p><strong>SPOT Walkthrough</strong>:</p>
+    <ul>
+        <li><strong>Survey</strong>: The authentication failure and backend delay are identified as primary tasks, while the server health warning is categorized as secondary due to no immediate user impact.</li>
+        <li><strong>Prioritize</strong>: Among the primary tasks, the authentication issue is prioritized as it directly impacts user access, making it the most urgent task.</li>
+        <li><strong>Optimize</strong>: A temporary fix is available to restore login functionality quickly, ensuring that users can access the system while a long-term solution is developed.</li>
+        <li><strong>Take Action</strong>: The engineer deploys the authentication fix, restoring core functionality. With this issue addressed, the engineer can now turn to the backend processing delay and server health alert, in order of impact.</li>
+    </ul>
+    <p><strong>Outcome</strong>: SPOT enabled the engineer to swiftly isolate and address the highest-priority task, restoring essential user access first before shifting focus to secondary tasks.</p>
+
+    <h3>Scenario 2: Clear Primary, Then Evaluate Secondary</h3>
+    <p><strong>Tasks</strong>:</p>
+    <ul>
+        <li>Payment processing errors affecting 40% of users.</li>
+        <li>Increased memory usage on a primary server.</li>
+        <li>Slower customer support portal responses, with minor user impact.</li>
+    </ul>
+    <p><strong>SPOT Walkthrough</strong>:</p>
+    <ul>
+        <li><strong>Survey</strong>: The payment processing error is immediately flagged as critical due to its direct impact on revenue and user transactions, while the increased memory usage and slower customer support portal are considered secondary.</li>
+        <li><strong>Prioritize & Optimize</strong>: Given that the payment issue impacts a core function, the engineer deploys a quick fix to restore payment processing for affected users.</li>
+        <li><strong>Take Action</strong>: With payment processing restored, the engineer reassesses the secondary tasks. The memory usage issue is addressed next to prevent potential cascading effects, followed by the customer support portal response issue, which is lower priority.</li>
+    </ul>
+    <p><strong>Outcome</strong>: SPOT’s ability to rapidly identify the most critical task enabled the engineer to restore a core function immediately while ensuring secondary issues were handled in sequence.</p>
+
+    <h3>Scenario 3: Ambiguity Until the Final Stage</h3>
+    <p><strong>Tasks</strong>:</p>
+    <ul>
+        <li>File upload failures for 50% of users.</li>
+        <li>Admin dashboard outage affecting internal teams only.</li>
+        <li>Third-party integration timeouts for fewer than 5% of users.</li>
+        <li>Email notification delays affecting 10% of users.</li>
+    </ul>
+    <p><strong>SPOT Walkthrough</strong>:</p>
+    <ul>
+        <li><strong>Survey</strong>: File upload failures and the admin dashboard outage are identified as primary tasks. The third-party integration timeout and email delays are categorized as secondary due to limited user impact.</li>
+        <li><strong>Prioritize</strong>: Both primary tasks are reviewed for urgency, with file upload failures impacting a significant number of users. The admin dashboard, while important, affects only internal teams and is deprioritized.</li>
+        <li><strong>Optimize</strong>: The engineer finds a temporary workaround for file uploads, which will improve user experience until a more robust fix is implemented. The admin dashboard outage will require input from another team.</li>
+        <li><strong>Take Action</strong>: The engineer applies the file upload fix and escalates the admin dashboard issue for additional support, ensuring minimal disruption to external users while internal issues are handled appropriately.</li>
+    </ul>
+    <p><strong>Outcome</strong>: SPOT helped the engineer navigate through ambiguity and make a decision based on both external impact and resource availability, balancing user-facing issues with internal support needs.</p>
 </section>
 
 <section>
