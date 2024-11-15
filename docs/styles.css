@@ -12,6 +12,14 @@ body {
     background-color: #f9f9f9;
 }
 
+/* Header styling */
+header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
 /* Banner styling */
 .banner {
     background: url('images/banner_image.jpg') no-repeat center center;
@@ -65,4 +73,18 @@ main {
     padding-left: 20px;
 }
 
-/* Footer st
+/* Footer styling */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.9em;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    margin: 5px 0;
+}
