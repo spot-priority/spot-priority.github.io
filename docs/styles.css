@@ -122,3 +122,23 @@ footer {
 footer p {
     margin: 5px 0;
 }
+
+/* Styling footer links */
+footer a {
+    color: #4CAF50;
+    /* Bright green color for contrast */
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+    /* Smooth transition effect */
+}
+
+footer a:hover {
+    color: #FFD700;
+    /* Gold color on hover for added emphasis */
+}
+
+footer a:active {
+    color: #FF4500;
+    /* Red-orange color on click for feedback */
+}
