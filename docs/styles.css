@@ -18,6 +18,7 @@ header {
     top: 0;
     left: 0;
     width: 100%;
+    min-height: 8vh;
 }
 
 /* Banner styling */
@@ -35,11 +36,42 @@ header {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
+/* Navigation bar styling */
+.navbar {
+    position: sticky;
+    background-color: #444;
+    padding: 10px 0;
+    text-align: center;
+    min-height: 2vh;
+}
+
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.navbar ul li a:hover {
+    background-color: #555;
+}
+
 /* Main content styling */
 main {
     display: flex;
     justify-content: center;
     padding: 20px;
+    min-height: 86vh;
+    align-items: flex-start;
 }
 
 #content {
@@ -83,6 +115,8 @@ footer {
     position: sticky;
     bottom: 0;
     width: 100%;
+    margin-top: auto;
+    min-height: 4vh;
 }
 
 footer p {
