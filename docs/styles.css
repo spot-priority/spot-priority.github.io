@@ -65,6 +65,11 @@ header {
     background-color: #555;
 }
 
+.navbar a.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 /* Main content styling */
 main {
     display: flex;
