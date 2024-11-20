@@ -25,7 +25,7 @@ header {
 .banner {
     background: url('images/banner_image.jpg') no-repeat center center;
     background-size: cover;
-    padding: 60px 0;
+    padding: 40px 0;
     color: #fff;
     text-align: center;
 }
@@ -34,6 +34,18 @@ header {
     font-size: 2.5em;
     margin: 0;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Adjusted banner for mobile */
+@media (max-width: 768px) {
+    .banner {
+        padding: 20px 0;
+    }
+
+    .banner h1 {
+        font-size: 1.5em;
+        /* Smaller text for mobile */
+    }
 }
 
 /* Navigation bar styling */
@@ -68,6 +80,60 @@ header {
 .navbar a.active {
     font-weight: bold;
     text-decoration: underline;
+}
+
+/* Navigation bar styling */
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.menu-toggle {
+    display: none;
+
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-toggle {
+        display: block;
+        /* Show hamburger menu on mobile */
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .nav-links {
+        display: none;
+        /* Collapsed menu by default */
+        flex-direction: column;
+        background-color: #444;
+    }
+
+    .nav-links.show {
+        display: flex;
+    }
+}
+
+/* GitHub stars styling */
+.github-stars {
+    overflow: hidden;
+    max-width: 100%;
+    /* Ensure icon stays within mobile screen bounds */
+}
+
+.github-stars img {
+    max-width: 100%;
 }
 
 /* Main content styling */

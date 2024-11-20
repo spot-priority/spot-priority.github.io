@@ -1,6 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
     const content = document.getElementById("content");
     const navbarLinks = document.querySelectorAll(".navbar a[data-page]");
+    const menuToggle = document.querySelector(".menu-toggle");
+    const navLinks = document.querySelector(".nav-links");
+
+    // Collapsible menu toggle
+    menuToggle.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+    });
 
     // Function to load the requested page into the content section
     function loadPage(pageUrl) {
