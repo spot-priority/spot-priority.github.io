@@ -4,12 +4,12 @@ Welcome to the SPOT Framework Documentation repository! This document provides a
 
 ## Overview
 
-The SPOT Framework is designed to help teams quickly prioritize tasks, especially during incident handling, system design, or development workflows. The framework breaks down task prioritization into four simple, actionable steps:
+The SPOT Framework is a rapid decision-making tool inspired by medical triage. It helps engineers quickly assess, prioritize, and act on tasks, ensuring focus on what matters most in critical situations. Instead of ranking tasks exhaustively, SPOT filters them step-by-step until the next essential action is clear.. The framework breaks down task prioritization into four simple, actionable steps:
 
-1. **Swift** - Quickly evaluate the urgency of tasks.
-2. **Prioritize** - Rank tasks based on impact and importance.
-3. **Optimize** - Refine the execution of prioritized tasks for efficiency.
-4. **Triage** - Address any ambiguity by revisiting prioritization.
+1. **Survey** - Quickly assess all tasks to identify critical issues.
+2. **Prioritize** - Focus on tasks with the highest urgency.
+3. **Optimize** - Choose tasks that offer the greatest return on effort.
+4. **Take Action** - Act immediately on the most important tasks.
 
 ## Key Features
 
