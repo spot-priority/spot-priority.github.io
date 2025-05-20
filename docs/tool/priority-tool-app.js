@@ -99,10 +99,36 @@ export class SPOTApp {
         document.querySelectorAll('.step-content').forEach(content => {
             content.style.display = 'none';
         });
-
+        
         // Show selected step
-        document.getElementById(step).style.display = 'block';
+        document.getElementById(`${step}-step`).style.display = 'block';
+        
+        // Update current step
         this.currentStep = step;
+        
+        // Update active state of step buttons
+        document.querySelectorAll('.step-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.step === step) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Update progress meter
+        const progressFill = document.querySelector('.progress-fill');
+        const steps = ['survey', 'prioritize', 'optimize', 'action'];
+        const currentIndex = steps.indexOf(step);
+        const progress = (currentIndex / (steps.length - 1)) * 100;
+        progressFill.style.width = `${progress}%`;
+        
+        // Update navigation buttons
+        const prevBtn = document.getElementById('prevStep');
+        const nextBtn = document.getElementById('nextStep');
+        
+        prevBtn.disabled = step === 'survey';
+        nextBtn.disabled = step === 'action';
+        
+        // Render tasks for current step
         this.renderCurrentStep();
     }
 

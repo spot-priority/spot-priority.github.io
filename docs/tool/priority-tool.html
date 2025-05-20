@@ -96,46 +96,110 @@
             <section class="tool-section">
                 <h2>Prioritization Tool</h2>
                 <div class="tool-container">
-                    <!-- Tool content will be here -->
-                    <div class="step-content" id="survey">
-                        <h3>Survey</h3>
-                        <div class="task-list" data-group="survey">
-                            <!-- Tasks will be added here -->
+                    <!-- Control Area -->
+                    <div class="control-area">
+                        <div class="control-buttons">
+                            <button id="toggleFullControl" class="btn">
+                                <i class="fas fa-th-large"></i> Toggle Full Control
+                            </button>
+                            <button id="importTasks" class="btn">
+                                <i class="fas fa-file-import"></i> Import Tasks
+                            </button>
+                            <button id="exportTasks" class="btn">
+                                <i class="fas fa-file-export"></i> Export Tasks
+                            </button>
+                            <button id="clearTasks" class="btn">
+                                <i class="fas fa-trash"></i> Clear All Tasks
+                            </button>
                         </div>
                     </div>
 
-                    <div class="step-content" id="prioritize" style="display: none;">
-                        <h3>Prioritize</h3>
-                        <div class="task-list" data-group="prioritize">
-                            <!-- Tasks will be added here -->
+                    <!-- Progress Bar / Steps Selector -->
+                    <div class="progress-area">
+                        <div class="progress-meter">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <div class="step-selector">
+                            <button class="step-btn" data-step="survey">
+                                <i class="fas fa-arrow-right step-arrow"></i>
+                                <span class="step-name">Survey</span>
+                            </button>
+                            <button class="step-btn" data-step="prioritize">
+                                <i class="fas fa-arrow-right step-arrow"></i>
+                                <span class="step-name">Prioritize</span>
+                            </button>
+                            <button class="step-btn" data-step="optimize">
+                                <i class="fas fa-arrow-right step-arrow"></i>
+                                <span class="step-name">Optimize</span>
+                            </button>
+                            <button class="step-btn" data-step="action">
+                                <span class="step-name">Take Action</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="step-content" id="optimize" style="display: none;">
-                        <h3>Optimize</h3>
-                        <div class="task-list" data-group="optimize">
-                            <!-- Tasks will be added here -->
+                    <!-- Main Content Area -->
+                    <div class="content-area">
+                        <!-- Step Views -->
+                        <div class="step-content" id="survey">
+                            <h3>Survey</h3>
+                            <div class="task-list" data-group="survey">
+                                <!-- Tasks will be added here -->
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="step-content" id="action" style="display: none;">
-                        <h3>Take Action</h3>
-                        <div class="task-list" data-group="action">
-                            <!-- Tasks will be added here -->
+                        <div class="step-content" id="prioritize" style="display: none;">
+                            <h3>Prioritize</h3>
+                            <div class="task-list" data-group="prioritize">
+                                <!-- Tasks will be added here -->
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="control-panel">
-                        <button id="prevStep" class="btn">Previous</button>
-                        <button id="nextStep" class="btn">Next</button>
-                        <button id="toggleFullControl" class="btn">Show All Tasks</button>
-                    </div>
+                        <div class="step-content" id="optimize" style="display: none;">
+                            <h3>Optimize</h3>
+                            <div class="task-list" data-group="optimize">
+                                <!-- Tasks will be added here -->
+                            </div>
+                        </div>
 
-                    <div class="full-control" style="display: none;">
-                        <button id="addTask" class="btn">Add Task</button>
-                        <button id="importTasks" class="btn">Import Tasks</button>
-                        <button id="exportTasks" class="btn">Export Tasks</button>
-                        <button id="clearTasks" class="btn">Clear All Tasks</button>
+                        <div class="step-content" id="action" style="display: none;">
+                            <h3>Take Action</h3>
+                            <div class="task-list" data-group="action">
+                                <!-- Tasks will be added here -->
+                            </div>
+                        </div>
+
+                        <!-- Full Control View -->
+                        <div class="full-control-view" style="display: none;">
+                            <div class="all-steps">
+                                <div class="step-section">
+                                    <h3>Survey</h3>
+                                    <div class="task-list" data-group="survey"></div>
+                                </div>
+                                <div class="step-section">
+                                    <h3>Prioritize</h3>
+                                    <div class="task-list" data-group="prioritize"></div>
+                                </div>
+                                <div class="step-section">
+                                    <h3>Optimize</h3>
+                                    <div class="task-list" data-group="optimize"></div>
+                                </div>
+                                <div class="step-section">
+                                    <h3>Take Action</h3>
+                                    <div class="task-list" data-group="action"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step Navigation -->
+                        <div class="step-navigation">
+                            <button id="prevStep" class="btn">
+                                <i class="fas fa-arrow-left"></i> Previous
+                            </button>
+                            <button id="nextStep" class="btn">
+                                Next <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
