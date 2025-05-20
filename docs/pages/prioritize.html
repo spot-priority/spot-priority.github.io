@@ -1,17 +1,6 @@
-<!-- SPOT Framework Prioritization Tool
-     A web-based tool for managing and prioritizing tasks using the SPOT framework.
-     Features:
-     - Four-step process: Survey, Prioritize, Optimize, Take Action
-     - Full Control view for comprehensive task management
-     - Drag and drop functionality
-     - Import/Export capabilities
-     - Demo task functionality
--->
-
 <div class="container">
     <h1>SPOT Framework Prioritization Tool</h1>
     
-    <!-- Control Panel: Main actions and utilities -->
     <div class="control-panel">
         <button class="btn" onclick="toggleFullControl()" id="fullControlBtn">
             <i class="fas fa-sliders-h"></i>
@@ -28,8 +17,7 @@
         </button>
         <input type="file" id="fileInput" style="display: none" accept=".json">
     </div>
-
-    <!-- Progress Bar: Visual indicator of current step -->
+    
     <div class="progress-bar">
         <div class="progress-step" onclick="goToStep(1)" title="Survey">
             <div class="step-indicator"></div>
@@ -49,7 +37,7 @@
         </div>
     </div>
 
-    <!-- Full Control View: Comprehensive task management -->
+    <!-- Add Full Control view -->
     <div class="step-container" id="fullControl">
         <div class="full-control-container">
             <div class="full-control-header">
@@ -62,21 +50,23 @@
                         <i class="fas fa-trash-alt"></i>
                         Clear All Tasks
                     </button>
-                </div>
-            </div>
-            <div id="fullControlList"></div>
         </div>
-    </div>
+                </div>
+            <div id="fullControlList"></div>
+            </div>
+        </div>
 
-    <!-- Step 1: Survey - Initial task collection -->
+    <!-- Step 1: Survey -->
     <div class="step-container active" id="step1">
         <h2>Step 1: Survey</h2>
         <p>Quickly assess all tasks to identify critical issues.</p>
+
         <div class="task-list" id="taskList"></div>
+
         <button class="btn" onclick="nextStep(1)">Next: Prioritize</button>
     </div>
 
-    <!-- Step 2: Prioritize - Group by urgency -->
+    <!-- Step 2: Prioritize -->
     <div class="step-container" id="step2">
         <h2>Step 2: Prioritize</h2>
         <p>Focus on tasks with the highest urgency.</p>
@@ -87,7 +77,7 @@
         </div>
     </div>
 
-    <!-- Step 3: Optimize - Group by impact -->
+    <!-- Step 3: Optimize -->
     <div class="step-container" id="step3">
         <h2>Step 3: Optimize</h2>
         <p>Choose tasks that offer the greatest return on effort.</p>
@@ -98,7 +88,7 @@
         </div>
     </div>
 
-    <!-- Step 4: Take Action - Focus on highest priority tasks -->
+    <!-- Step 4: Take Action -->
     <div class="step-container" id="step4">
         <h2>Step 4: Take Action</h2>
         <p>Act immediately on the most important tasks.</p>
@@ -110,7 +100,6 @@
     </div>
 </div>
 
-<!-- Styles -->
 <style>
     .task-list {
         margin: 20px 0;
@@ -693,7 +682,7 @@
 
     .column-headers {
         display: grid;
-        grid-template-columns: 50px 1fr 120px 120px 120px 100px 80px;
+        grid-template-columns: 50px 1fr 120px 120px 120px 100px;
         gap: 10px;
         padding: 10px;
         background: #f8f9fa;
@@ -705,7 +694,7 @@
 
     .task-row {
         display: grid;
-        grid-template-columns: 50px 1fr 120px 120px 120px 100px 80px;
+        grid-template-columns: 50px 1fr 120px 120px 120px 100px;
         gap: 10px;
         align-items: center;
         padding: 10px;
@@ -1037,39 +1026,15 @@
         margin-top: 8px;
         background: rgba(76, 175, 80, 0.1);
     }
-
-    .full-control-add-task {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .full-control-add-task .task-input {
-        flex: 1;
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-
-    .full-control-add-task .btn {
-        padding: 8px 16px;
-        font-size: 14px;
-    }
 </style>
 
-<!-- Scripts -->
 <script>
-    // Global state
+    // Task management
     let tasks = JSON.parse(localStorage.getItem('spotTasks')) || [];
     let currentStep = 1;
 
-    // Progress bar management
     function updateProgress() {
+        // Update progress bar steps
         document.querySelectorAll('.progress-step').forEach((step, index) => {
             step.classList.remove('active', 'completed');
             if (index + 1 === currentStep) {
@@ -1080,10 +1045,13 @@
         });
     }
 
-    // Task rendering functions
     function renderTasks() {
         const taskList = document.getElementById('taskList');
+        
+        // Filter out completed tasks
         const activeTasks = tasks.filter(task => task.status !== 'completed');
+        
+        // Group tasks by primary/secondary
         const primaryTasks = activeTasks.filter(task => task.group === 'primary');
         const secondaryTasks = activeTasks.filter(task => task.group === 'secondary');
         
@@ -1109,15 +1077,15 @@
                 <div class="drop-zone" data-position="secondary-end" data-group="secondary"></div>
             </div>
         `;
-        setupDragAndDrop(document.getElementById('taskList'));
+        setupDragAndDrop();
     }
 
-    // Task management functions
     function addTask(group) {
         const input = document.querySelector(`.task-group.${group} .task-input`);
         const taskName = input.value.trim();
         
         if (taskName) {
+            // Find the highest rank
             const maxRank = tasks.length > 0 ? Math.max(...tasks.map(t => t.rank || 0)) : 0;
             
             tasks.push({
@@ -1136,73 +1104,556 @@
         }
     }
 
-    // Drag and drop handlers
+    function handleTaskInput(event, group) {
+        if (event.key === 'Enter') {
+            addTask(group);
+        }
+    }
+
+    function renderTaskItem(task, index) {
+        return `
+                <div class="task-item" data-id="${task.id}" draggable="true">
+                <div class="drag-handle">⋮⋮</div>
+                    <div class="task-details">
+                        <span class="task-rank">#${index + 1}</span>
+                        <input type="text" value="${task.name}" onchange="updateTaskName(${task.id}, this.value)">
+                    </div>
+                    <div class="task-controls">
+                    <button class="move-btn" onclick="moveTask(${tasks.indexOf(task)}, -1)" ${index === 0 ? 'disabled' : ''}>↑</button>
+                    <button class="move-btn" onclick="moveTask(${tasks.indexOf(task)}, 1)" ${index === tasks.length - 1 ? 'disabled' : ''}>↓</button>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn btn-secondary" onclick="removeTask(${task.id})">Remove</button>
+                    </div>
+                </div>
+        `;
+    }
+
+    function updateTaskName(id, newName) {
+        const task = tasks.find(t => t.id === id);
+        if (task) {
+            task.name = newName;
+            saveTasks();
+        }
+    }
+
+    function removeTask(id) {
+        tasks = tasks.filter(t => t.id !== id);
+        saveTasks();
+        renderTasks();
+    }
+
+    function saveTasks() {
+        localStorage.setItem('spotTasks', JSON.stringify(tasks));
+    }
+
+    function renderPrioritizeStep() {
+        const prioritizeList = document.getElementById('prioritizeList');
+        
+        // Filter out completed tasks
+        const activeTasks = tasks.filter(task => task.status !== 'completed');
+        
+        // Separate primary and secondary tasks
+        const primaryTasks = activeTasks.filter(task => task.group === 'primary');
+        const secondaryTasks = activeTasks.filter(task => task.group === 'secondary');
+        
+        // Group primary tasks by urgency
+        const urgencyGroups = {
+            higher: [],
+            lower: []
+        };
+
+        primaryTasks.forEach(task => {
+            if (task.urgency === 'higher') {
+                urgencyGroups.higher.push(task);
+            } else {
+                urgencyGroups.lower.push(task);
+            }
+        });
+
+        // Sort each group by name
+        urgencyGroups.higher.sort((a, b) => a.name.localeCompare(b.name));
+        urgencyGroups.lower.sort((a, b) => a.name.localeCompare(b.name));
+        secondaryTasks.sort((a, b) => a.name.localeCompare(b.name));
+
+        let higherCounter = 1;
+        let lowerCounter = 1;
+        let secondaryCounter = 1;
+
+        prioritizeList.innerHTML = `
+            <div class="task-group primary">
+                <h3>Primary Tasks</h3>
+                <div class="urgency-subgroup higher">
+                    <h4>Higher Urgency</h4>
+                    <div class="drop-zone" data-position="higher-start" data-group="primary" data-urgency="higher"></div>
+                    ${urgencyGroups.higher.map(task => renderPrioritizeTask(task, higherCounter++)).join('')}
+                    <div class="drop-zone" data-position="higher-end" data-group="primary" data-urgency="higher"></div>
+            </div>
+                <div class="urgency-subgroup lower">
+                    <h4>Lower Urgency</h4>
+                    <div class="drop-zone" data-position="lower-start" data-group="primary" data-urgency="lower"></div>
+                    ${urgencyGroups.lower.map(task => renderPrioritizeTask(task, lowerCounter++)).join('')}
+                    <div class="drop-zone" data-position="lower-end" data-group="primary" data-urgency="lower"></div>
+            </div>
+            </div>
+            <div class="task-group secondary">
+                <h3>Secondary Tasks</h3>
+                <div class="drop-zone" data-position="secondary-start" data-group="secondary"></div>
+                ${secondaryTasks.map(task => renderPrioritizeTask(task, secondaryCounter++)).join('')}
+                <div class="drop-zone" data-position="secondary-end" data-group="secondary"></div>
+            </div>
+        `;
+        setupDragAndDrop();
+    }
+
+    function renderPrioritizeTask(task, index) {
+        return `
+            <div class="task-item" data-id="${task.id}" draggable="true">
+                <div class="drag-handle">⋮⋮</div>
+                <div class="task-details">
+                    <span class="task-rank">#${index}</span>
+                    <span>${task.name}</span>
+                </div>
+                <div class="task-controls">
+                    <button class="move-btn" onclick="moveTask(${tasks.indexOf(task)}, -1)">↑</button>
+                    <button class="move-btn" onclick="moveTask(${tasks.indexOf(task)}, 1)">↓</button>
+                </div>
+                        </div>
+        `;
+    }
+
+    function renderOptimizeStep() {
+        const optimizeList = document.getElementById('optimizeList');
+        
+        // Filter out completed tasks
+        const activeTasks = tasks.filter(task => task.status !== 'completed');
+        
+        // Get primary tasks
+        const primaryTasks = activeTasks.filter(task => task.group === 'primary');
+        
+        // Group primary tasks by urgency
+        const urgencyGroups = {
+            higher: [],
+            lower: []
+        };
+
+        primaryTasks.forEach(task => {
+            if (task.urgency === 'higher') {
+                urgencyGroups.higher.push(task);
+            } else {
+                urgencyGroups.lower.push(task);
+            }
+        });
+
+        // Group higher urgency tasks by impact
+        const impactGroups = {
+            high: [],
+            low: []
+        };
+
+        urgencyGroups.higher.forEach(task => {
+            if (task.impact === 'more') {
+                impactGroups.high.push(task);
+            } else {
+                impactGroups.low.push(task);
+            }
+        });
+
+        // Sort each group by name
+        impactGroups.high.sort((a, b) => a.name.localeCompare(b.name));
+        impactGroups.low.sort((a, b) => a.name.localeCompare(b.name));
+        urgencyGroups.lower.sort((a, b) => a.name.localeCompare(b.name));
+
+        let highImpactCounter = 1;
+        let lowImpactCounter = 1;
+        let lowerUrgencyCounter = 1;
+
+        optimizeList.innerHTML = `
+            <div class="task-group primary">
+                <h3>Primary Tasks</h3>
+                <div class="urgency-subgroup higher">
+                    <h4>Higher Urgency</h4>
+                    <div class="impact-subgroup high">
+                        <h5>More Impact</h5>
+                        <div class="drop-zone" data-position="high-impact-start" data-group="primary" data-urgency="higher" data-impact="more"></div>
+                        ${impactGroups.high.map(task => renderOptimizeTask(task, highImpactCounter++)).join('')}
+                        <div class="drop-zone" data-position="high-impact-end" data-group="primary" data-urgency="higher" data-impact="more"></div>
+                    </div>
+                    <div class="impact-subgroup low">
+                        <h5>Less Impact</h5>
+                        <div class="drop-zone" data-position="low-impact-start" data-group="primary" data-urgency="higher" data-impact="less"></div>
+                        ${impactGroups.low.map(task => renderOptimizeTask(task, lowImpactCounter++)).join('')}
+                        <div class="drop-zone" data-position="low-impact-end" data-group="primary" data-urgency="higher" data-impact="less"></div>
+                    </div>
+                </div>
+                <div class="urgency-subgroup lower">
+                    <h4>Lower Urgency</h4>
+                    <div class="drop-zone" data-position="lower-start" data-group="primary" data-urgency="lower"></div>
+                    ${urgencyGroups.lower.map(task => renderOptimizeTask(task, lowerUrgencyCounter++)).join('')}
+                    <div class="drop-zone" data-position="lower-end" data-group="primary" data-urgency="lower"></div>
+                </div>
+            </div>
+        `;
+        setupDragAndDrop();
+    }
+
+    function renderOptimizeTask(task, index) {
+        const isHighImpact = task.impact === 'more';
+        const isLowImpact = task.impact === 'less' && task.urgency === 'higher';
+        const isLowerUrgency = task.urgency === 'lower';
+
+        return `
+            <div class="task-item" data-id="${task.id}" draggable="true">
+                <div class="drag-handle">⋮⋮</div>
+                <div class="task-details">
+                    <span class="task-rank">#${index}</span>
+                    <span>${task.name}</span>
+                </div>
+                <div class="task-controls">
+                    <button class="move-btn" onclick="moveTaskInGroup(${task.id}, -1)" title="Move up in group">↑</button>
+                    <button class="move-btn" onclick="moveTaskInGroup(${task.id}, 1)" title="Move down in group">↓</button>
+                    ${isHighImpact ? `
+                        <button class="move-btn" onclick="moveTaskToGroup(${task.id}, 'low')" title="Move to Less Impact">⇓</button>
+                        <button class="move-btn" onclick="moveTaskToGroup(${task.id}, 'lower')" title="Move to Lower Urgency">⇓⇓</button>
+                    ` : isLowImpact ? `
+                        <button class="move-btn" onclick="moveTaskToGroup(${task.id}, 'high')" title="Move to More Impact">⇑</button>
+                        <button class="move-btn" onclick="moveTaskToGroup(${task.id}, 'lower')" title="Move to Lower Urgency">⇓</button>
+                    ` : `
+                        <button class="move-btn" onclick="moveTaskToGroup(${task.id}, 'high')" title="Move to More Impact">⇑⇑</button>
+                        <button class="move-btn" onclick="moveTaskToGroup(${task.id}, 'low')" title="Move to Less Impact">⇑</button>
+                    `}
+                </div>
+                        </div>
+        `;
+    }
+
+    function moveTaskInGroup(taskId, direction) {
+        const taskIndex = tasks.findIndex(t => t.id === taskId);
+        if (taskIndex === -1) return;
+
+        const task = tasks[taskIndex];
+        const currentGroup = getTaskGroup(task);
+        const groupTasks = tasks.filter(t => getTaskGroup(t) === currentGroup);
+        const groupIndex = groupTasks.findIndex(t => t.id === taskId);
+        
+        if (groupIndex + direction >= 0 && groupIndex + direction < groupTasks.length) {
+            const targetTask = groupTasks[groupIndex + direction];
+            const targetIndex = tasks.findIndex(t => t.id === targetTask.id);
+            
+            const [movedTask] = tasks.splice(taskIndex, 1);
+            tasks.splice(targetIndex, 0, movedTask);
+            
+            saveTasks();
+            renderOptimizeStep();
+        }
+    }
+
+    function moveTaskToGroup(taskId, targetGroup) {
+        const taskIndex = tasks.findIndex(t => t.id === taskId);
+        if (taskIndex === -1) return;
+
+        const task = tasks[taskIndex];
+        const [movedTask] = tasks.splice(taskIndex, 1);
+        const updatedTask = { ...movedTask };
+
+        if (targetGroup === 'high') {
+            updatedTask.impact = 'more';
+            updatedTask.urgency = 'higher';
+        } else if (targetGroup === 'low') {
+            updatedTask.impact = 'less';
+            updatedTask.urgency = 'higher';
+        } else if (targetGroup === 'lower') {
+            updatedTask.impact = 'less';
+            updatedTask.urgency = 'lower';
+        }
+
+        tasks.push(updatedTask);
+        saveTasks();
+        
+        // Re-render all steps to ensure consistency
+        renderTasks();
+        renderPrioritizeStep();
+        renderOptimizeStep();
+    }
+
+    function getTaskGroup(task) {
+        if (task.urgency === 'lower') return 'lower';
+        return task.impact === 'more' ? 'high' : 'low';
+    }
+
+    function renderActionStep() {
+        const actionList = document.getElementById('actionList');
+        
+        // Get all primary tasks
+        const primaryTasks = tasks.filter(task => task.group === 'primary');
+        
+        // Find the highest priority cohort
+        let actionTasks = [];
+        let impactType = '';
+        
+        // Check in order of priority
+        if (primaryTasks.some(task => task.urgency === 'higher' && task.impact === 'more')) {
+            actionTasks = primaryTasks.filter(task => task.urgency === 'higher' && task.impact === 'more');
+            impactType = 'More Impact';
+        } else if (primaryTasks.some(task => task.urgency === 'higher' && task.impact === 'less')) {
+            actionTasks = primaryTasks.filter(task => task.urgency === 'higher' && task.impact === 'less');
+            impactType = 'Less Impact';
+        } else if (primaryTasks.some(task => task.urgency === 'lower' && task.impact === 'more')) {
+            actionTasks = primaryTasks.filter(task => task.urgency === 'lower' && task.impact === 'more');
+            impactType = 'More Impact';
+        } else if (primaryTasks.some(task => task.urgency === 'lower' && task.impact === 'less')) {
+            actionTasks = primaryTasks.filter(task => task.urgency === 'lower' && task.impact === 'less');
+            impactType = 'Less Impact';
+        }
+
+        // Sort by name for consistency
+        actionTasks.sort((a, b) => a.name.localeCompare(b.name));
+
+        if (actionTasks.length === 0) {
+            actionList.innerHTML = `
+                <div class="action-container">
+                    <div class="action-header">
+                        <h3>No Tasks Available</h3>
+                        <p>Add some tasks in the Survey step to get started.</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Group tasks by status
+        const statusGroups = {
+            pending: actionTasks.filter(task => task.status === 'pending'),
+            in_progress: actionTasks.filter(task => task.status === 'in_progress'),
+            blocked: actionTasks.filter(task => task.status === 'blocked'),
+            completed: actionTasks.filter(task => task.status === 'completed')
+        };
+
+        let taskCounter = 1;
+        actionList.innerHTML = `
+            <div class="action-container">
+                <div class="action-header">
+                    <h3>Take Action</h3>
+                    <p>Complete these ${impactType.toLowerCase()} tasks. Update their status as you work on them.</p>
+                </div>
+                <div class="action-tasks">
+                    ${Object.entries(statusGroups).map(([status, tasks]) => `
+                        <div class="status-group ${status}" data-status="${status}">
+                            <h4>
+                                ${status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                                <span class="status-count">${tasks.length} tasks</span>
+                            </h4>
+                            <div class="status-drop-zone" data-status="${status}"></div>
+                            ${tasks.map(task => `
+                                <div class="action-task ${task.status}" data-id="${task.id}" draggable="true">
+                                    <div class="task-content">
+                                        <span class="task-rank">#${taskCounter++}</span>
+                                        <span class="task-name">${task.name}</span>
+                                    </div>
+                                    <div class="task-controls">
+                                        ${task.status !== 'completed' ? `
+                                            <button class="move-status-btn" onclick="moveTaskStatus(${task.id}, 'prev')" ${task.status === 'pending' ? 'disabled' : ''}>↑</button>
+                                            <button class="move-status-btn" onclick="moveTaskStatus(${task.id}, 'next')" ${task.status === 'blocked' ? 'disabled' : ''}>↓</button>
+                                        ` : ''}
+                                        <input type="checkbox" class="task-checkbox" ${task.status === 'completed' ? 'checked' : ''} onchange="toggleTaskComplete(${task.id}, this.checked)">
+                                    </div>
+                                </div>
+                            `).join('')}
+                            <div class="status-drop-zone" data-status="${status}"></div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        setupActionDragAndDrop();
+    }
+
+    function moveTaskStatus(taskId, direction) {
+        const task = tasks.find(t => t.id === taskId);
+        if (!task) return;
+
+        const statusFlow = ['pending', 'in_progress', 'blocked', 'completed'];
+        const currentIndex = statusFlow.indexOf(task.status);
+        
+        if (direction === 'prev' && currentIndex > 0) {
+            task.status = statusFlow[currentIndex - 1];
+        } else if (direction === 'next' && currentIndex < statusFlow.length - 1) {
+            task.status = statusFlow[currentIndex + 1];
+        }
+
+            saveTasks();
+        renderActionStep();
+    }
+
+    function toggleTaskComplete(taskId, completed) {
+        const task = tasks.find(t => t.id === taskId);
+        if (!task) return;
+
+        task.status = completed ? 'completed' : 'pending';
+        saveTasks();
+        
+        // Check if all tasks in the current impact group are completed
+        const higherUrgencyTasks = tasks.filter(t => 
+            t.group === 'primary' && 
+            t.urgency === 'higher'
+        );
+        
+        const moreImpactTasks = higherUrgencyTasks.filter(t => t.impact === 'more');
+        const lessImpactTasks = higherUrgencyTasks.filter(t => t.impact === 'less');
+        
+        // Determine which group we're working with
+        const currentGroup = moreImpactTasks.length > 0 ? moreImpactTasks : lessImpactTasks;
+        const allCompleted = currentGroup.every(t => t.status === 'completed');
+        
+        if (allCompleted) {
+            // Remove completed tasks
+            tasks = tasks.filter(t => t.status !== 'completed');
+            saveTasks();
+            
+            // Go back to step 3
+            prevStep(4);
+        } else {
+            // Just re-render the current step
+            renderActionStep();
+        }
+    }
+
+    function moveTask(index, direction) {
+        const newIndex = index + direction;
+        if (newIndex >= 0 && newIndex < tasks.length) {
+            const [movedTask] = tasks.splice(index, 1);
+            tasks.splice(newIndex, 0, movedTask);
+            
+            // Update ranks
+            tasks.forEach((task, idx) => {
+                task.rank = idx + 1;
+            });
+            
+            saveTasks();
+            if (currentStep === 1) {
+                renderTasks();
+            } else if (currentStep === 2) {
+                renderPrioritizeStep();
+            } else if (currentStep === 3) {
+                renderOptimizeStep();
+            }
+        }
+    }
+
+    function setupDragAndDrop() {
+        const items = document.querySelectorAll('.task-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+            });
+
+        const dropZones = document.querySelectorAll('.drop-zone');
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', handleDragOver);
+            zone.addEventListener('drop', handleDrop);
+        });
+    }
+
     function handleDragStart(e) {
-        const item = e.target.closest('.task-item, .task-row, .action-task');
+        const item = e.target.closest('.task-item');
         if (!item) return;
         
+        e.dataTransfer.setDragImage(item, 0, 0);
         e.dataTransfer.setData('text/plain', item.dataset.id);
-        item.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
+        
+        setTimeout(() => {
+            item.classList.add('dragging');
+        }, 0);
     }
 
     function handleDragEnd(e) {
-        const item = e.target.closest('.task-item, .task-row, .action-task');
+        const item = e.target.closest('.task-item');
         if (!item) return;
         
         item.classList.remove('dragging');
-        document.querySelectorAll('.task-item, .task-row, .action-task, .drop-zone, .status-drop-zone').forEach(el => {
+        document.querySelectorAll('.task-item, .drop-zone').forEach(el => {
             el.classList.remove('drag-over');
         });
-
-        saveTasks();
-        if (currentStep === 1) renderTasks();
-        else if (currentStep === 2) renderPrioritizeStep();
-        else if (currentStep === 3) renderOptimizeStep();
-        else if (currentStep === 4) renderActionStep();
-        else if (document.getElementById('fullControl').classList.contains('active')) {
-            renderFullControl();
-        }
     }
 
     function handleDragOver(e) {
         e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        
         const draggingItem = document.querySelector('.dragging');
         if (!draggingItem) return;
         
-        const targetItem = e.target.closest('.task-item, .task-row, .action-task, .drop-zone, .status-drop-zone');
+        const targetItem = e.target.closest('.task-item, .drop-zone');
         if (!targetItem || targetItem === draggingItem) return;
         
-        document.querySelectorAll('.task-item, .task-row, .action-task, .drop-zone, .status-drop-zone').forEach(el => {
+        document.querySelectorAll('.task-item, .drop-zone').forEach(el => {
             el.classList.remove('drag-over');
         });
         targetItem.classList.add('drag-over');
     }
 
-    function handleDrop(e, options = {}) {
+    function handleDrop(e) {
         e.preventDefault();
         const draggedId = parseInt(e.dataTransfer.getData('text/plain'));
-        const targetItem = document.querySelector('.drag-over') || e.target.closest('.task-item, .task-row, .action-task, .drop-zone, .status-drop-zone');
+        const targetItem = document.querySelector('.drag-over') || e.target.closest('.task-item, .drop-zone');
         if (!targetItem) return;
         
         const draggedTask = tasks.find(t => t.id === draggedId);
         if (!draggedTask) return;
 
-        if (options.onDrop) {
-            options.onDrop(draggedTask, targetItem);
+        let targetIndex;
+        let newGroup;
+        let newUrgency;
+        let newImpact;
+        
+        if (targetItem.classList.contains('drop-zone')) {
+            const position = targetItem.dataset.position;
+            const [group, placement] = position.split('-');
+            newGroup = targetItem.dataset.group;
+            newUrgency = targetItem.dataset.urgency;
+            newImpact = targetItem.dataset.impact;
+            
+            const groupTasks = tasks.filter(t => t.group === newGroup);
+            if (groupTasks.length === 0) {
+                targetIndex = placement === 'start' ? 0 : tasks.length;
         } else {
-            handleDefaultDrop(draggedTask, targetItem);
+                const targetTask = placement === 'start' ? groupTasks[0] : groupTasks[groupTasks.length - 1];
+                targetIndex = tasks.findIndex(t => t.id === targetTask.id);
+                if (placement === 'end') targetIndex++;
+            }
+        } else {
+            const targetTask = tasks.find(t => t.id === parseInt(targetItem.dataset.id));
+            newGroup = targetTask.group;
+            newUrgency = targetTask.urgency;
+            
+            const impactSubgroup = targetItem.closest('.impact-subgroup');
+            if (impactSubgroup) {
+                newImpact = impactSubgroup.classList.contains('high') ? 'more' : 'less';
+            }
+            targetIndex = tasks.findIndex(t => t.id === targetTask.id);
+        }
+
+        const draggedIndex = tasks.findIndex(t => t.id === draggedId);
+        if (draggedIndex !== targetIndex) {
+            const [movedTask] = tasks.splice(draggedIndex, 1);
+            movedTask.group = newGroup;
+            if (newUrgency) {
+                movedTask.urgency = newUrgency;
+            }
+            if (newImpact) {
+                movedTask.impact = newImpact;
+            }
+            tasks.splice(targetIndex, 0, movedTask);
+            saveTasks();
+            
+            if (currentStep === 1) renderTasks();
+            else if (currentStep === 2) renderPrioritizeStep();
+            else if (currentStep === 3) renderOptimizeStep();
         }
     }
 
-    // Data persistence
-    function saveTasks() {
-        localStorage.setItem('spotTasks', JSON.stringify(tasks));
-    }
-
-    // Navigation functions
     function nextStep(step) {
         document.getElementById(`step${step}`).classList.remove('active');
         document.getElementById(`step${step + 1}`).classList.add('active');
@@ -1225,7 +1676,6 @@
         updateProgress();
     }
 
-    // Import/Export functions
     function importTasks() {
         document.getElementById('fileInput').click();
     }
@@ -1256,6 +1706,374 @@
         linkElement.setAttribute('href', dataUri);
         linkElement.setAttribute('download', exportFileDefaultName);
         linkElement.click();
+    }
+
+    function toggleFullControl() {
+        const fullControl = document.getElementById('fullControl');
+        const fullControlBtn = document.getElementById('fullControlBtn');
+        const isActive = fullControl.classList.contains('active');
+        
+        // Hide all other steps
+        document.querySelectorAll('.step-container').forEach(step => {
+            step.classList.remove('active');
+        });
+        
+        if (!isActive) {
+            fullControl.classList.add('active');
+            fullControlBtn.innerHTML = '<i class="fas fa-sliders-h"></i> Hide Full Control';
+            renderFullControl();
+        } else {
+            fullControl.classList.remove('active');
+            fullControlBtn.innerHTML = '<i class="fas fa-sliders-h"></i> Show Full Control';
+            // Restore previous step
+            document.getElementById(`step${currentStep}`).classList.add('active');
+        }
+    }
+
+    function renderFullControl() {
+        const fullControlList = document.getElementById('fullControlList');
+        
+        // Sort tasks by rank
+        const sortedTasks = [...tasks].sort((a, b) => (a.rank || 0) - (b.rank || 0));
+        
+        // Group tasks by all possible combinations
+        const groupedTasks = {
+            'Primary - Higher Urgency - More Impact': sortedTasks.filter(t => 
+                t.group === 'primary' && t.urgency === 'higher' && t.impact === 'more'),
+            'Primary - Higher Urgency - Less Impact': sortedTasks.filter(t => 
+                t.group === 'primary' && t.urgency === 'higher' && t.impact === 'less'),
+            'Primary - Lower Urgency - More Impact': sortedTasks.filter(t => 
+                t.group === 'primary' && t.urgency === 'lower' && t.impact === 'more'),
+            'Primary - Lower Urgency - Less Impact': sortedTasks.filter(t => 
+                t.group === 'primary' && t.urgency === 'lower' && t.impact === 'less'),
+            'Secondary - Higher Urgency - More Impact': sortedTasks.filter(t => 
+                t.group === 'secondary' && t.urgency === 'higher' && t.impact === 'more'),
+            'Secondary - Higher Urgency - Less Impact': sortedTasks.filter(t => 
+                t.group === 'secondary' && t.urgency === 'higher' && t.impact === 'less'),
+            'Secondary - Lower Urgency - More Impact': sortedTasks.filter(t => 
+                t.group === 'secondary' && t.urgency === 'lower' && t.impact === 'more'),
+            'Secondary - Lower Urgency - Less Impact': sortedTasks.filter(t => 
+                t.group === 'secondary' && t.urgency === 'lower' && t.impact === 'less')
+        };
+
+        fullControlList.innerHTML = Object.entries(groupedTasks).map(([groupName, tasks]) => `
+            <div class="full-control-group">
+                <div class="group-header">
+                    <h3>${groupName}</h3>
+                    <span class="task-count">${tasks.length} tasks</span>
+                </div>
+                <div class="group-content">
+                    <div class="column-headers">
+                        <div class="rank-col">Rank</div>
+                        <div class="name-col">Task Name</div>
+                        <div class="category-col">Group</div>
+                        <div class="category-col">Urgency</div>
+                        <div class="category-col">Impact</div>
+                        <div class="status-col">Status</div>
+                    </div>
+                    ${tasks.map((task, index) => `
+                        <div class="task-row ${task.isDemo ? 'demo-task' : ''}" data-id="${task.id}" draggable="true">
+                            <div class="rank-col">
+                                <span class="rank-display">#${task.rank || index + 1}</span>
+                            </div>
+                            <div class="name-col">
+                                <span class="task-name">${task.name}</span>
+                            </div>
+                            <div class="category-col">
+                                <select onchange="updateTaskCategory(${task.id}, 'group', this.value)" class="category-select">
+                                    <option value="primary" ${task.group === 'primary' ? 'selected' : ''}>Primary</option>
+                                    <option value="secondary" ${task.group === 'secondary' ? 'selected' : ''}>Secondary</option>
+                                </select>
+                            </div>
+                            <div class="category-col">
+                                <select onchange="updateTaskCategory(${task.id}, 'urgency', this.value)" class="category-select">
+                                    <option value="higher" ${task.urgency === 'higher' ? 'selected' : ''}>Higher</option>
+                                    <option value="lower" ${task.urgency === 'lower' ? 'selected' : ''}>Lower</option>
+                                </select>
+                            </div>
+                            <div class="category-col">
+                                <select onchange="updateTaskCategory(${task.id}, 'impact', this.value)" class="category-select">
+                                    <option value="more" ${task.impact === 'more' ? 'selected' : ''}>More</option>
+                                    <option value="less" ${task.impact === 'less' ? 'selected' : ''}>Less</option>
+                                </select>
+                            </div>
+                            <div class="status-col">
+                                <select onchange="updateTaskCategory(${task.id}, 'status', this.value)" class="status-select">
+                                    <option value="pending" ${task.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="in_progress" ${task.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                                    <option value="blocked" ${task.status === 'blocked' ? 'selected' : ''}>Blocked</option>
+                                    <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        setupFullControlDragAndDrop();
+    }
+
+    function updateTaskCategory(taskId, category, value) {
+        const task = tasks.find(t => t.id === taskId);
+        if (task) {
+            task[category] = value;
+            saveTasks();
+            renderFullControl();
+        }
+    }
+
+    function addDemoTasks() {
+        // Remove any existing demo tasks first
+        removeDemoTasks();
+        
+        // Create demo tasks for each combination
+        const demoTasks = [
+            { group: 'primary', urgency: 'higher', impact: 'more', name: 'Demo Task 1' },
+            { group: 'primary', urgency: 'higher', impact: 'less', name: 'Demo Task 2' },
+            { group: 'primary', urgency: 'lower', impact: 'more', name: 'Demo Task 3' },
+            { group: 'primary', urgency: 'lower', impact: 'less', name: 'Demo Task 4' },
+            { group: 'secondary', urgency: 'higher', impact: 'more', name: 'Demo Task 5' },
+            { group: 'secondary', urgency: 'higher', impact: 'less', name: 'Demo Task 6' },
+            { group: 'secondary', urgency: 'lower', impact: 'more', name: 'Demo Task 7' },
+            { group: 'secondary', urgency: 'lower', impact: 'less', name: 'Demo Task 8' }
+        ];
+
+        // Add each demo task
+        demoTasks.forEach((task, index) => {
+            tasks.push({
+                id: Date.now() + index,
+                name: task.name,
+                group: task.group,
+                urgency: task.urgency,
+                impact: task.impact,
+                status: 'pending',
+                rank: tasks.length + 1,
+                isDemo: true
+            });
+        });
+
+        saveTasks();
+        renderFullControl();
+    }
+
+    function removeDemoTasks() {
+        tasks = tasks.filter(task => !task.isDemo);
+        saveTasks();
+        renderFullControl();
+    }
+
+    function setupFullControlDragAndDrop() {
+        const taskRows = document.querySelectorAll('.task-row');
+        taskRows.forEach(row => {
+            row.addEventListener('dragstart', handleFullControlDragStart);
+            row.addEventListener('dragend', handleFullControlDragEnd);
+            row.addEventListener('dragover', handleFullControlDragOver);
+            row.addEventListener('drop', handleFullControlDrop);
+        });
+    }
+
+    function handleFullControlDragStart(e) {
+        const row = e.target.closest('.task-row');
+        if (!row) return;
+        
+        e.dataTransfer.setData('text/plain', row.dataset.id);
+        row.classList.add('dragging');
+    }
+
+    function handleFullControlDragEnd(e) {
+        const row = e.target.closest('.task-row');
+        if (!row) return;
+        
+        row.classList.remove('dragging');
+        document.querySelectorAll('.task-row, .full-control-group').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+    }
+
+    function handleFullControlDragOver(e) {
+        e.preventDefault();
+        const row = e.target.closest('.task-row');
+        if (!row) return;
+        
+        const draggingRow = document.querySelector('.task-row.dragging');
+        if (!draggingRow || draggingRow === row) return;
+        
+        document.querySelectorAll('.task-row').forEach(r => r.classList.remove('drag-over'));
+        row.classList.add('drag-over');
+    }
+
+    function handleFullControlDrop(e) {
+        e.preventDefault();
+        const draggedId = parseInt(e.dataTransfer.getData('text/plain'));
+        const targetRow = document.querySelector('.task-row.drag-over');
+        
+        // Find the dragged task
+        const draggedTask = tasks.find(t => t.id === draggedId);
+        if (!draggedTask) return;
+
+        // If no valid target, just re-render
+        if (!targetRow) {
+            renderFullControl();
+            return;
+        }
+
+        // Get the target group info
+        const groupHeader = targetRow.closest('.full-control-group').querySelector('.group-header h3').textContent;
+        const [group, urgency, impact] = groupHeader.split(' - ');
+
+        // Update task properties
+        draggedTask.group = group.toLowerCase();
+        draggedTask.urgency = urgency.toLowerCase();
+        draggedTask.impact = impact.toLowerCase();
+
+        // Move the task
+        const draggedIndex = tasks.findIndex(t => t.id === draggedId);
+        const targetIndex = tasks.findIndex(t => t.id === parseInt(targetRow.dataset.id));
+        
+        if (draggedIndex !== -1 && targetIndex !== -1) {
+            tasks.splice(draggedIndex, 1);
+            tasks.splice(targetIndex, 0, draggedTask);
+        }
+
+        saveTasks();
+        renderFullControl();
+    }
+
+    function clearAllTasks() {
+        if (confirm('Are you sure you want to clear all tasks? This action cannot be undone.')) {
+            tasks = [];
+            saveTasks();
+            renderFullControl();
+        }
+    }
+
+    function setupActionDragAndDrop() {
+        const tasks = document.querySelectorAll('.action-task');
+        tasks.forEach(task => {
+            task.addEventListener('dragstart', handleActionDragStart);
+            task.addEventListener('dragend', handleActionDragEnd);
+            task.addEventListener('dragover', handleActionDragOver);
+            task.addEventListener('drop', handleActionDrop);
+        });
+
+        const dropZones = document.querySelectorAll('.status-drop-zone');
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', handleActionDragOver);
+            zone.addEventListener('drop', handleActionDrop);
+        });
+    }
+
+    function handleActionDragStart(e) {
+        const task = e.target.closest('.action-task');
+        if (!task) return;
+        
+        e.dataTransfer.setData('text/plain', task.dataset.id);
+        task.classList.add('dragging');
+    }
+
+    function handleActionDragEnd(e) {
+        const task = e.target.closest('.action-task');
+        if (!task) return;
+        
+        task.classList.remove('dragging');
+        document.querySelectorAll('.action-task, .status-drop-zone').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+    }
+
+    function handleActionDragOver(e) {
+        e.preventDefault();
+        const target = e.target.closest('.action-task, .status-drop-zone');
+        if (!target) return;
+        
+        const draggingTask = document.querySelector('.action-task.dragging');
+        if (!draggingTask || draggingTask === target) return;
+        
+        document.querySelectorAll('.action-task, .status-drop-zone').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+        target.classList.add('drag-over');
+    }
+
+    function handleActionDrop(e) {
+        e.preventDefault();
+        const draggedId = parseInt(e.dataTransfer.getData('text/plain'));
+        const target = document.querySelector('.action-task.drag-over, .status-drop-zone.drag-over');
+        if (!target) return;
+
+        const draggedTask = tasks.find(t => t.id === draggedId);
+        if (!draggedTask) return;
+
+        let newStatus;
+        if (target.classList.contains('status-drop-zone')) {
+            newStatus = target.dataset.status;
+        } else {
+            const statusGroup = target.closest('.status-group');
+            newStatus = statusGroup.dataset.status;
+        }
+
+        if (newStatus) {
+            draggedTask.status = newStatus;
+            saveTasks();
+            renderActionStep();
+        }
+    }
+
+    // Add a safety check function
+    function validateTaskList() {
+        const taskIds = new Set();
+        let hasDuplicates = false;
+        
+        tasks.forEach(task => {
+            if (taskIds.has(task.id)) {
+                hasDuplicates = true;
+            }
+            taskIds.add(task.id);
+        });
+
+        if (hasDuplicates) {
+            console.error('Duplicate task IDs detected');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Modify the saveTasks function to include validation
+    function saveTasks() {
+        if (!validateTaskList()) {
+            console.error('Invalid task list detected, restoring backup');
+            if (window._taskBackup) {
+                tasks = JSON.parse(JSON.stringify(window._taskBackup));
+            }
+        }
+        localStorage.setItem('spotTasks', JSON.stringify(tasks));
+    }
+
+    function goToStep(step) {
+        // Hide all steps
+        document.querySelectorAll('.step-container').forEach(container => {
+            container.classList.remove('active');
+        });
+        
+        // Show selected step
+        document.getElementById(`step${step}`).classList.add('active');
+        currentStep = step;
+        
+        // Update progress bar
+        updateProgress();
+        
+        // Render appropriate view
+        if (step === 1) {
+            renderTasks();
+        } else if (step === 2) {
+            renderPrioritizeStep();
+        } else if (step === 3) {
+            renderOptimizeStep();
+        } else if (step === 4) {
+            renderActionStep();
+        }
     }
 
     // Initialize
