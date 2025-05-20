@@ -4,73 +4,83 @@ document.addEventListener("DOMContentLoaded", () => {
     const menuToggle = document.querySelector(".menu-toggle");
     const navLinks = document.querySelector(".nav-links");
 
-    // Collapsible menu toggle
-    menuToggle.addEventListener("click", () => {
-        navLinks.classList.toggle("show");
-    });
+    // Mobile menu toggle
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", () => {
+            navLinks.classList.toggle("show");
+            // Toggle aria-expanded for accessibility
+            const isExpanded = navLinks.classList.contains("show");
+            menuToggle.setAttribute("aria-expanded", isExpanded);
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener("click", (event) => {
+            if (!event.target.closest(".navbar") && navLinks.classList.contains("show")) {
+                navLinks.classList.remove("show");
+                menuToggle.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        // Close menu when clicking a link
+        navLinks.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", () => {
+                if (window.innerWidth <= 768) {
+                    navLinks.classList.remove("show");
+                    menuToggle.setAttribute("aria-expanded", "false");
+                }
+            });
+        });
+    }
 
     // Function to load the requested page into the content section
-    function loadPage(pageUrl) {
-        fetch(pageUrl)
-            .then(response => {
+    function loadPage(page) {
+        const pagePath = `pages/${page}.html`;
+        fetch(pagePath)
+            .then((response) => {
                 if (!response.ok) {
-                    throw new Error(`Could not load ${pageUrl}`);
+                    throw new Error("Page not found");
                 }
                 return response.text();
             })
-            .then(html => {
+            .then((html) => {
                 content.innerHTML = html;
+                // Update active link
+                navbarLinks.forEach((link) => {
+                    link.classList.remove("active");
+                    if (link.getAttribute("data-page") === page) {
+                        link.classList.add("active");
+                    }
+                });
+                // Update URL without reload
+                const newUrl = page === "home" ? window.location.pathname : `${window.location.pathname}?page=${page}`;
+                window.history.pushState({ page }, "", newUrl);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Error loading page:", error);
-                content.innerHTML = `<p>Error loading content. Please try again later.</p>`;
+                content.innerHTML = "<h2>Page not found</h2><p>The requested page could not be loaded.</p>";
             });
-
     }
 
-    // Function to decorate active page
-    function decorateNavbarLinks(activePage) {
-        // Active page decoration
-        navbarLinks.forEach(link => {
-            link.classList.remove("active");
-            if (link.getAttribute("data-page") === activePage) {
-                link.classList.add("active");
+    // Handle initial page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get("page") || "home";
+    loadPage(page);
+
+    // Handle navigation
+    navbarLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const page = this.getAttribute("data-page");
+            if (page) {
+                loadPage(page);
             }
-        });
-    }
-
-    // Function to handle page navigation and loading
-    function handlePage(pageUrl, activePage) {
-        loadPage(pageUrl);
-        decorateNavbarLinks(activePage);
-    }
-
-    // Check for query parameter on page load
-    const params = new URLSearchParams(window.location.search);
-    const page = params.get("page");
-    if (page) {
-        handlePage(`pages/${page}.html`, page);
-    } else {
-        // Default page (home)
-        handlePage("pages/home.html", "home");
-    }
-
-    // Attach click event listeners to navigation links
-    navbarLinks.forEach(link => {
-        link.addEventListener("click", event => {
-            event.preventDefault(); // Prevent default anchor behavior
-            const page = link.getAttribute("data-page");
-            handlePage(`pages/${page}.html`, page);
-
-            // Update the browser's URL without reloading
-            history.pushState({}, "", `?page=${page}`);
         });
     });
 
-    // Handle browser back/forward navigation
+    // Handle browser back/forward buttons
     window.addEventListener("popstate", () => {
-        const params = new URLSearchParams(window.location.search);
-        const page = params.get("page") || "home";
-        handlePage(`pages/${page}.html`, page);
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = urlParams.get("page") || "home";
+        loadPage(page);
     });
 });
