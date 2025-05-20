@@ -46,6 +46,7 @@ header {
     padding: 10px 20px;
     text-align: center;
     min-height: 2vh;
+    position: relative;
 }
 
 .nav-links {
@@ -86,7 +87,9 @@ header {
     padding: 10px;
     position: absolute;
     right: 20px;
-    top: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1001;
 }
 
 /* Mobile-specific adjustments */
@@ -105,6 +108,7 @@ header {
 
     .navbar {
         padding: 0;
+        position: relative;
     }
 
     .nav-links {
@@ -117,6 +121,7 @@ header {
         right: 0;
         padding: 10px 0;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
     }
 
     .nav-links.show {
