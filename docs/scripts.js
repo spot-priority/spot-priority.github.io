@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     navbarLinks.forEach((link) => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
-            const page = this.getAttribute("data-page");
+            const page = link.getAttribute("data-page");
             if (page) {
                 loadPage(page);
             }
