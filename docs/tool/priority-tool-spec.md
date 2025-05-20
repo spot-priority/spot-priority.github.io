@@ -12,10 +12,10 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - Track task status and progress
 
 ### 2. SPOT Framework Steps
-- **Survey**: Initial task collection and organization
-- **Prioritize**: Task prioritization based on urgency and impact
-- **Optimize**: Task optimization and resource allocation
-- **Take Action**: Task execution and progress tracking
+- **Survey**: Quickly assess all tasks to identify critical issues.
+- **Prioritize**: Focus on tasks with the highest urgency.
+- **Optimize**: Choose tasks that offer the greatest return on effort.
+- **Take Action**: Act immediately on the most important tasks.
 
 ### 3. Drag and Drop Interface
 - Intuitive drag-and-drop functionality
@@ -73,16 +73,21 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 ### Task Object
 ```javascript
 {
-    id: string,
-    title: string,
-    description: string,
-    priority: 'high' | 'medium' | 'low',
-    group: 'survey' | 'prioritize' | 'optimize' | 'action',
-    relatedTasks: string[],
-    createdAt: string,
-    updatedAt: string
+    "name": "Task Name",
+    "status": "in progress",
+    "survey": "primary",
+    "prioritize": "high",
+    "optimize": "more",
+    "rank": 1
 }
 ```
+
+### Possible Values for Task Object Fields
+- **status**: "in progress", "not started", "blocked", "completed"
+- **survey**: "primary", "secondary"
+- **prioritize**: "high", "low"
+- **optimize**: "more", "less"
+- **rank**: Any positive integer (1, 2, 3, ...)
 
 ### State Management
 - Centralized task management
@@ -121,19 +126,3 @@ docs/tool/
 ├── priority-tool-drag.js
 └── priority-tool-spec.md
 ```
-
-## Future Enhancements
-
-### Planned Features
-1. Task dependencies
-2. Time tracking
-3. Team collaboration
-4. Cloud sync
-5. Advanced analytics
-
-### Potential Improvements
-1. Offline PWA support
-2. Advanced filtering
-3. Custom workflows
-4. API integration
-5. Theme customization 
