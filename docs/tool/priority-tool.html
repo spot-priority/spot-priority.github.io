@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SPOT Framework Prioritization Tool - A systematic approach to task prioritization and management">
+    <meta name="keywords" content="SPOT Framework, Task Prioritization, DevOps, SRE, Workflow Optimization">
+    <meta name="author" content="Inbar Rose">
+    
+    <title>SPOT Framework - Prioritization Tool</title>
+
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="priority-tool.css">
+    <link rel="canonical" href="https://spot-priority.github.io/tool/priority-tool.html">
+    <link rel="icon" href="../images/spot_icon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Drag and Drop Styles */
+        .task-item {
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .task-item.dragging {
+            cursor: grabbing;
+            opacity: 0.8;
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .task-item.touch-dragging {
+            cursor: grabbing;
+            opacity: 0.8;
+        }
+
+        .task-item.drag-over {
+            border: 2px dashed #4CAF50;
+            margin: -2px;
+        }
+
+        .drop-zone {
+            min-height: 50px;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+            margin: 8px 0;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #4CAF50;
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .task-item {
+                touch-action: none;
+            }
+
+            .task-item.dragging {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dev-banner">
+        🚧 This tool is currently under development. Some features may not work as expected. 🚧
+    </div>
+    <div class="container">
+        <header>
+            <h1>SPOT Framework</h1>
+            <p>A systematic approach to task prioritization and management</p>
+        </header>
+
+        <main>
+            <section class="tool-section">
+                <h2>Prioritization Tool</h2>
+                <div class="tool-container">
+                    <!-- Tool content will be here -->
+                    <div class="step-content" id="survey">
+                        <h3>Survey</h3>
+                        <div class="task-list" data-group="survey">
+                            <!-- Tasks will be added here -->
+                        </div>
+                    </div>
+
+                    <div class="step-content" id="prioritize" style="display: none;">
+                        <h3>Prioritize</h3>
+                        <div class="task-list" data-group="prioritize">
+                            <!-- Tasks will be added here -->
+                        </div>
+                    </div>
+
+                    <div class="step-content" id="optimize" style="display: none;">
+                        <h3>Optimize</h3>
+                        <div class="task-list" data-group="optimize">
+                            <!-- Tasks will be added here -->
+                        </div>
+                    </div>
+
+                    <div class="step-content" id="action" style="display: none;">
+                        <h3>Take Action</h3>
+                        <div class="task-list" data-group="action">
+                            <!-- Tasks will be added here -->
+                        </div>
+                    </div>
+
+                    <div class="control-panel">
+                        <button id="prevStep" class="btn">Previous</button>
+                        <button id="nextStep" class="btn">Next</button>
+                        <button id="toggleFullControl" class="btn">Show All Tasks</button>
+                    </div>
+
+                    <div class="full-control" style="display: none;">
+                        <button id="addTask" class="btn">Add Task</button>
+                        <button id="importTasks" class="btn">Import Tasks</button>
+                        <button id="exportTasks" class="btn">Export Tasks</button>
+                        <button id="clearTasks" class="btn">Clear All Tasks</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 SPOT Framework. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="taskModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Add New Task</h2>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Title:</label>
+                    <input type="text" id="taskTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">Description:</label>
+                    <textarea id="taskDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taskPriority">Priority:</label>
+                    <select id="taskPriority">
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Save Task</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="importModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Import Tasks</h2>
+            <form id="importForm">
+                <div class="form-group">
+                    <label for="importFile">Select JSON file:</label>
+                    <input type="file" id="importFile" accept=".json" required>
+                </div>
+                <button type="submit" class="btn">Import</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { SPOTApp } from './priority-tool-app.js';
+        new SPOTApp();
+    </script>
+</body>
+</html> 
