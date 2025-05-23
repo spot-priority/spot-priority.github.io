@@ -63,6 +63,19 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - Show warning indicators only when they prevent workflow: on Take Action if no high priority, on Optimize if no high priority, on Prioritize if no primary, on Survey if no primary.
 - TODO: Add a section for handling done tasks in the future (e.g., history, analytics, restore, etc.).
 
+### Control Area & Full Control View
+- The control area contains buttons for: Toggle Full Control, Import Tasks, Export Tasks, Clear All Tasks.
+- The Add Task button is removed (task creation is inline or in full control views).
+- **Clear All Tasks**: Prompts for confirmation, then deletes all tasks.
+- **Import/Export Tasks**:
+  - Export: Opens a file save dialog, default filename "SPOT.Prioritization.Triage.json", saves all tasks as JSON.
+  - Import: Opens a file load dialog, validates JSON structure. If valid, prompts user to replace or add to existing tasks. If invalid, cancels import and shows error.
+- **Toggle Full Control**: Switches between step-based view and full control view.
+  - **Full Control View**:
+    - **Column View**: Four columns (Survey, Prioritize, Optimize, Take Action), each with their groups. Tasks are duplicated in columns as appropriate, visible only if their properties match. Drag-and-drop and ranking work across all columns/groups. (Mobile rendering to be addressed later.)
+    - **List View** (default): Shows a list of all tasks. Each task has dropdowns to modify all properties (survey, priority, optimize, status). New tasks can be added directly in this view.
+- The full control view can be toggled between column and list modes.
+
 ### 3. Drag and Drop Interface
 - Intuitive drag-and-drop functionality
 - Mobile-friendly touch support
