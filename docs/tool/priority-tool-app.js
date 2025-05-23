@@ -55,7 +55,8 @@ export class SPOTApp {
         // Task form submission
         document.getElementById('taskForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const title = document.getElementById('taskTitle').value;
+            let title = document.getElementById('taskTitle').value;
+            if (title.length > 64) title = title.slice(0, 64);
             const description = document.getElementById('taskDescription').value;
             const priority = document.getElementById('taskPriority').value;
 
@@ -100,7 +101,8 @@ export class SPOTApp {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const input = form.querySelector('.add-task-input');
-                const name = input.value.trim();
+                let name = input.value.trim();
+                if (name.length > 64) name = name.slice(0, 64);
                 if (name) {
                     const survey = form.getAttribute('data-survey');
                     this.taskManager.addTask({
@@ -434,6 +436,130 @@ export class SPOTApp {
         // Wire up mode buttons
         modeBar.querySelector('#fcColumnMode').onclick = () => this.setFullControlMode('column');
         modeBar.querySelector('#fcListMode').onclick = () => this.setFullControlMode('list');
+
+        // --- List View: Render all tasks with dropdowns for each property ---
+        if (mode === 'list') {
+            const taskList = list.querySelector('.task-list[data-group="all"]');
+            taskList.innerHTML = '';
+            // Add Task Form (inline, similar to survey step)
+            const addForm = document.createElement('form');
+            addForm.className = 'add-task-form add-task-form-list';
+            addForm.style.marginBottom = '0.5em';
+            addForm.innerHTML = `<input type="text" class="add-task-input" placeholder="Add a new task..." required maxlength="64" /> <button type="submit" class="btn">Add</button>`;
+            addForm.onsubmit = (e) => {
+                e.preventDefault();
+                const input = addForm.querySelector('.add-task-input');
+                let name = input.value.trim();
+                if (name.length > 64) name = name.slice(0, 64);
+                if (name) {
+                    this.taskManager.addTask({ name, survey: 'primary', priority: 'higher', optimize: 'more', status: 'todo', demo: false });
+                    input.value = '';
+                    this.setFullControlMode('list');
+                }
+            };
+            taskList.appendChild(addForm);
+            // Header row
+            const header = document.createElement('div');
+            header.className = 'task-list-header';
+            header.style.display = 'flex';
+            header.style.gap = '1em';
+            header.style.fontWeight = 'bold';
+            header.style.position = 'sticky';
+            header.style.top = '0';
+            header.style.background = '#f5f5f5';
+            header.style.zIndex = '2';
+            header.innerHTML = '<span style="width: 2em;">#</span><span style="flex:2;">Name</span>' +
+                '<span>Survey</span><span>Priority</span><span>Optimize</span><span>Status</span><span style="width:2em;"></span>';
+            taskList.appendChild(header);
+            const tasks = this.taskManager.getAllTasks();
+            if (tasks.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'empty-state';
+                empty.textContent = 'No tasks yet.';
+                taskList.appendChild(empty);
+            } else {
+                tasks.forEach((task, idx) => {
+                    const row = document.createElement('div');
+                    row.className = 'task-list-row';
+                    row.style.display = 'flex';
+                    row.style.gap = '1em';
+                    row.style.alignItems = 'center';
+                    row.classList.add(idx % 2 === 0 ? 'even-row' : 'odd-row');
+                    row.onmouseover = () => row.classList.add('row-hover');
+                    row.onmouseout = () => row.classList.remove('row-hover');
+                    row.innerHTML = `<span style="width:2em;">${idx + 1}</span><span style="flex:2;">${task.name}</span>`;
+                    // Survey dropdown
+                    const surveySel = document.createElement('select');
+                    surveySel.className = 'compact-dropdown';
+                    ['primary', 'secondary'].forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = val; opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                        if (task.survey === val) opt.selected = true;
+                        surveySel.appendChild(opt);
+                    });
+                    surveySel.onchange = () => {
+                        this.taskManager.updateTask(task.id, { survey: surveySel.value });
+                        this.setFullControlMode('list');
+                    };
+                    row.appendChild(surveySel);
+                    // Priority dropdown
+                    const prioritySel = document.createElement('select');
+                    prioritySel.className = 'compact-dropdown';
+                    ['higher', 'lower'].forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = val; opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                        if (task.priority === val) opt.selected = true;
+                        prioritySel.appendChild(opt);
+                    });
+                    prioritySel.onchange = () => {
+                        this.taskManager.updateTask(task.id, { priority: prioritySel.value });
+                        this.setFullControlMode('list');
+                    };
+                    row.appendChild(prioritySel);
+                    // Optimize dropdown
+                    const optimizeSel = document.createElement('select');
+                    optimizeSel.className = 'compact-dropdown';
+                    ['more', 'less'].forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = val; opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                        if (task.optimize === val) opt.selected = true;
+                        optimizeSel.appendChild(opt);
+                    });
+                    optimizeSel.onchange = () => {
+                        this.taskManager.updateTask(task.id, { optimize: optimizeSel.value });
+                        this.setFullControlMode('list');
+                    };
+                    row.appendChild(optimizeSel);
+                    // Status dropdown
+                    const statusSel = document.createElement('select');
+                    statusSel.className = 'compact-dropdown';
+                    ['todo', 'doing', 'blocked', 'done'].forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = val; opt.textContent = val.charAt(0).toUpperCase() + val.slice(1);
+                        if (task.status === val) opt.selected = true;
+                        statusSel.appendChild(opt);
+                    });
+                    statusSel.onchange = () => {
+                        this.taskManager.updateTask(task.id, { status: statusSel.value });
+                        this.setFullControlMode('list');
+                    };
+                    row.appendChild(statusSel);
+                    // Delete button
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'delete-btn';
+                    delBtn.title = 'Delete task';
+                    delBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                    delBtn.onclick = () => {
+                        if (confirm('Delete this task?')) {
+                            this.taskManager.deleteTask(task.id);
+                            this.setFullControlMode('list');
+                        }
+                    };
+                    row.appendChild(delBtn);
+                    taskList.appendChild(row);
+                });
+            }
+        }
     }
 
     showAddTaskModal() {
@@ -715,3 +841,5 @@ function showImportChoiceDialog({ onReplace, onAdd }) {
         onAdd();
     };
 }
+
+document.getElementById('taskTitle').setAttribute('maxlength', '64');
