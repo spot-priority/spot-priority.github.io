@@ -121,6 +121,14 @@ export class SPOTApp {
             btn.addEventListener('click', () => {
                 const step = btn.getAttribute('data-step');
                 if (step) {
+                    // If in full control, exit it
+                    const fc = document.querySelector('.full-control-view');
+                    if (fc && fc.style.display !== 'none') {
+                        fc.style.display = 'none';
+                        document.querySelectorAll('.step-content').forEach(el => {
+                            el.style.display = (el.id === step) ? 'block' : 'none';
+                        });
+                    }
                     this.navigateToStep(step);
                 }
             });
@@ -368,9 +376,64 @@ export class SPOTApp {
     }
 
     toggleFullControl() {
-        const fullControl = document.querySelector('.full-control');
-        const isVisible = fullControl.style.display !== 'none';
-        fullControl.style.display = isVisible ? 'none' : 'block';
+        // Toggle between full control and step-based view
+        const fullControlView = document.querySelector('.full-control-view');
+        const contentArea = document.querySelector('.content-area');
+        if (!fullControlView) return;
+        const isFullControl = fullControlView.style.display !== 'none';
+        if (isFullControl) {
+            // Hide full control, show step content
+            fullControlView.style.display = 'none';
+            // Show the current step content
+            document.querySelectorAll('.step-content').forEach(el => {
+                el.style.display = (el.id === this.currentStep) ? 'block' : 'none';
+            });
+        } else {
+            // Show full control, hide all step content
+            fullControlView.style.display = 'block';
+            document.querySelectorAll('.step-content').forEach(el => {
+                el.style.display = 'none';
+            });
+            // Default to column mode
+            this.setFullControlMode('column');
+        }
+    }
+
+    setFullControlMode(mode) {
+        // Wireframe: visually switch between column and list mode
+        const fc = document.querySelector('.full-control-view');
+        if (!fc) return;
+        let col = fc.querySelector('.all-steps');
+        let list = fc.querySelector('.all-tasks-list');
+        if (!col) {
+            col = document.createElement('div');
+            col.className = 'all-steps';
+            col.innerHTML = `<div class="step-section"><h3>Survey</h3><div class="task-list" data-group="survey"></div></div>
+                <div class="step-section"><h3>Prioritize</h3><div class="task-list" data-group="prioritize"></div></div>
+                <div class="step-section"><h3>Optimize</h3><div class="task-list" data-group="optimize"></div></div>
+                <div class="step-section"><h3>Take Action</h3><div class="task-list" data-group="action"></div></div>`;
+            fc.appendChild(col);
+        }
+        if (!list) {
+            list = document.createElement('div');
+            list.className = 'all-tasks-list';
+            list.innerHTML = `<h3>All Tasks (List Mode)</h3><div class="task-list" data-group="all"></div>`;
+            fc.appendChild(list);
+        }
+        col.style.display = (mode === 'column') ? 'block' : 'none';
+        list.style.display = (mode === 'list') ? 'block' : 'none';
+        // Add mode toggle buttons (wireframe)
+        let modeBar = fc.querySelector('.full-control-mode-bar');
+        if (!modeBar) {
+            modeBar = document.createElement('div');
+            modeBar.className = 'full-control-mode-bar';
+            modeBar.style.marginBottom = '1em';
+            modeBar.innerHTML = `<button class="btn" id="fcColumnMode">Column View</button> <button class="btn" id="fcListMode">List View</button>`;
+            fc.insertBefore(modeBar, fc.firstChild);
+        }
+        // Wire up mode buttons
+        modeBar.querySelector('#fcColumnMode').onclick = () => this.setFullControlMode('column');
+        modeBar.querySelector('#fcListMode').onclick = () => this.setFullControlMode('list');
     }
 
     showAddTaskModal() {
