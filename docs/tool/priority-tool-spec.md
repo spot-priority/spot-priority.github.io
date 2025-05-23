@@ -1,23 +1,27 @@
 # SPOT Framework Prioritization Tool Specification
 
 ## Overview
+
 The SPOT Framework Prioritization Tool is a web-based application designed to help users prioritize tasks using the SPOT (Survey, Prioritize, Optimize, Take Action) framework. The tool provides an intuitive interface for managing tasks through these four key steps.
 
 ## Core Features
 
 ### 1. Task Management
+
 - Create, edit, and delete tasks
 - Assign priorities (high, medium, low)
 - Add descriptions and related tasks
 - Track task status and progress
 
 ### 2. SPOT Framework Steps
+
 - **Survey**: Quickly assess all tasks to identify critical issues.
 - **Prioritize**: Focus on tasks with the highest urgency.
 - **Optimize**: Choose tasks that offer the greatest return on effort.
 - **Take Action**: Act immediately on the most important tasks.
 
 ### Survey Step
+
 - The Survey step is the initial collection phase.
 - Users can create tasks by entering a name directly in the UI, with no dialog or modal.
 - The Survey step displays two groups: **Primary** (on top) and **Secondary** (below).
@@ -27,6 +31,7 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - Internally, each task has: `{ id, name, survey, priority, optimize, demo }`.
 
 ### Prioritize Step
+
 - The Prioritize step displays all tasks from the Survey step that are marked as `survey: 'primary'`.
 - Two groups are shown: **Higher** (top) and **Lower** (bottom).
 - All tasks start in the Higher group.
@@ -38,6 +43,7 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - (Optionally) a `rank` property can be added to tasks for explicit ordering.
 
 ### Optimize Step
+
 - The Optimize step displays all tasks from the Prioritize step that are marked as `priority: 'higher'`.
 - Two groups are shown: **More** (top) and **Less** (bottom), representing the impact of the task.
 - All tasks start in the More group.
@@ -49,6 +55,7 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - (Optionally) a `rank` property can be added to tasks for explicit ordering.
 
 ### Take Action Step
+
 - The Take Action step displays tasks in four stacked groups: **Todo** (top), **Doing**, **Blocked**, and **Done** (bottom).
 - Each task has a new `status` property: `"todo"`, `"doing"`, `"blocked"`, `"done"`.
 - Tasks can be dragged between any of the four groups (Todo, Doing, Blocked, Done), updating their `status` accordingly.
@@ -64,6 +71,7 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - TODO: Add a section for handling done tasks in the future (e.g., history, analytics, restore, etc.).
 
 ### Control Area & Full Control View
+
 - The control area contains buttons for: Toggle Full Control, Import Tasks, Export Tasks, Clear All Tasks.
 - The Add Task button is removed (task creation is inline or in full control views).
 - **Clear All Tasks**: Prompts for confirmation, then deletes all tasks.
@@ -77,12 +85,14 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - The full control view can be toggled between column and list modes.
 
 ### 3. Drag and Drop Interface
+
 - Intuitive drag-and-drop functionality
 - Mobile-friendly touch support
 - Visual feedback during drag operations
 - Smooth animations and transitions
 
 ### 4. Data Persistence
+
 - Local storage for task data
 - Import/export functionality
 - Demo data for quick start
@@ -90,17 +100,20 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 ## Technical Requirements
 
 ### Browser Support
+
 - Modern browsers (Chrome, Firefox, Safari, Edge)
 - Mobile browsers (iOS Safari, Android Chrome)
 - ES6+ JavaScript support
 
 ### Performance
+
 - Smooth animations (60fps)
 - Responsive design
 - Touch-friendly interface
 - Offline capability
 
 ### Accessibility
+
 - Keyboard navigation
 - Screen reader support
 - High contrast mode
@@ -109,12 +122,14 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 ## User Interface
 
 ### Layout
+
 - Clean, modern design
 - Responsive grid system
 - Clear visual hierarchy
 - Intuitive navigation
 
 ### Components
+
 - Task cards
 - Priority indicators
 - Progress bars
@@ -122,6 +137,7 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - Control panels
 
 ### Visual Feedback
+
 - Hover states
 - Active states
 - Loading indicators
@@ -130,6 +146,7 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 ## Data Structure
 
 ### Task Object
+
 ```javascript
 {
     id: string,
@@ -142,6 +159,7 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 ```
 
 ### State Management
+
 - Centralized task management
 - Observer pattern for updates
 - Local storage persistence
@@ -150,6 +168,7 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 ## Implementation Details
 
 ### Core Classes
+
 1. **SPOTApp**
    - Main application class
    - UI management
@@ -169,7 +188,8 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
    - Position management
 
 ### File Structure
-```
+
+```shell
 docs/tool/
 ├── priority-tool.html
 ├── priority-tool.css
