@@ -169,9 +169,21 @@ export class SPOTApp {
         }
     }
 
+    // Utility: filter out done tasks for all steps except Take Action
+    getVisibleTasksForStep(step) {
+        const all = this.taskManager.getAllTasks();
+        if (step === 'action') return all;
+        return all.filter(t => t.status !== 'done');
+    }
+
+    // Utility: filter out blocked/done for warning logic
+    getActiveTasksForGroup(filterFn) {
+        return this.taskManager.getAllTasks().filter(t => filterFn(t) && t.status !== 'done' && t.status !== 'blocked');
+    }
+
     renderPrioritizeStep() {
-        // Only show tasks with survey: 'primary'
-        const tasks = this.taskManager.getTasksBySurvey('primary');
+        // Only show tasks with survey: 'primary' and not done
+        const tasks = this.getVisibleTasksForStep('prioritize').filter(t => t.survey === 'primary');
         // Set default priority to 'higher' if not set
         tasks.forEach(task => {
             if (!task.priority) {
@@ -190,6 +202,7 @@ export class SPOTApp {
         } else {
             higher.forEach((task, idx) => {
                 const el = this.createPriorityTaskElement(task, idx);
+                if (task.status === 'blocked') el.classList.add('blocked');
                 higherList.appendChild(el);
             });
         }
@@ -201,11 +214,15 @@ export class SPOTApp {
         } else {
             lower.forEach((task, idx) => {
                 const el = this.createPriorityTaskElement(task, idx);
+                if (task.status === 'blocked') el.classList.add('blocked');
                 lowerList.appendChild(el);
             });
         }
         // Initialize drag and drop for prioritize step
         this.dragDropManager.initializePrioritizeDragAndDrop();
+        // Show warning if no active primary tasks
+        const showWarning = this.getActiveTasksForGroup(t => t.survey === 'primary').length === 0;
+        this.setStepWarning('prioritize', showWarning);
     }
 
     createPriorityTaskElement(task, idx) {
@@ -218,8 +235,8 @@ export class SPOTApp {
     }
 
     renderOptimizeStep() {
-        // Only show tasks with priority: 'higher'
-        const tasks = this.taskManager.getTasksByPriority('higher');
+        // Only show tasks with priority: 'higher' and not done
+        const tasks = this.getVisibleTasksForStep('optimize').filter(t => t.priority === 'higher');
         // Set default optimize to 'more' if not set
         tasks.forEach(task => {
             if (!task.optimize) {
@@ -238,6 +255,7 @@ export class SPOTApp {
         } else {
             more.forEach((task, idx) => {
                 const el = this.createOptimizeTaskElement(task, idx);
+                if (task.status === 'blocked') el.classList.add('blocked');
                 moreList.appendChild(el);
             });
         }
@@ -249,11 +267,15 @@ export class SPOTApp {
         } else {
             less.forEach((task, idx) => {
                 const el = this.createOptimizeTaskElement(task, idx);
+                if (task.status === 'blocked') el.classList.add('blocked');
                 lessList.appendChild(el);
             });
         }
         // Initialize drag and drop for optimize step
         this.dragDropManager.initializeOptimizeDragAndDrop();
+        // Show warning if no active high-priority tasks
+        const showWarning = this.getActiveTasksForGroup(t => t.priority === 'higher').length === 0;
+        this.setStepWarning('optimize', showWarning);
     }
 
     createOptimizeTaskElement(task, idx) {
@@ -287,18 +309,22 @@ export class SPOTApp {
             const list = document.querySelector(`.task-list[data-survey="${survey}"]`);
             if (!list) return;
             list.innerHTML = '';
-            const tasks = this.taskManager.getTasksBySurvey(survey);
+            const tasks = this.getVisibleTasksForStep('survey').filter(t => t.survey === survey);
             if (tasks.length === 0) {
                 list.innerHTML = '<div class="empty-state">No tasks in this group yet.</div>';
                 return;
             }
             tasks.forEach((task, idx) => {
                 const el = this.createSurveyTaskElement(task, idx);
+                if (task.status === 'blocked') el.classList.add('blocked');
                 list.appendChild(el);
             });
         });
         // Initialize drag and drop for survey step
         this.dragDropManager.initializeSurveyDragAndDrop();
+        // Show warning if no active primary tasks
+        const showWarning = this.getActiveTasksForGroup(t => t.survey === 'primary').length === 0;
+        this.setStepWarning('survey', showWarning);
     }
 
     createTaskElement(task) {
@@ -391,19 +417,19 @@ export class SPOTApp {
     }
 
     renderActionStep() {
-        // Get tasks for the highest available group (primary/high/more, then primary/high/less, etc.), not done
+        // Get tasks for the highest available group (primary/high/more, then primary/high/less, etc.), not done/blocked
         const candidates = [
-            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'more' && t.status !== 'done',
-            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'less' && t.status !== 'done',
-            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'more' && t.status !== 'done',
-            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'less' && t.status !== 'done'
+            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'more' && t.status !== 'done' && t.status !== 'blocked',
+            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'less' && t.status !== 'done' && t.status !== 'blocked',
+            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'more' && t.status !== 'done' && t.status !== 'blocked',
+            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'less' && t.status !== 'done' && t.status !== 'blocked'
         ];
         let tasks = [];
         for (const filter of candidates) {
             tasks = this.taskManager.getAllTasks().filter(filter);
             if (tasks.length > 0) break;
         }
-        // Show warning if no tasks in any group
+        // Show warning if no active tasks in any group
         const showWarning = tasks.length === 0;
         // Split by status
         const todo = tasks.filter(t => t.status === 'todo');
@@ -420,6 +446,7 @@ export class SPOTApp {
             } else {
                 arr.forEach((task, idx) => {
                     const el = this.createActionTaskElement(task, idx, status);
+                    if (task.status === 'blocked') el.classList.add('blocked');
                     list.appendChild(el);
                 });
             }
@@ -428,9 +455,7 @@ export class SPOTApp {
         renderGroup('doing', doing);
         renderGroup('blocked', blocked);
         renderGroup('done', done);
-        // Show/hide warning indicator
-        this.setActionWarning(showWarning);
-        // Initialize drag and drop for action step
+        this.setStepWarning('action', showWarning);
         this.dragDropManager.initializeActionDragAndDrop();
     }
 
@@ -477,5 +502,24 @@ export class SPOTApp {
     setActionWarning(show) {
         // Show/hide warning indicator for action step (implement as needed)
         // ...
+    }
+
+    // --- Step Warning Indicator ---
+    setStepWarning(step, show) {
+        // Show/hide warning indicator for the given step
+        let bar = document.querySelector('.step-selector');
+        if (!bar) return;
+        let warn = bar.querySelector('.step-warning[data-step="' + step + '"]');
+        if (!warn && show) {
+            warn = document.createElement('span');
+            warn.className = 'step-warning';
+            warn.setAttribute('data-step', step);
+            warn.title = 'No actionable tasks in this step. Please review previous steps.';
+            warn.innerHTML = '⚠️';
+            let btn = bar.querySelector('.step-btn[data-step="' + step + '"]');
+            if (btn) btn.appendChild(warn);
+        } else if (warn && !show) {
+            warn.remove();
+        }
     }
 }
