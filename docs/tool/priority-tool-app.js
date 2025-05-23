@@ -125,6 +125,9 @@ export class SPOTApp {
                 }
             });
         });
+
+        // Patch: subscribe to task changes for warning updates
+        this.taskManager.subscribe(() => this.rerenderAllStepWarnings());
     }
 
     navigateToStep(step) {
@@ -417,24 +420,26 @@ export class SPOTApp {
     }
 
     renderActionStep() {
-        // Get tasks for the highest available group (primary/high/more, then primary/high/less, etc.), not done/blocked
+        // Get tasks for the highest available group (primary/high/more, then primary/high/less, etc.), not done
         const candidates = [
-            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'more' && t.status !== 'done' && t.status !== 'blocked',
-            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'less' && t.status !== 'done' && t.status !== 'blocked',
-            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'more' && t.status !== 'done' && t.status !== 'blocked',
-            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'less' && t.status !== 'done' && t.status !== 'blocked'
+            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'more' && t.status !== 'done',
+            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'less' && t.status !== 'done',
+            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'more' && t.status !== 'done',
+            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'less' && t.status !== 'done'
         ];
         let tasks = [];
         for (const filter of candidates) {
             tasks = this.taskManager.getAllTasks().filter(filter);
             if (tasks.length > 0) break;
         }
-        // Show warning if no active tasks in any group
-        const showWarning = tasks.length === 0;
+        // Always show blocked tasks for the current group
+        const allBlocked = this.taskManager.getAllTasks().filter(t => tasks.some(base => base.survey === t.survey && base.priority === t.priority && base.optimize === t.optimize) && t.status === 'blocked');
+        // Show warning if no active tasks in any group (excluding blocked)
+        const showWarning = tasks.filter(t => t.status !== 'blocked').length === 0;
         // Split by status
         const todo = tasks.filter(t => t.status === 'todo');
         const doing = tasks.filter(t => t.status === 'doing');
-        const blocked = tasks.filter(t => t.status === 'blocked');
+        const blocked = allBlocked;
         // Done tasks (from all, not just current group)
         const done = this.taskManager.getAllTasks().filter(t => t.status === 'done');
         // Render each group
@@ -521,5 +526,13 @@ export class SPOTApp {
         } else if (warn && !show) {
             warn.remove();
         }
+    }
+
+    // Patch: force warning indicators to update after any task change
+    rerenderAllStepWarnings() {
+        this.renderSurveyStep();
+        this.renderPrioritizeStep();
+        this.renderOptimizeStep();
+        this.renderActionStep();
     }
 }
