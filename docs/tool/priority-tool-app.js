@@ -6,8 +6,9 @@ export class SPOTApp {
         this.taskManager = new TaskManager();
         this.dragDropManager = new DragDropManager(this.taskManager);
         this.currentStep = 'survey';
+        window.spotApp = this; // for drag-drop callback
         this.initializeEventListeners();
-        this.renderCurrentStep();
+        this.renderSurveyStep();
     }
 
     initializeEventListeners() {
@@ -92,6 +93,27 @@ export class SPOTApp {
                 reader.readAsText(file);
             }
         });
+
+        // Survey step: add task forms for primary and secondary
+        document.querySelectorAll('.add-task-form').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const input = form.querySelector('.add-task-input');
+                const name = input.value.trim();
+                if (name) {
+                    const survey = form.getAttribute('data-survey');
+                    this.taskManager.addTask({
+                        name,
+                        survey,
+                        // priority is not set in this step
+                        optimize: 'more',
+                        demo: false
+                    });
+                    input.value = '';
+                    this.renderSurveyStep();
+                }
+            });
+        });
     }
 
     navigateToStep(step) {
@@ -99,13 +121,13 @@ export class SPOTApp {
         document.querySelectorAll('.step-content').forEach(content => {
             content.style.display = 'none';
         });
-        
+
         // Show selected step
         document.getElementById(`${step}-step`).style.display = 'block';
-        
+
         // Update current step
         this.currentStep = step;
-        
+
         // Update active state of step buttons
         document.querySelectorAll('.step-btn').forEach(btn => {
             btn.classList.remove('active');
@@ -113,23 +135,27 @@ export class SPOTApp {
                 btn.classList.add('active');
             }
         });
-        
+
         // Update progress meter
         const progressFill = document.querySelector('.progress-fill');
         const steps = ['survey', 'prioritize', 'optimize', 'action'];
         const currentIndex = steps.indexOf(step);
         const progress = (currentIndex / (steps.length - 1)) * 100;
         progressFill.style.width = `${progress}%`;
-        
+
         // Update navigation buttons
         const prevBtn = document.getElementById('prevStep');
         const nextBtn = document.getElementById('nextStep');
-        
+
         prevBtn.disabled = step === 'survey';
         nextBtn.disabled = step === 'action';
-        
+
         // Render tasks for current step
-        this.renderCurrentStep();
+        if (step === 'survey') {
+            this.renderSurveyStep();
+        } else {
+            this.renderCurrentStep();
+        }
     }
 
     renderCurrentStep() {
@@ -146,6 +172,26 @@ export class SPOTApp {
             const taskElement = this.createTaskElement(task);
             taskList.appendChild(taskElement);
         });
+    }
+
+    renderSurveyStep() {
+        // Render tasks for primary and secondary groups
+        ['primary', 'secondary'].forEach(survey => {
+            const list = document.querySelector(`.task-list[data-survey="${survey}"]`);
+            if (!list) return;
+            list.innerHTML = '';
+            const tasks = this.taskManager.getTasksBySurvey(survey);
+            if (tasks.length === 0) {
+                list.innerHTML = '<div class="empty-state">No tasks in this group yet.</div>';
+                return;
+            }
+            tasks.forEach((task, idx) => {
+                const el = this.createSurveyTaskElement(task, idx);
+                list.appendChild(el);
+            });
+        });
+        // Initialize drag and drop for survey step
+        this.dragDropManager.initializeSurveyDragAndDrop();
     }
 
     createTaskElement(task) {
@@ -173,6 +219,15 @@ export class SPOTApp {
         div.querySelector('.edit-btn').addEventListener('click', () => this.editTask(task));
         div.querySelector('.delete-btn').addEventListener('click', () => this.deleteTask(task));
 
+        return div;
+    }
+
+    createSurveyTaskElement(task, idx) {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.draggable = true;
+        div.dataset.taskId = task.id;
+        div.innerHTML = `<span class="task-rank">${idx + 1}.</span> <span class="task-name">${task.name}</span>`;
         return div;
     }
 
@@ -227,4 +282,4 @@ export class SPOTApp {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }
-} 
+}

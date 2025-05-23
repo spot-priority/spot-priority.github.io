@@ -20,6 +20,15 @@ export class DragDropManager {
         container.addEventListener('touchcancel', this.handleTouchEnd.bind(this));
     }
 
+    initializeSurveyDragAndDrop() {
+        // Add drag and drop listeners for survey step task lists
+        document.querySelectorAll('.task-list[data-survey]').forEach(list => {
+            list.addEventListener('dragstart', this.handleSurveyDragStart.bind(this));
+            list.addEventListener('dragover', this.handleSurveyDragOver.bind(this));
+            list.addEventListener('drop', this.handleSurveyDrop.bind(this));
+        });
+    }
+
     // Desktop Drag and Drop Handlers
     handleDragStart(e) {
         if (!e.target.classList.contains('task-item')) return;
@@ -66,6 +75,33 @@ export class DragDropManager {
         if (taskId && newGroup) {
             this.taskManager.moveTask(taskId, newGroup);
         }
+    }
+
+    handleSurveyDragStart(e) {
+        if (!e.target.classList.contains('task-item')) return;
+        this.draggedItem = e.target;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', e.target.dataset.taskId);
+    }
+
+    handleSurveyDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    }
+
+    handleSurveyDrop(e) {
+        e.preventDefault();
+        const targetList = e.target.closest('.task-list[data-survey]');
+        if (!targetList || !this.draggedItem) return;
+        const taskId = this.draggedItem.dataset.taskId;
+        const newSurvey = targetList.getAttribute('data-survey');
+        // Find the drop index
+        let dropIndex = Array.from(targetList.children).indexOf(e.target.closest('.task-item'));
+        if (dropIndex === -1) dropIndex = targetList.children.length;
+        this.taskManager.moveTaskToSurveyAndReorder(taskId, newSurvey, dropIndex);
+        this.draggedItem = null;
+        // Re-render survey step
+        if (window.spotApp) window.spotApp.renderSurveyStep();
     }
 
     // Mobile Touch Handlers
@@ -144,4 +180,4 @@ export class DragDropManager {
 
         this.draggedItem.style.transform = `translate(${x}px, ${y}px)`;
     }
-} 
+}

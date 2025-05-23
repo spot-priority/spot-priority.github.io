@@ -412,6 +412,7 @@ main {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -732,19 +733,19 @@ footer a:active {
 }
 
 /* Update progress fill based on current step */
-.step-btn[data-step="survey"].active ~ .progress-fill {
+.step-btn[data-step="survey"].active~.progress-fill {
     width: 0%;
 }
 
-.step-btn[data-step="prioritize"].active ~ .progress-fill {
+.step-btn[data-step="prioritize"].active~.progress-fill {
     width: 33.33%;
 }
 
-.step-btn[data-step="optimize"].active ~ .progress-fill {
+.step-btn[data-step="optimize"].active~.progress-fill {
     width: 66.66%;
 }
 
-.step-btn[data-step="action"].active ~ .progress-fill {
+.step-btn[data-step="action"].active~.progress-fill {
     width: 100%;
 }
 
@@ -812,4 +813,70 @@ footer a:active {
     .full-control-view {
         grid-template-columns: 1fr;
     }
-} 
+}
+
+/* Survey step group layout */
+.survey-group {
+    margin-bottom: 2rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.survey-group h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.add-task-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.add-task-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.task-list[data-survey] {
+    min-height: 2.5rem;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
+    cursor: grab;
+    transition: box-shadow 0.2s, background 0.2s;
+}
+
+.task-item.dragging {
+    opacity: 0.7;
+    background: #e3f2fd;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+}
+
+.task-rank {
+    font-weight: bold;
+    margin-right: 0.75rem;
+    color: #1976d2;
+}
+
+.task-name {
+    flex: 1;
+}
+
+.empty-state {
+    color: #aaa;
+    font-style: italic;
+    padding: 0.5rem 0;
+}

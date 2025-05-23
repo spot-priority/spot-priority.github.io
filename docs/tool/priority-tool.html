@@ -111,6 +111,9 @@
                             <button id="clearTasks" class="btn">
                                 <i class="fas fa-trash"></i> Clear All Tasks
                             </button>
+                            <button id="addTask" class="btn">
+                                <i class="fas fa-plus"></i> Add Task
+                            </button>
                         </div>
                     </div>
 
@@ -143,8 +146,23 @@
                         <!-- Step Views -->
                         <div class="step-content" id="survey">
                             <h3>Survey</h3>
-                            <div class="task-list" data-group="survey">
-                                <!-- Tasks will be added here -->
+                            <!-- Primary Group -->
+                            <div class="survey-group" data-survey="primary">
+                                <h4>Primary</h4>
+                                <form class="add-task-form" data-survey="primary">
+                                    <input type="text" class="add-task-input" placeholder="Add a primary task..." required />
+                                    <button type="submit" class="btn">Add</button>
+                                </form>
+                                <div class="task-list" data-survey="primary"></div>
+                            </div>
+                            <!-- Secondary Group -->
+                            <div class="survey-group" data-survey="secondary">
+                                <h4>Secondary</h4>
+                                <form class="add-task-form" data-survey="secondary">
+                                    <input type="text" class="add-task-input" placeholder="Add a secondary task..." required />
+                                    <button type="submit" class="btn">Add</button>
+                                </form>
+                                <div class="task-list" data-survey="secondary"></div>
                             </div>
                         </div>
 
@@ -273,4 +291,4 @@
         new SPOTApp();
     </script>
 </body>
-</html> 
+</html>

@@ -9,9 +9,10 @@ export class TaskManager {
     addTask(task) {
         const newTask = {
             id: this.generateId(),
-            ...task,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            name: task.name,
+            survey: task.survey,
+            optimize: task.optimize || 'more',
+            demo: !!task.demo
         };
         this.tasks.push(newTask);
         this.notifyObservers();
@@ -57,6 +58,22 @@ export class TaskManager {
         return false;
     }
 
+    moveTaskToSurveyAndReorder(taskId, newSurvey, newIndex) {
+        // Find and remove the task from the array
+        const idx = this.tasks.findIndex(t => t.id === taskId);
+        if (idx === -1) return;
+        const [task] = this.tasks.splice(idx, 1);
+        // Update survey property
+        task.survey = newSurvey;
+        // Insert at new index in the correct group
+        const groupTasks = this.tasks.filter(t => t.survey === newSurvey);
+        let insertIdx = this.tasks.findIndex((t, i) => t.survey === newSurvey && groupTasks.indexOf(t) === newIndex);
+        if (insertIdx === -1) insertIdx = this.tasks.length;
+        this.tasks.splice(insertIdx, 0, task);
+        this.notifyObservers();
+        this.saveTasks();
+    }
+
     // Task Queries
     getTask(id) {
         return this.tasks.find(task => task.id === id);
@@ -76,6 +93,10 @@ export class TaskManager {
 
     getTasksByStatus(status) {
         return this.tasks.filter(task => task.status === status);
+    }
+
+    getTasksBySurvey(survey) {
+        return this.tasks.filter(task => task.survey === survey);
     }
 
     // Group Operations
@@ -192,4 +213,4 @@ export class TaskManager {
     generateId() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
-} 
+}

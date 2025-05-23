@@ -12,10 +12,19 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - Track task status and progress
 
 ### 2. SPOT Framework Steps
-- **Survey**: Initial task collection and organization
-- **Prioritize**: Task prioritization based on urgency and impact
-- **Optimize**: Task optimization and resource allocation
-- **Take Action**: Task execution and progress tracking
+- **Survey**: Quickly assess all tasks to identify critical issues.
+- **Prioritize**: Focus on tasks with the highest urgency.
+- **Optimize**: Choose tasks that offer the greatest return on effort.
+- **Take Action**: Act immediately on the most important tasks.
+
+### Survey Step
+- The Survey step is the initial collection phase.
+- Users can create tasks by entering a name directly in the UI, with no dialog or modal.
+- The Survey step displays two groups: **Primary** (on top) and **Secondary** (below).
+- Each group has its own input for adding tasks.
+- Tasks can be dragged and dropped between Primary and Secondary, which updates their `survey` property.
+- Tasks can be reordered within each group by drag-and-drop; their order in the list reflects their stack rank.
+- Internally, each task has: `{ id, name, survey, priority, optimize, demo }`.
 
 ### 3. Drag and Drop Interface
 - Intuitive drag-and-drop functionality
@@ -74,13 +83,11 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 ```javascript
 {
     id: string,
-    title: string,
-    description: string,
-    priority: 'high' | 'medium' | 'low',
-    group: 'survey' | 'prioritize' | 'optimize' | 'action',
-    relatedTasks: string[],
-    createdAt: string,
-    updatedAt: string
+    name: string,
+    survey: 'primary' | 'secondary',
+    priority: 'higher' | 'lower',
+    optimize: 'more' | 'less',
+    demo: bool
 }
 ```
 
@@ -121,19 +128,3 @@ docs/tool/
 ├── priority-tool-drag.js
 └── priority-tool-spec.md
 ```
-
-## Future Enhancements
-
-### Planned Features
-1. Task dependencies
-2. Time tracking
-3. Team collaboration
-4. Cloud sync
-5. Advanced analytics
-
-### Potential Improvements
-1. Offline PWA support
-2. Advanced filtering
-3. Custom workflows
-4. API integration
-5. Theme customization 
