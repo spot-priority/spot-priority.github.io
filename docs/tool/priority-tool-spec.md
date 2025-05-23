@@ -37,6 +37,17 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - New tasks added to a group are ranked at the bottom.
 - (Optionally) a `rank` property can be added to tasks for explicit ordering.
 
+### Optimize Step
+- The Optimize step displays all tasks from the Prioritize step that are marked as `priority: 'higher'`.
+- Two groups are shown: **More** (top) and **Less** (bottom), representing the impact of the task.
+- All tasks start in the More group.
+- Users can drag and drop tasks between More and Less, and reorder within each group (stack-rank).
+- Only the `optimize` property is changed in this step (`optimize: 'more'` or `'less'`).
+- The order in the group reflects the stack rank.
+- The Previous button and progress bar allow navigation back to the Prioritize step, where tasks can be moved to Higher and become visible in Optimize.
+- New tasks added to a group are ranked at the bottom.
+- (Optionally) a `rank` property can be added to tasks for explicit ordering.
+
 ### 3. Drag and Drop Interface
 - Intuitive drag-and-drop functionality
 - Mobile-friendly touch support

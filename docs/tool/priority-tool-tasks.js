@@ -90,6 +90,22 @@ export class TaskManager {
         this.saveTasks();
     }
 
+    moveTaskToOptimizeAndReorder(taskId, newOptimize, newIndex) {
+        // Only operate on tasks with priority: 'higher'
+        const idx = this.tasks.findIndex(t => t.id === taskId && t.priority === 'higher');
+        if (idx === -1) return;
+        const [task] = this.tasks.splice(idx, 1);
+        // Update optimize property
+        task.optimize = newOptimize;
+        // Insert at new index in the correct group
+        const groupTasks = this.tasks.filter(t => t.priority === 'higher' && t.optimize === newOptimize);
+        let insertIdx = this.tasks.findIndex((t, i) => t.priority === 'higher' && t.optimize === newOptimize && groupTasks.indexOf(t) === newIndex);
+        if (insertIdx === -1) insertIdx = this.tasks.length;
+        this.tasks.splice(insertIdx, 0, task);
+        this.notifyObservers();
+        this.saveTasks();
+    }
+
     // Task Queries
     getTask(id) {
         return this.tasks.find(task => task.id === id);

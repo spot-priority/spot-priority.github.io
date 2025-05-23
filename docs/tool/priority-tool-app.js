@@ -159,6 +159,8 @@ export class SPOTApp {
             this.renderSurveyStep();
         } else if (step === 'prioritize') {
             this.renderPrioritizeStep();
+        } else if (step === 'optimize') {
+            this.renderOptimizeStep();
         } else {
             this.renderCurrentStep();
         }
@@ -204,6 +206,54 @@ export class SPOTApp {
     }
 
     createPriorityTaskElement(task, idx) {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.draggable = true;
+        div.dataset.taskId = task.id;
+        div.innerHTML = `<span class="task-rank">${idx + 1}.</span> <span class="task-name">${task.name}</span>`;
+        return div;
+    }
+
+    renderOptimizeStep() {
+        // Only show tasks with priority: 'higher'
+        const tasks = this.taskManager.getTasksByPriority('higher');
+        // Set default optimize to 'more' if not set
+        tasks.forEach(task => {
+            if (!task.optimize) {
+                task.optimize = 'more';
+            }
+        });
+        this.taskManager.saveTasks();
+        // Split by optimize
+        const more = tasks.filter(t => t.optimize !== 'less');
+        const less = tasks.filter(t => t.optimize === 'less');
+        // Render more
+        const moreList = document.querySelector('.task-list[data-optimize="more"]');
+        moreList.innerHTML = '';
+        if (more.length === 0) {
+            moreList.innerHTML = '<div class="empty-state">No tasks in this group yet.</div>';
+        } else {
+            more.forEach((task, idx) => {
+                const el = this.createOptimizeTaskElement(task, idx);
+                moreList.appendChild(el);
+            });
+        }
+        // Render less
+        const lessList = document.querySelector('.task-list[data-optimize="less"]');
+        lessList.innerHTML = '';
+        if (less.length === 0) {
+            lessList.innerHTML = '<div class="empty-state">No tasks in this group yet.</div>';
+        } else {
+            less.forEach((task, idx) => {
+                const el = this.createOptimizeTaskElement(task, idx);
+                lessList.appendChild(el);
+            });
+        }
+        // Initialize drag and drop for optimize step
+        this.dragDropManager.initializeOptimizeDragAndDrop();
+    }
+
+    createOptimizeTaskElement(task, idx) {
         const div = document.createElement('div');
         div.className = 'task-item';
         div.draggable = true;

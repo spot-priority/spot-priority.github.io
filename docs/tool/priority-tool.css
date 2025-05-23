@@ -912,3 +912,21 @@ footer a:active {
 .task-list[data-priority] {
     min-height: 2.5rem;
 }
+
+/* Optimize step group layout */
+.optimize-group {
+    margin-bottom: 2rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.optimize-group h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.task-list[data-optimize] {
+    min-height: 2.5rem;
+}
