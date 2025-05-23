@@ -382,6 +382,79 @@ export class SPOTApp {
     showImportModal() {
         document.getElementById('importForm').reset();
         document.getElementById('importModal').style.display = 'block';
+        // Remove any previous event listeners to avoid stacking
+        const importForm = document.getElementById('importForm');
+        const newForm = importForm.cloneNode(true);
+        importForm.parentNode.replaceChild(newForm, importForm);
+        // Remove any previous validation indicator
+        let validIndicator = document.getElementById('importValidIndicator');
+        if (validIndicator) validIndicator.remove();
+        let validTasks = null;
+        // Listen for file input change to validate
+        newForm.querySelector('#importFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            // Remove previous indicator
+            let prev = document.getElementById('importValidIndicator');
+            if (prev) prev.remove();
+            validTasks = null;
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    let tasks;
+                    let valid = false;
+                    try {
+                        tasks = JSON.parse(e.target.result);
+                        valid = Array.isArray(tasks) && tasks.every(t => t && typeof t === 'object' && t.id && t.name);
+                    } catch (error) {
+                        valid = false;
+                    }
+                    const indicator = document.createElement('span');
+                    indicator.id = 'importValidIndicator';
+                    indicator.style.marginLeft = '10px';
+                    if (valid) {
+                        indicator.innerHTML = '<span style="color: #43a047; font-size: 1.2em;">✔️ Valid file</span>';
+                        validTasks = tasks;
+                    } else {
+                        indicator.innerHTML = '<span style="color: #e53935; font-size: 1.2em;">❌ Invalid file</span>';
+                        validTasks = null;
+                    }
+                    e.target.parentNode.appendChild(indicator);
+                };
+                reader.readAsText(file);
+            }
+        });
+        // On submit, only proceed if validTasks is set
+        newForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!validTasks) {
+                alert('Please select a valid JSON file before importing.');
+                return;
+            }
+            showImportChoiceDialog({
+                onReplace: () => {
+                    this.taskManager.clearAllTasks();
+                    validTasks.forEach(task => this.taskManager.addTask(task));
+                    this.renderCurrentStep();
+                    document.getElementById('importModal').style.display = 'none';
+                    newForm.querySelector('#importFile').value = '';
+                    let ind = document.getElementById('importValidIndicator');
+                    if (ind) ind.remove();
+                },
+                onAdd: () => {
+                    const existingIds = new Set(this.taskManager.getAllTasks().map(t => t.id));
+                    validTasks.forEach(task => {
+                        if (!existingIds.has(task.id)) {
+                            this.taskManager.addTask(task);
+                        }
+                    });
+                    this.renderCurrentStep();
+                    document.getElementById('importModal').style.display = 'none';
+                    newForm.querySelector('#importFile').value = '';
+                    let ind = document.getElementById('importValidIndicator');
+                    if (ind) ind.remove();
+                }
+            });
+        });
     }
 
     editTask(task) {
@@ -398,6 +471,8 @@ export class SPOTApp {
             this.renderCurrentStep();
         }
     }
+
+    // TODO: Improve duplicate detection in import (currently only checks by id, not full object)
 
     clearAllTasks() {
         if (confirm('Are you sure you want to clear all tasks?')) {
@@ -536,4 +611,44 @@ export class SPOTApp {
         this.renderOptimizeStep();
         this.renderActionStep();
     }
+}
+
+// Helper: show a modal dialog for import choice
+function showImportChoiceDialog({ onReplace, onAdd }) {
+    let dialog = document.getElementById('importChoiceDialog');
+    if (!dialog) {
+        dialog = document.createElement('div');
+        dialog.id = 'importChoiceDialog';
+        dialog.style.position = 'fixed';
+        dialog.style.left = '0';
+        dialog.style.top = '0';
+        dialog.style.width = '100vw';
+        dialog.style.height = '100vh';
+        dialog.style.background = 'rgba(0,0,0,0.4)';
+        dialog.style.display = 'flex';
+        dialog.style.alignItems = 'center';
+        dialog.style.justifyContent = 'center';
+        dialog.style.zIndex = '9999';
+        dialog.innerHTML = `
+            <div style="background:#fff;padding:2em 2em 1.5em 2em;border-radius:8px;box-shadow:0 2px 16px #0002;max-width:350px;text-align:center;">
+                <h3>Import Tasks</h3>
+                <p>How would you like to import tasks?</p>
+                <div style="margin:1.5em 0 1em 0;display:flex;gap:1em;justify-content:center;">
+                    <button id="importReplaceBtn" class="btn" style="background:#e53935;color:#fff;">Replace</button>
+                    <button id="importAddBtn" class="btn" style="background:#43a047;color:#fff;">Add</button>
+                </div>
+                <div style="font-size:0.95em;color:#888;">Replace: Remove all current tasks and import new ones.<br>Add: Keep current tasks and add new ones (skip duplicates).</div>
+            </div>
+        `;
+        document.body.appendChild(dialog);
+    }
+    dialog.style.display = 'flex';
+    dialog.querySelector('#importReplaceBtn').onclick = () => {
+        dialog.style.display = 'none';
+        onReplace();
+    };
+    dialog.querySelector('#importAddBtn').onclick = () => {
+        dialog.style.display = 'none';
+        onAdd();
+    };
 }
