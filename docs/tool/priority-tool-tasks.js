@@ -74,6 +74,22 @@ export class TaskManager {
         this.saveTasks();
     }
 
+    moveTaskToPriorityAndReorder(taskId, newPriority, newIndex) {
+        // Only operate on tasks with survey: 'primary'
+        const idx = this.tasks.findIndex(t => t.id === taskId && t.survey === 'primary');
+        if (idx === -1) return;
+        const [task] = this.tasks.splice(idx, 1);
+        // Update priority property
+        task.priority = newPriority;
+        // Insert at new index in the correct group
+        const groupTasks = this.tasks.filter(t => t.survey === 'primary' && t.priority === newPriority);
+        let insertIdx = this.tasks.findIndex((t, i) => t.survey === 'primary' && t.priority === newPriority && groupTasks.indexOf(t) === newIndex);
+        if (insertIdx === -1) insertIdx = this.tasks.length;
+        this.tasks.splice(insertIdx, 0, task);
+        this.notifyObservers();
+        this.saveTasks();
+    }
+
     // Task Queries
     getTask(id) {
         return this.tasks.find(task => task.id === id);

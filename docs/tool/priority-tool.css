@@ -800,6 +800,20 @@ footer a:active {
     border-top: 1px solid var(--border-color);
 }
 
+.step-navigation .btn.disabled,
+.step-navigation .btn:disabled {
+    background: #eee !important;
+    color: #bbb !important;
+    cursor: not-allowed !important;
+    border-color: #eee !important;
+    pointer-events: none;
+}
+
+.step-btn.active {
+    background: #1976d2;
+    color: #fff;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .step-selector {
@@ -879,4 +893,22 @@ footer a:active {
     color: #aaa;
     font-style: italic;
     padding: 0.5rem 0;
+}
+
+/* Prioritize step group layout */
+.priority-group {
+    margin-bottom: 2rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.priority-group h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.task-list[data-priority] {
+    min-height: 2.5rem;
 }

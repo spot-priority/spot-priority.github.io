@@ -29,6 +29,15 @@ export class DragDropManager {
         });
     }
 
+    initializePrioritizeDragAndDrop() {
+        // Add drag and drop listeners for prioritize step task lists
+        document.querySelectorAll('.task-list[data-priority]').forEach(list => {
+            list.addEventListener('dragstart', this.handlePrioritizeDragStart.bind(this));
+            list.addEventListener('dragover', this.handlePrioritizeDragOver.bind(this));
+            list.addEventListener('drop', this.handlePrioritizeDrop.bind(this));
+        });
+    }
+
     // Desktop Drag and Drop Handlers
     handleDragStart(e) {
         if (!e.target.classList.contains('task-item')) return;
@@ -102,6 +111,33 @@ export class DragDropManager {
         this.draggedItem = null;
         // Re-render survey step
         if (window.spotApp) window.spotApp.renderSurveyStep();
+    }
+
+    handlePrioritizeDragStart(e) {
+        if (!e.target.classList.contains('task-item')) return;
+        this.draggedItem = e.target;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', e.target.dataset.taskId);
+    }
+
+    handlePrioritizeDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    }
+
+    handlePrioritizeDrop(e) {
+        e.preventDefault();
+        const targetList = e.target.closest('.task-list[data-priority]');
+        if (!targetList || !this.draggedItem) return;
+        const taskId = this.draggedItem.dataset.taskId;
+        const newPriority = targetList.getAttribute('data-priority');
+        // Find the drop index
+        let dropIndex = Array.from(targetList.children).indexOf(e.target.closest('.task-item'));
+        if (dropIndex === -1) dropIndex = targetList.children.length;
+        this.taskManager.moveTaskToPriorityAndReorder(taskId, newPriority, dropIndex);
+        this.draggedItem = null;
+        // Re-render prioritize step
+        if (window.spotApp) window.spotApp.renderPrioritizeStep();
     }
 
     // Mobile Touch Handlers

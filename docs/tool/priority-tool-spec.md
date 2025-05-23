@@ -26,6 +26,17 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - Tasks can be reordered within each group by drag-and-drop; their order in the list reflects their stack rank.
 - Internally, each task has: `{ id, name, survey, priority, optimize, demo }`.
 
+### Prioritize Step
+- The Prioritize step displays all tasks from the Survey step that are marked as `survey: 'primary'`.
+- Two groups are shown: **Higher** (top) and **Lower** (bottom).
+- All tasks start in the Higher group.
+- Users can drag and drop tasks between Higher and Lower, and reorder within each group (stack-rank).
+- Only the `priority` property is changed in this step (`priority: 'higher'` or `'lower'`).
+- The order in the group reflects the stack rank.
+- The Previous button and progress bar allow navigation back to the Survey step, where tasks can be moved to Primary and become visible in Prioritize.
+- New tasks added to a group are ranked at the bottom.
+- (Optionally) a `rank` property can be added to tasks for explicit ordering.
+
 ### 3. Drag and Drop Interface
 - Intuitive drag-and-drop functionality
 - Mobile-friendly touch support

@@ -114,6 +114,16 @@ export class SPOTApp {
                 }
             });
         });
+
+        // Step selector (progress bar) navigation
+        document.querySelectorAll('.step-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const step = btn.getAttribute('data-step');
+                if (step) {
+                    this.navigateToStep(step);
+                }
+            });
+        });
     }
 
     navigateToStep(step) {
@@ -121,13 +131,9 @@ export class SPOTApp {
         document.querySelectorAll('.step-content').forEach(content => {
             content.style.display = 'none';
         });
-
         // Show selected step
-        document.getElementById(`${step}-step`).style.display = 'block';
-
-        // Update current step
+        document.getElementById(step).style.display = 'block';
         this.currentStep = step;
-
         // Update active state of step buttons
         document.querySelectorAll('.step-btn').forEach(btn => {
             btn.classList.remove('active');
@@ -135,27 +141,75 @@ export class SPOTApp {
                 btn.classList.add('active');
             }
         });
-
         // Update progress meter
         const progressFill = document.querySelector('.progress-fill');
         const steps = ['survey', 'prioritize', 'optimize', 'action'];
         const currentIndex = steps.indexOf(step);
         const progress = (currentIndex / (steps.length - 1)) * 100;
         progressFill.style.width = `${progress}%`;
-
         // Update navigation buttons
         const prevBtn = document.getElementById('prevStep');
         const nextBtn = document.getElementById('nextStep');
-
-        prevBtn.disabled = step === 'survey';
-        nextBtn.disabled = step === 'action';
-
-        // Render tasks for current step
+        prevBtn.disabled = (step === steps[0]);
+        nextBtn.disabled = (step === steps[steps.length - 1]);
+        prevBtn.classList.toggle('disabled', prevBtn.disabled);
+        nextBtn.classList.toggle('disabled', nextBtn.disabled);
+        // Render for current step
         if (step === 'survey') {
             this.renderSurveyStep();
+        } else if (step === 'prioritize') {
+            this.renderPrioritizeStep();
         } else {
             this.renderCurrentStep();
         }
+    }
+
+    renderPrioritizeStep() {
+        // Only show tasks with survey: 'primary'
+        const tasks = this.taskManager.getTasksBySurvey('primary');
+        // Set default priority to 'higher' if not set
+        tasks.forEach(task => {
+            if (!task.priority) {
+                task.priority = 'higher';
+            }
+        });
+        this.taskManager.saveTasks();
+        // Split by priority
+        const higher = tasks.filter(t => t.priority !== 'lower');
+        const lower = tasks.filter(t => t.priority === 'lower');
+        // Render higher
+        const higherList = document.querySelector('.task-list[data-priority="higher"]');
+        higherList.innerHTML = '';
+        if (higher.length === 0) {
+            higherList.innerHTML = '<div class="empty-state">No tasks in this group yet.</div>';
+        } else {
+            higher.forEach((task, idx) => {
+                const el = this.createPriorityTaskElement(task, idx);
+                higherList.appendChild(el);
+            });
+        }
+        // Render lower
+        const lowerList = document.querySelector('.task-list[data-priority="lower"]');
+        lowerList.innerHTML = '';
+        if (lower.length === 0) {
+            lowerList.innerHTML = '<div class="empty-state">No tasks in this group yet.</div>';
+        } else {
+            lower.forEach((task, idx) => {
+                const el = this.createPriorityTaskElement(task, idx);
+                lowerList.appendChild(el);
+            });
+        }
+        // Initialize drag and drop for prioritize step
+        this.dragDropManager.initializePrioritizeDragAndDrop();
+    }
+
+    createPriorityTaskElement(task, idx) {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.draggable = true;
+        div.dataset.taskId = task.id;
+        div.innerHTML = `<span class="task-rank">${idx + 1}.</span> <span class="task-name">${task.name}</span>`;
+        return div;
     }
 
     renderCurrentStep() {
