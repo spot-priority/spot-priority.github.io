@@ -3,6 +3,7 @@ export class TaskManager {
         this.tasks = [];
         this.observers = [];
         this.loadTasks();
+        this.migrateTasks();
     }
 
     // Task Operations
@@ -11,8 +12,10 @@ export class TaskManager {
             id: this.generateId(),
             name: task.name,
             survey: task.survey,
+            priority: task.priority,
             optimize: task.optimize || 'more',
-            demo: !!task.demo
+            demo: !!task.demo,
+            status: task.status || 'todo'
         };
         this.tasks.push(newTask);
         this.notifyObservers();
@@ -106,6 +109,20 @@ export class TaskManager {
         this.saveTasks();
     }
 
+    moveTaskToStatusAndReorder(taskId, newStatus, newIndex) {
+        const idx = this.tasks.findIndex(t => t.id === taskId);
+        if (idx === -1) return;
+        const [task] = this.tasks.splice(idx, 1);
+        task.status = newStatus;
+        // Insert at new index in the correct group
+        const groupTasks = this.tasks.filter(t => t.status === newStatus);
+        let insertIdx = this.tasks.findIndex((t, i) => t.status === newStatus && groupTasks.indexOf(t) === newIndex);
+        if (insertIdx === -1) insertIdx = this.tasks.length;
+        this.tasks.splice(insertIdx, 0, task);
+        this.notifyObservers();
+        this.saveTasks();
+    }
+
     // Task Queries
     getTask(id) {
         return this.tasks.find(task => task.id === id);
@@ -175,6 +192,18 @@ export class TaskManager {
             console.error('Error loading tasks:', error);
             this.tasks = [];
         }
+    }
+
+    // Migration: ensure all tasks have a status property
+    migrateTasks() {
+        let changed = false;
+        this.tasks.forEach(task => {
+            if (!task.status) {
+                task.status = 'todo';
+                changed = true;
+            }
+        });
+        if (changed) this.saveTasks();
     }
 
     // Demo Data

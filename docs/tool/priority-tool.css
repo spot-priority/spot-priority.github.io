@@ -930,3 +930,41 @@ footer a:active {
 .task-list[data-optimize] {
     min-height: 2.5rem;
 }
+
+/* Take Action step group layout */
+.action-group {
+    margin-bottom: 2rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.action-group h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.task-list[data-status] {
+    min-height: 2.5rem;
+}
+
+.done-btn,
+.undo-btn,
+.delete-btn {
+    margin-left: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    vertical-align: middle;
+}
+
+.task-item.blocked .task-name {
+    text-decoration: line-through;
+    color: #b71c1c;
+}
+
+.task-item .task-name {
+    flex: 1;
+}

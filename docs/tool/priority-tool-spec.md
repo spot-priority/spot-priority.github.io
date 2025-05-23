@@ -48,6 +48,21 @@ The SPOT Framework Prioritization Tool is a web-based application designed to he
 - New tasks added to a group are ranked at the bottom.
 - (Optionally) a `rank` property can be added to tasks for explicit ordering.
 
+### Take Action Step
+- The Take Action step displays tasks in four stacked groups: **Todo** (top), **Doing**, **Blocked**, and **Done** (bottom).
+- Each task has a new `status` property: `"todo"`, `"doing"`, `"blocked"`, `"done"`.
+- Tasks can be dragged between any of the four groups (Todo, Doing, Blocked, Done), updating their `status` accordingly.
+- Dragging a task from Done to another group restores it to that status; dragging to Done marks it as done.
+- Each task in Todo, Doing, or Blocked has a checkmark button to mark as Done (moves to Done group).
+- Done tasks are hidden from all other steps, but shown in the Done group here, with Undo and Delete buttons.
+- Undo returns the task to Todo; Delete removes it permanently.
+- Blocked tasks have strikethrough text everywhere they appear and are not counted for progress/warnings.
+- Only tasks with `status` not `"done"` are shown in other steps.
+- Tasks shown in Take Action are the highest-tier available: show `primary`/`higher`/`more` first, then `primary`/`higher`/`less`, etc.
+- If no tasks are available in the current highest group, show a yellow warning triangle with a tooltip/hint.
+- Show warning indicators only when they prevent workflow: on Take Action if no high priority, on Optimize if no high priority, on Prioritize if no primary, on Survey if no primary.
+- TODO: Add a section for handling done tasks in the future (e.g., history, analytics, restore, etc.).
+
 ### 3. Drag and Drop Interface
 - Intuitive drag-and-drop functionality
 - Mobile-friendly touch support

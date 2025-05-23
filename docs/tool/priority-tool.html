@@ -196,8 +196,25 @@
 
                         <div class="step-content" id="action" style="display: none;">
                             <h3>Take Action</h3>
-                            <div class="task-list" data-group="action">
-                                <!-- Tasks will be added here -->
+                            <!-- Todo Group -->
+                            <div class="action-group" data-status="todo">
+                                <h4>Todo</h4>
+                                <div class="task-list" data-status="todo"></div>
+                            </div>
+                            <!-- Doing Group -->
+                            <div class="action-group" data-status="doing">
+                                <h4>Doing</h4>
+                                <div class="task-list" data-status="doing"></div>
+                            </div>
+                            <!-- Blocked Group -->
+                            <div class="action-group" data-status="blocked">
+                                <h4>Blocked</h4>
+                                <div class="task-list" data-status="blocked"></div>
+                            </div>
+                            <!-- Done Group -->
+                            <div class="action-group" data-status="done">
+                                <h4>Done</h4>
+                                <div class="task-list" data-status="done"></div>
                             </div>
                         </div>
 

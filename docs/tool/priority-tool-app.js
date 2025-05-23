@@ -4,6 +4,7 @@ import { DragDropManager } from './priority-tool-drag.js';
 export class SPOTApp {
     constructor() {
         this.taskManager = new TaskManager();
+        this.taskManager.migrateTasks();
         this.dragDropManager = new DragDropManager(this.taskManager);
         this.currentStep = 'survey';
         window.spotApp = this; // for drag-drop callback
@@ -161,6 +162,8 @@ export class SPOTApp {
             this.renderPrioritizeStep();
         } else if (step === 'optimize') {
             this.renderOptimizeStep();
+        } else if (step === 'action') {
+            this.renderActionStep();
         } else {
             this.renderCurrentStep();
         }
@@ -385,5 +388,94 @@ export class SPOTApp {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    renderActionStep() {
+        // Get tasks for the highest available group (primary/high/more, then primary/high/less, etc.), not done
+        const candidates = [
+            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'more' && t.status !== 'done',
+            t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === 'less' && t.status !== 'done',
+            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'more' && t.status !== 'done',
+            t => t.survey === 'primary' && t.priority === 'lower' && t.optimize === 'less' && t.status !== 'done'
+        ];
+        let tasks = [];
+        for (const filter of candidates) {
+            tasks = this.taskManager.getAllTasks().filter(filter);
+            if (tasks.length > 0) break;
+        }
+        // Show warning if no tasks in any group
+        const showWarning = tasks.length === 0;
+        // Split by status
+        const todo = tasks.filter(t => t.status === 'todo');
+        const doing = tasks.filter(t => t.status === 'doing');
+        const blocked = tasks.filter(t => t.status === 'blocked');
+        // Done tasks (from all, not just current group)
+        const done = this.taskManager.getAllTasks().filter(t => t.status === 'done');
+        // Render each group
+        const renderGroup = (status, arr) => {
+            const list = document.querySelector(`.task-list[data-status="${status}"]`);
+            list.innerHTML = '';
+            if (arr.length === 0) {
+                list.innerHTML = '<div class="empty-state">No tasks in this group yet.</div>';
+            } else {
+                arr.forEach((task, idx) => {
+                    const el = this.createActionTaskElement(task, idx, status);
+                    list.appendChild(el);
+                });
+            }
+        };
+        renderGroup('todo', todo);
+        renderGroup('doing', doing);
+        renderGroup('blocked', blocked);
+        renderGroup('done', done);
+        // Show/hide warning indicator
+        this.setActionWarning(showWarning);
+        // Initialize drag and drop for action step
+        this.dragDropManager.initializeActionDragAndDrop();
+    }
+
+    createActionTaskElement(task, idx, status) {
+        const div = document.createElement('div');
+        div.className = 'task-item' + (task.status === 'blocked' ? ' blocked' : '');
+        div.draggable = true;
+        div.dataset.taskId = task.id;
+        div.innerHTML = `<span class="task-rank">${idx + 1}.</span> <span class="task-name">${task.name}</span>`;
+        // Add checkmark for done, undo, delete
+        if (status !== 'done') {
+            const doneBtn = document.createElement('button');
+            doneBtn.className = 'done-btn';
+            doneBtn.title = 'Mark as done';
+            doneBtn.innerHTML = '✔️';
+            doneBtn.onclick = () => {
+                this.taskManager.updateTask(task.id, { status: 'done' });
+                this.renderActionStep();
+            };
+            div.appendChild(doneBtn);
+        } else {
+            const undoBtn = document.createElement('button');
+            undoBtn.className = 'undo-btn';
+            undoBtn.title = 'Undo done';
+            undoBtn.innerHTML = '↩️';
+            undoBtn.onclick = () => {
+                this.taskManager.updateTask(task.id, { status: 'todo' });
+                this.renderActionStep();
+            };
+            div.appendChild(undoBtn);
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-btn';
+            delBtn.title = 'Delete task';
+            delBtn.innerHTML = '🗑️';
+            delBtn.onclick = () => {
+                this.taskManager.deleteTask(task.id);
+                this.renderActionStep();
+            };
+            div.appendChild(delBtn);
+        }
+        return div;
+    }
+
+    setActionWarning(show) {
+        // Show/hide warning indicator for action step (implement as needed)
+        // ...
     }
 }

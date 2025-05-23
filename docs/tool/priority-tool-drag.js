@@ -47,6 +47,14 @@ export class DragDropManager {
         });
     }
 
+    initializeActionDragAndDrop() {
+        document.querySelectorAll('.task-list[data-status]').forEach(list => {
+            list.addEventListener('dragstart', this.handleActionDragStart.bind(this));
+            list.addEventListener('dragover', this.handleActionDragOver.bind(this));
+            list.addEventListener('drop', this.handleActionDrop.bind(this));
+        });
+    }
+
     // Desktop Drag and Drop Handlers
     handleDragStart(e) {
         if (!e.target.classList.contains('task-item')) return;
@@ -174,6 +182,32 @@ export class DragDropManager {
         this.draggedItem = null;
         // Re-render optimize step
         if (window.spotApp) window.spotApp.renderOptimizeStep();
+    }
+
+    handleActionDragStart(e) {
+        if (!e.target.classList.contains('task-item')) return;
+        this.draggedItem = e.target;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', e.target.dataset.taskId);
+    }
+
+    handleActionDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    }
+
+    handleActionDrop(e) {
+        e.preventDefault();
+        const targetList = e.target.closest('.task-list[data-status]');
+        if (!targetList || !this.draggedItem) return;
+        const taskId = this.draggedItem.dataset.taskId;
+        const newStatus = targetList.getAttribute('data-status');
+        // Find the drop index
+        let dropIndex = Array.from(targetList.children).indexOf(e.target.closest('.task-item'));
+        if (dropIndex === -1) dropIndex = targetList.children.length;
+        this.taskManager.moveTaskToStatusAndReorder(taskId, newStatus, dropIndex);
+        this.draggedItem = null;
+        if (window.spotApp) window.spotApp.renderActionStep();
     }
 
     // Mobile Touch Handlers
