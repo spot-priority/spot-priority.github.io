@@ -404,8 +404,8 @@ export class SPOTApp {
             // Hide prev/next buttons
             if (prevBtn) prevBtn.style.display = 'none';
             if (nextBtn) nextBtn.style.display = 'none';
-            // Default to column mode
-            this.setFullControlMode('column');
+            // Default to list mode (was column)
+            this.setFullControlMode('list');
         }
     }
 
@@ -622,56 +622,52 @@ export class SPOTApp {
             const columnsWrap = document.createElement('div');
             columnsWrap.className = 'fc-columns-wrap';
             columnsWrap.style.display = 'flex';
-            columnsWrap.style.gap = '1em';
+            columnsWrap.style.gap = '0.5em'; // Tighter gap
             columnsWrap.style.alignItems = 'flex-start';
             columnsWrap.style.width = '100%';
-            // Add columns and arrows between them
+            columnsWrap.style.maxWidth = '1100px'; // Limit max width
+            columnsWrap.style.margin = '0 auto'; // Center columns
+            // Add columns (no arrows)
             columns.forEach((colDef, colIdx) => {
-                if (colIdx > 0) {
-                    // Insert arrow between columns
-                    const arrowDiv = document.createElement('div');
-                    arrowDiv.className = 'fc-col-arrow';
-                    arrowDiv.style.display = 'flex';
-                    arrowDiv.style.alignItems = 'center';
-                    arrowDiv.style.justifyContent = 'center';
-                    arrowDiv.style.width = '32px';
-                    arrowDiv.style.height = '100%';
-                    arrowDiv.innerHTML = `<svg width="24" height="48" viewBox="0 0 24 48" style="display:block;margin:auto;"><polyline points="4,24 20,24" stroke="#1976d2" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/><defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#1976d2"/></marker></defs></svg>`;
-                    columnsWrap.appendChild(arrowDiv);
-                }
                 const colDiv = document.createElement('div');
                 colDiv.className = 'fc-column';
                 colDiv.style.flex = '1 1 0';
-                colDiv.style.minWidth = '240px';
-                colDiv.style.background = colIdx < 3 ? '#f8fafc' : '#f5f5f5';
+                colDiv.style.minWidth = '200px';
+                colDiv.style.maxWidth = '260px';
+                colDiv.style.background = colIdx < 3 ? '#f6f8fa' : '#f3f3f3';
                 colDiv.style.borderRadius = '10px';
-                colDiv.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)';
-                colDiv.style.padding = '1em 0.5em 1.5em 0.5em';
+                colDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                colDiv.style.padding = '0.7em 0.3em 1.2em 0.3em';
                 colDiv.style.marginBottom = '0.5em';
-                if (colIdx < 3) colDiv.style.borderRight = '3px solid #e0e0e0';
+                colDiv.style.border = '1.5px solid #e0e0e0';
+                colDiv.style.transition = 'box-shadow 0.2s';
+                colDiv.onmouseover = () => colDiv.style.boxShadow = '0 4px 16px rgba(25,118,210,0.10)';
+                colDiv.onmouseout = () => colDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
                 // Column title
                 const colTitle = document.createElement('h4');
                 colTitle.textContent = colDef.title;
                 colTitle.style.textAlign = 'center';
                 colTitle.style.marginBottom = '0.7em';
                 colTitle.style.letterSpacing = '0.02em';
+                colTitle.style.fontWeight = 'bold';
+                colTitle.style.color = '#1976d2';
                 colDiv.appendChild(colTitle);
                 // Groups in column
                 colDef.groups.forEach(group => {
                     const groupDiv = document.createElement('div');
                     groupDiv.className = 'fc-group';
-                    groupDiv.style.marginBottom = '1.2em';
+                    groupDiv.style.marginBottom = '1em';
                     groupDiv.style.background = '#fff';
                     groupDiv.style.borderRadius = '7px';
                     groupDiv.style.boxShadow = '0 1px 2px rgba(0,0,0,0.03)';
-                    groupDiv.style.padding = '0.5em 0.5em 0.7em 0.5em';
+                    groupDiv.style.padding = '0.4em 0.4em 0.6em 0.4em';
                     groupDiv.style.border = '1px solid #e0e0e0';
                     // Group label
                     const groupLabel = document.createElement('div');
                     groupLabel.className = 'fc-group-label';
                     groupLabel.textContent = group.label;
                     groupLabel.style.fontWeight = 'bold';
-                    groupLabel.style.marginBottom = '0.3em';
+                    groupLabel.style.marginBottom = '0.2em';
                     groupLabel.style.letterSpacing = '0.01em';
                     groupLabel.style.color = '#1976d2';
                     groupDiv.appendChild(groupLabel);
@@ -680,7 +676,7 @@ export class SPOTApp {
                     groupList.className = 'task-list';
                     groupList.setAttribute('data-fc-col', colDef.title.toLowerCase());
                     groupList.setAttribute('data-fc-group', group.key);
-                    groupList.style.minHeight = '2.5em';
+                    groupList.style.minHeight = '2.2em';
                     // Render tasks for this group
                     const tasks = colDef.getTasks(group.key);
                     if (tasks.length === 0) {
@@ -750,7 +746,7 @@ export class SPOTApp {
             hr.style.width = '100%';
             hr.style.height = '0';
             hr.style.borderTop = '2.5px solid #b0bec5';
-            hr.style.margin = '1.5em 0 1.5em 0';
+            hr.style.margin = '1.2em 0 1.2em 0';
             hr.style.opacity = '0.5';
             columnsWrap.insertBefore(hr, columnsWrap.children[3]);
             // Initialize drag and drop for all columns (use correct selectors)
