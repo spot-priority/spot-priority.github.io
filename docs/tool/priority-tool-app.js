@@ -32,7 +32,7 @@ export class SPOTApp {
 
         // Control panel buttons
         document.getElementById('toggleFullControl').addEventListener('click', () => this.toggleFullControl());
-        document.getElementById('addTask').addEventListener('click', () => this.showAddTaskModal());
+        // Removed Add Task button event listener (button no longer exists)
         document.getElementById('importTasks').addEventListener('click', () => this.showImportModal());
         document.getElementById('exportTasks').addEventListener('click', () => this.exportTasks());
         document.getElementById('clearTasks').addEventListener('click', () => this.clearAllTasks());
