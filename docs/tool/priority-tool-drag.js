@@ -20,39 +20,60 @@ export class DragDropManager {
         container.addEventListener('touchcancel', this.handleTouchEnd.bind(this));
     }
 
-    initializeSurveyDragAndDrop() {
-        // Add drag and drop listeners for survey step task lists
-        document.querySelectorAll('.task-list[data-survey]').forEach(list => {
-            list.addEventListener('dragstart', this.handleSurveyDragStart.bind(this));
-            list.addEventListener('dragover', this.handleSurveyDragOver.bind(this));
-            list.addEventListener('drop', this.handleSurveyDrop.bind(this));
-        });
+    initializeSurveyDragAndDrop(container) {
+        if (container) {
+            container.addEventListener('dragstart', this.handleSurveyDragStart.bind(this));
+            container.addEventListener('dragover', this.handleSurveyDragOver.bind(this));
+            container.addEventListener('drop', this.handleSurveyDrop.bind(this));
+        } else {
+            document.querySelectorAll('.task-list[data-survey], .task-list[data-fc-col="survey"]').forEach(list => {
+                list.addEventListener('dragstart', this.handleSurveyDragStart.bind(this));
+                list.addEventListener('dragover', this.handleSurveyDragOver.bind(this));
+                list.addEventListener('drop', this.handleSurveyDrop.bind(this));
+            });
+        }
     }
 
-    initializePrioritizeDragAndDrop() {
-        // Add drag and drop listeners for prioritize step task lists
-        document.querySelectorAll('.task-list[data-priority]').forEach(list => {
-            list.addEventListener('dragstart', this.handlePrioritizeDragStart.bind(this));
-            list.addEventListener('dragover', this.handlePrioritizeDragOver.bind(this));
-            list.addEventListener('drop', this.handlePrioritizeDrop.bind(this));
-        });
+    initializePrioritizeDragAndDrop(container) {
+        if (container) {
+            container.addEventListener('dragstart', this.handlePrioritizeDragStart.bind(this));
+            container.addEventListener('dragover', this.handlePrioritizeDragOver.bind(this));
+            container.addEventListener('drop', this.handlePrioritizeDrop.bind(this));
+        } else {
+            document.querySelectorAll('.task-list[data-priority], .task-list[data-fc-col="prioritize"]').forEach(list => {
+                list.addEventListener('dragstart', this.handlePrioritizeDragStart.bind(this));
+                list.addEventListener('dragover', this.handlePrioritizeDragOver.bind(this));
+                list.addEventListener('drop', this.handlePrioritizeDrop.bind(this));
+            });
+        }
     }
 
-    initializeOptimizeDragAndDrop() {
-        // Add drag and drop listeners for optimize step task lists
-        document.querySelectorAll('.task-list[data-optimize]').forEach(list => {
-            list.addEventListener('dragstart', this.handleOptimizeDragStart.bind(this));
-            list.addEventListener('dragover', this.handleOptimizeDragOver.bind(this));
-            list.addEventListener('drop', this.handleOptimizeDrop.bind(this));
-        });
+    initializeOptimizeDragAndDrop(container) {
+        if (container) {
+            container.addEventListener('dragstart', this.handleOptimizeDragStart.bind(this));
+            container.addEventListener('dragover', this.handleOptimizeDragOver.bind(this));
+            container.addEventListener('drop', this.handleOptimizeDrop.bind(this));
+        } else {
+            document.querySelectorAll('.task-list[data-optimize], .task-list[data-fc-col="optimize"]').forEach(list => {
+                list.addEventListener('dragstart', this.handleOptimizeDragStart.bind(this));
+                list.addEventListener('dragover', this.handleOptimizeDragOver.bind(this));
+                list.addEventListener('drop', this.handleOptimizeDrop.bind(this));
+            });
+        }
     }
 
-    initializeActionDragAndDrop() {
-        document.querySelectorAll('.task-list[data-status]').forEach(list => {
-            list.addEventListener('dragstart', this.handleActionDragStart.bind(this));
-            list.addEventListener('dragover', this.handleActionDragOver.bind(this));
-            list.addEventListener('drop', this.handleActionDrop.bind(this));
-        });
+    initializeActionDragAndDrop(container) {
+        if (container) {
+            container.addEventListener('dragstart', this.handleActionDragStart.bind(this));
+            container.addEventListener('dragover', this.handleActionDragOver.bind(this));
+            container.addEventListener('drop', this.handleActionDrop.bind(this));
+        } else {
+            document.querySelectorAll('.task-list[data-status], .task-list[data-fc-col="take action"]').forEach(list => {
+                list.addEventListener('dragstart', this.handleActionDragStart.bind(this));
+                list.addEventListener('dragover', this.handleActionDragOver.bind(this));
+                list.addEventListener('drop', this.handleActionDrop.bind(this));
+            });
+        }
     }
 
     // Desktop Drag and Drop Handlers
@@ -117,17 +138,21 @@ export class DragDropManager {
 
     handleSurveyDrop(e) {
         e.preventDefault();
-        const targetList = e.target.closest('.task-list[data-survey]');
+        // Support both step and full control views
+        let targetList = e.target.closest('.task-list[data-survey], .task-list[data-fc-col="survey"]');
         if (!targetList || !this.draggedItem) return;
+        let newSurvey = targetList.getAttribute('data-survey') || targetList.getAttribute('data-fc-group');
         const taskId = this.draggedItem.dataset.taskId;
-        const newSurvey = targetList.getAttribute('data-survey');
         // Find the drop index
         let dropIndex = Array.from(targetList.children).indexOf(e.target.closest('.task-item'));
         if (dropIndex === -1) dropIndex = targetList.children.length;
         this.taskManager.moveTaskToSurveyAndReorder(taskId, newSurvey, dropIndex);
         this.draggedItem = null;
-        // Re-render survey step
-        if (window.spotApp) window.spotApp.renderSurveyStep();
+        if (window.spotApp && window.spotApp.setFullControlMode) {
+            window.spotApp.setFullControlMode('column');
+        } else if (window.spotApp) {
+            window.spotApp.renderSurveyStep();
+        }
     }
 
     handlePrioritizeDragStart(e) {
@@ -144,17 +169,19 @@ export class DragDropManager {
 
     handlePrioritizeDrop(e) {
         e.preventDefault();
-        const targetList = e.target.closest('.task-list[data-priority]');
+        let targetList = e.target.closest('.task-list[data-priority], .task-list[data-fc-col="prioritize"]');
         if (!targetList || !this.draggedItem) return;
+        let newPriority = targetList.getAttribute('data-priority') || targetList.getAttribute('data-fc-group');
         const taskId = this.draggedItem.dataset.taskId;
-        const newPriority = targetList.getAttribute('data-priority');
-        // Find the drop index
         let dropIndex = Array.from(targetList.children).indexOf(e.target.closest('.task-item'));
         if (dropIndex === -1) dropIndex = targetList.children.length;
         this.taskManager.moveTaskToPriorityAndReorder(taskId, newPriority, dropIndex);
         this.draggedItem = null;
-        // Re-render prioritize step
-        if (window.spotApp) window.spotApp.renderPrioritizeStep();
+        if (window.spotApp && window.spotApp.setFullControlMode) {
+            window.spotApp.setFullControlMode('column');
+        } else if (window.spotApp) {
+            window.spotApp.renderPrioritizeStep();
+        }
     }
 
     handleOptimizeDragStart(e) {
@@ -171,17 +198,19 @@ export class DragDropManager {
 
     handleOptimizeDrop(e) {
         e.preventDefault();
-        const targetList = e.target.closest('.task-list[data-optimize]');
+        let targetList = e.target.closest('.task-list[data-optimize], .task-list[data-fc-col="optimize"]');
         if (!targetList || !this.draggedItem) return;
+        let newOptimize = targetList.getAttribute('data-optimize') || targetList.getAttribute('data-fc-group');
         const taskId = this.draggedItem.dataset.taskId;
-        const newOptimize = targetList.getAttribute('data-optimize');
-        // Find the drop index
         let dropIndex = Array.from(targetList.children).indexOf(e.target.closest('.task-item'));
         if (dropIndex === -1) dropIndex = targetList.children.length;
         this.taskManager.moveTaskToOptimizeAndReorder(taskId, newOptimize, dropIndex);
         this.draggedItem = null;
-        // Re-render optimize step
-        if (window.spotApp) window.spotApp.renderOptimizeStep();
+        if (window.spotApp && window.spotApp.setFullControlMode) {
+            window.spotApp.setFullControlMode('column');
+        } else if (window.spotApp) {
+            window.spotApp.renderOptimizeStep();
+        }
     }
 
     handleActionDragStart(e) {
@@ -198,16 +227,19 @@ export class DragDropManager {
 
     handleActionDrop(e) {
         e.preventDefault();
-        const targetList = e.target.closest('.task-list[data-status]');
+        let targetList = e.target.closest('.task-list[data-status], .task-list[data-fc-col="take action"]');
         if (!targetList || !this.draggedItem) return;
+        let newStatus = targetList.getAttribute('data-status') || targetList.getAttribute('data-fc-group');
         const taskId = this.draggedItem.dataset.taskId;
-        const newStatus = targetList.getAttribute('data-status');
-        // Find the drop index
         let dropIndex = Array.from(targetList.children).indexOf(e.target.closest('.task-item'));
         if (dropIndex === -1) dropIndex = targetList.children.length;
         this.taskManager.moveTaskToStatusAndReorder(taskId, newStatus, dropIndex);
         this.draggedItem = null;
-        if (window.spotApp) window.spotApp.renderActionStep();
+        if (window.spotApp && window.spotApp.setFullControlMode) {
+            window.spotApp.setFullControlMode('column');
+        } else if (window.spotApp) {
+            window.spotApp.renderActionStep();
+        }
     }
 
     // Mobile Touch Handlers

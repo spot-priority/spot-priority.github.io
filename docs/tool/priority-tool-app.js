@@ -381,6 +381,8 @@ export class SPOTApp {
         // Toggle between full control and step-based view
         const fullControlView = document.querySelector('.full-control-view');
         const contentArea = document.querySelector('.content-area');
+        const prevBtn = document.getElementById('prevStep');
+        const nextBtn = document.getElementById('nextStep');
         if (!fullControlView) return;
         const isFullControl = fullControlView.style.display !== 'none';
         if (isFullControl) {
@@ -390,12 +392,18 @@ export class SPOTApp {
             document.querySelectorAll('.step-content').forEach(el => {
                 el.style.display = (el.id === this.currentStep) ? 'block' : 'none';
             });
+            // Show prev/next buttons
+            if (prevBtn) prevBtn.style.display = '';
+            if (nextBtn) nextBtn.style.display = '';
         } else {
             // Show full control, hide all step content
             fullControlView.style.display = 'block';
             document.querySelectorAll('.step-content').forEach(el => {
                 el.style.display = 'none';
             });
+            // Hide prev/next buttons
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
             // Default to column mode
             this.setFullControlMode('column');
         }
@@ -429,8 +437,12 @@ export class SPOTApp {
         if (!modeBar) {
             modeBar = document.createElement('div');
             modeBar.className = 'full-control-mode-bar';
+            modeBar.style.display = 'flex';
+            modeBar.style.justifyContent = 'center';
+            modeBar.style.alignItems = 'center';
+            modeBar.style.gap = '1em';
             modeBar.style.marginBottom = '1em';
-            modeBar.innerHTML = `<button class="btn" id="fcColumnMode">Column View</button> <button class="btn" id="fcListMode">List View</button>`;
+            modeBar.innerHTML = `<button class="btn" id="fcColumnMode">Column View</button><button class="btn" id="fcListMode">List View</button>`;
             fc.insertBefore(modeBar, fc.firstChild);
         }
         // Wire up mode buttons
@@ -560,6 +572,207 @@ export class SPOTApp {
                 });
             }
         }
+
+        // --- Column View: Render all steps as columns with groups ---
+        if (mode === 'column') {
+            // Clear and set up columns
+            col.innerHTML = '';
+            // Column definitions
+            const columns = [
+                {
+                    title: 'Survey',
+                    groups: [
+                        { label: 'Primary', key: 'primary' },
+                        { label: 'Secondary', key: 'secondary' }
+                    ],
+                    getTasks: (groupKey) => this.taskManager.getAllTasks().filter(t => t.survey === groupKey && t.status !== 'done'),
+                    dndType: 'survey',
+                },
+                {
+                    title: 'Prioritize',
+                    groups: [
+                        { label: 'Higher', key: 'higher' },
+                        { label: 'Lower', key: 'lower' }
+                    ],
+                    getTasks: (groupKey) => this.taskManager.getAllTasks().filter(t => t.survey === 'primary' && t.priority === groupKey && t.status !== 'done'),
+                    dndType: 'prioritize',
+                },
+                {
+                    title: 'Optimize',
+                    groups: [
+                        { label: 'More', key: 'more' },
+                        { label: 'Less', key: 'less' }
+                    ],
+                    getTasks: (groupKey) => this.taskManager.getAllTasks().filter(t => t.survey === 'primary' && t.priority === 'higher' && t.optimize === groupKey && t.status !== 'done'),
+                    dndType: 'optimize',
+                },
+                {
+                    title: 'Take Action',
+                    groups: [
+                        { label: 'Todo', key: 'todo' },
+                        { label: 'Doing', key: 'doing' },
+                        { label: 'Blocked', key: 'blocked' },
+                        { label: 'Done', key: 'done' }
+                    ],
+                    getTasks: (groupKey) => this.taskManager.getAllTasks().filter(t => t.status === groupKey),
+                    dndType: 'action',
+                }
+            ];
+            // Columns container
+            const columnsWrap = document.createElement('div');
+            columnsWrap.className = 'fc-columns-wrap';
+            columnsWrap.style.display = 'flex';
+            columnsWrap.style.gap = '1em';
+            columnsWrap.style.alignItems = 'flex-start';
+            columnsWrap.style.width = '100%';
+            // Add columns and arrows between them
+            columns.forEach((colDef, colIdx) => {
+                if (colIdx > 0) {
+                    // Insert arrow between columns
+                    const arrowDiv = document.createElement('div');
+                    arrowDiv.className = 'fc-col-arrow';
+                    arrowDiv.style.display = 'flex';
+                    arrowDiv.style.alignItems = 'center';
+                    arrowDiv.style.justifyContent = 'center';
+                    arrowDiv.style.width = '32px';
+                    arrowDiv.style.height = '100%';
+                    arrowDiv.innerHTML = `<svg width="24" height="48" viewBox="0 0 24 48" style="display:block;margin:auto;"><polyline points="4,24 20,24" stroke="#1976d2" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/><defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#1976d2"/></marker></defs></svg>`;
+                    columnsWrap.appendChild(arrowDiv);
+                }
+                const colDiv = document.createElement('div');
+                colDiv.className = 'fc-column';
+                colDiv.style.flex = '1 1 0';
+                colDiv.style.minWidth = '240px';
+                colDiv.style.background = colIdx < 3 ? '#f8fafc' : '#f5f5f5';
+                colDiv.style.borderRadius = '10px';
+                colDiv.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)';
+                colDiv.style.padding = '1em 0.5em 1.5em 0.5em';
+                colDiv.style.marginBottom = '0.5em';
+                if (colIdx < 3) colDiv.style.borderRight = '3px solid #e0e0e0';
+                // Column title
+                const colTitle = document.createElement('h4');
+                colTitle.textContent = colDef.title;
+                colTitle.style.textAlign = 'center';
+                colTitle.style.marginBottom = '0.7em';
+                colTitle.style.letterSpacing = '0.02em';
+                colDiv.appendChild(colTitle);
+                // Groups in column
+                colDef.groups.forEach(group => {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'fc-group';
+                    groupDiv.style.marginBottom = '1.2em';
+                    groupDiv.style.background = '#fff';
+                    groupDiv.style.borderRadius = '7px';
+                    groupDiv.style.boxShadow = '0 1px 2px rgba(0,0,0,0.03)';
+                    groupDiv.style.padding = '0.5em 0.5em 0.7em 0.5em';
+                    groupDiv.style.border = '1px solid #e0e0e0';
+                    // Group label
+                    const groupLabel = document.createElement('div');
+                    groupLabel.className = 'fc-group-label';
+                    groupLabel.textContent = group.label;
+                    groupLabel.style.fontWeight = 'bold';
+                    groupLabel.style.marginBottom = '0.3em';
+                    groupLabel.style.letterSpacing = '0.01em';
+                    groupLabel.style.color = '#1976d2';
+                    groupDiv.appendChild(groupLabel);
+                    // Task list for group
+                    const groupList = document.createElement('div');
+                    groupList.className = 'task-list';
+                    groupList.setAttribute('data-fc-col', colDef.title.toLowerCase());
+                    groupList.setAttribute('data-fc-group', group.key);
+                    groupList.style.minHeight = '2.5em';
+                    // Render tasks for this group
+                    const tasks = colDef.getTasks(group.key);
+                    if (tasks.length === 0) {
+                        const empty = document.createElement('div');
+                        empty.className = 'empty-state';
+                        empty.textContent = 'No tasks in this group yet.';
+                        groupList.appendChild(empty);
+                    } else {
+                        tasks.forEach((task, idx) => {
+                            let el;
+                            if (colDef.dndType === 'action') {
+                                // Use createActionTaskElement, but patch to work in column view
+                                el = document.createElement('div');
+                                el.className = 'task-item' + (task.status === 'blocked' ? ' blocked' : '');
+                                el.draggable = true;
+                                el.dataset.taskId = task.id;
+                                el.innerHTML = `<span class="task-rank">${idx + 1}.</span> <span class="task-name">${task.name}</span>`;
+                                if (group.key !== 'done') {
+                                    const doneBtn = document.createElement('button');
+                                    doneBtn.className = 'done-btn';
+                                    doneBtn.title = 'Mark as done';
+                                    doneBtn.innerHTML = '✔️';
+                                    doneBtn.onclick = () => {
+                                        this.taskManager.updateTask(task.id, { status: 'done' });
+                                        this.setFullControlMode('column');
+                                    };
+                                    el.appendChild(doneBtn);
+                                } else {
+                                    const undoBtn = document.createElement('button');
+                                    undoBtn.className = 'undo-btn';
+                                    undoBtn.title = 'Undo done';
+                                    undoBtn.innerHTML = '↩️';
+                                    undoBtn.onclick = () => {
+                                        this.taskManager.updateTask(task.id, { status: 'todo' });
+                                        this.setFullControlMode('column');
+                                    };
+                                    el.appendChild(undoBtn);
+                                    const delBtn = document.createElement('button');
+                                    delBtn.className = 'delete-btn';
+                                    delBtn.title = 'Delete task';
+                                    delBtn.innerHTML = '🗑️';
+                                    delBtn.onclick = () => {
+                                        this.taskManager.deleteTask(task.id);
+                                        this.setFullControlMode('column');
+                                    };
+                                    el.appendChild(delBtn);
+                                }
+                            } else {
+                                el = document.createElement('div');
+                                el.className = 'task-item';
+                                el.draggable = true;
+                                el.dataset.taskId = task.id;
+                                el.innerHTML = `<span class="task-rank">${idx + 1}.</span> <span class="task-name">${task.name}</span>`;
+                            }
+                            if (task.status === 'blocked') el.classList.add('blocked');
+                            groupList.appendChild(el);
+                        });
+                    }
+                    groupDiv.appendChild(groupList);
+                    colDiv.appendChild(groupDiv);
+                });
+                columnsWrap.appendChild(colDiv);
+            });
+            col.appendChild(columnsWrap);
+            // Add a horizontal break after the first 3 columns
+            const hr = document.createElement('div');
+            hr.style.width = '100%';
+            hr.style.height = '0';
+            hr.style.borderTop = '2.5px solid #b0bec5';
+            hr.style.margin = '1.5em 0 1.5em 0';
+            hr.style.opacity = '0.5';
+            columnsWrap.insertBefore(hr, columnsWrap.children[3]);
+            // Initialize drag and drop for all columns (use correct selectors)
+            setTimeout(() => {
+                columns[0].groups.forEach(g => {
+                    const el = col.querySelector(`.task-list[data-fc-col="survey"][data-fc-group="${g.key}"]`);
+                    if (el) this.dragDropManager.initializeSurveyDragAndDrop(el);
+                });
+                columns[1].groups.forEach(g => {
+                    const el = col.querySelector(`.task-list[data-fc-col="prioritize"][data-fc-group="${g.key}"]`);
+                    if (el) this.dragDropManager.initializePrioritizeDragAndDrop(el);
+                });
+                columns[2].groups.forEach(g => {
+                    const el = col.querySelector(`.task-list[data-fc-col="optimize"][data-fc-group="${g.key}"]`);
+                    if (el) this.dragDropManager.initializeOptimizeDragAndDrop(el);
+                });
+                columns[3].groups.forEach(g => {
+                    const el = col.querySelector(`.task-list[data-fc-col="take action"][data-fc-group="${g.key}"]`);
+                    if (el) this.dragDropManager.initializeActionDragAndDrop(el);
+                });
+            }, 10); // Increased timeout to ensure DOM is ready
+        }
     }
 
     showAddTaskModal() {
@@ -666,6 +879,15 @@ export class SPOTApp {
     clearAllTasks() {
         if (confirm('Are you sure you want to clear all tasks?')) {
             this.taskManager.clearAllTasks();
+            // If in Full Control List View, re-render it
+            const fc = document.querySelector('.full-control-view');
+            if (fc && fc.style.display !== 'none') {
+                const list = fc.querySelector('.all-tasks-list');
+                if (list && list.style.display !== 'none') {
+                    this.setFullControlMode('list');
+                    return;
+                }
+            }
             this.renderCurrentStep();
         }
     }
