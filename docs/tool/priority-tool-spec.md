@@ -198,3 +198,25 @@ docs/tool/
 ├── priority-tool-drag.js
 └── priority-tool-spec.md
 ```
+
+## Possible Future Improvements Suggested by Copilot
+
+- Use a modern UI framework (React, Vue, Svelte) for more maintainable UI code.
+- Add unit and integration tests for all modules.
+- Add TypeScript for type safety.
+- Add accessibility (a11y) improvements.
+- Add i18n/l10n support for multiple languages.
+- Add user authentication and multi-user support.
+- Add real-time collaboration (WebSocket or similar).
+- Add analytics and usage tracking.
+- Add undo/redo functionality.
+- Add keyboard navigation and shortcuts.
+- Further decouple UI from business logic for easier testing and maintenance.
+
+## Module Documentation Mapping
+
+- SPOTApp: See docs/tool/spec/HLD.md (section 1), requirements.md
+- TaskManager: See docs/tool/spec/HLD.md (section 2), requirements.md
+- DragDropManager: See docs/tool/spec/HLD.md (section 3), requirements.md
+- UIRenderer: See docs/tool/spec/HLD.md (section 4), requirements.md
+- EventBinder: See docs/tool/spec/HLD.md (section 5), requirements.md
