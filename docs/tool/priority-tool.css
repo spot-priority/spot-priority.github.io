@@ -1135,9 +1135,7 @@ footer a:active {
     margin-right: 2em;
 }
 
-.fc-columns-wrap>.fc-column+.fc-column {
-    /* extra separation for visual break */
-}
+/* Removed empty ruleset: .fc-columns-wrap>.fc-column+.fc-column */
 
 .fc-columns-wrap>.fc-column:nth-child(4) {
     background: #f5f5f5;

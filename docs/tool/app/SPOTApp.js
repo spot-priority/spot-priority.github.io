@@ -3,7 +3,7 @@
 // Refactored for SOLID principles and modularity
 
 import { TaskManager } from '../core/TaskManager.js';
-import { DragDropManager } from '../priority-tool-drag.js';
+import { DragDropManager } from '../core/DragDropManager.js';
 import { UIRenderer } from './UIRenderer.js';
 import { EventBinder } from './EventBinder.js';
 
