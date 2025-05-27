@@ -17,8 +17,15 @@ export class EventBinder {
      * Should be called once on app startup.
      */
     bindAll() {
+        console.debug('[EventBinder] Binding all event listeners...');
         // Navigation buttons
-        document.getElementById('prevStep').addEventListener('click', () => {
+        const prevStepBtn = document.getElementById('prevStep');
+        const nextStepBtn = document.getElementById('nextStep');
+        if (!prevStepBtn || !nextStepBtn) {
+            console.error('[EventBinder] Navigation buttons not found in DOM');
+        }
+        prevStepBtn?.addEventListener('click', () => {
+            console.debug('[EventBinder] prevStep clicked');
             const steps = ['survey', 'prioritize', 'optimize', 'action'];
             const currentIndex = steps.indexOf(this.app.currentStep);
             if (currentIndex > 0) {
@@ -26,7 +33,8 @@ export class EventBinder {
                 this.ui.renderCurrentStep(this.app.currentStep);
             }
         });
-        document.getElementById('nextStep').addEventListener('click', () => {
+        nextStepBtn?.addEventListener('click', () => {
+            console.debug('[EventBinder] nextStep clicked');
             const steps = ['survey', 'prioritize', 'optimize', 'action'];
             const currentIndex = steps.indexOf(this.app.currentStep);
             if (currentIndex < steps.length - 1) {
@@ -38,6 +46,7 @@ export class EventBinder {
         document.querySelectorAll('.step-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const step = btn.getAttribute('data-step');
+                console.debug('[EventBinder] step-btn clicked', step);
                 if (step) {
                     this.app.currentStep = step;
                     this.ui.renderCurrentStep(step);
@@ -53,6 +62,7 @@ export class EventBinder {
                 if (name.length > 64) name = name.slice(0, 64);
                 if (name) {
                     const survey = form.getAttribute('data-survey');
+                    console.debug('[EventBinder] add-task-form submit', { name, survey });
                     this.taskManager.addTask({
                         name,
                         survey,
@@ -61,6 +71,8 @@ export class EventBinder {
                     });
                     input.value = '';
                     this.ui.renderSurveyStep();
+                } else {
+                    console.warn('[EventBinder] Task name is empty');
                 }
             });
         });
@@ -76,17 +88,23 @@ export class EventBinder {
                     reader.onload = (e) => {
                         try {
                             const tasks = JSON.parse(e.target.result);
+                            console.debug('[EventBinder] Importing tasks', tasks);
                             this.taskManager.importTasks(tasks);
                             this.ui.renderCurrentStep(this.app.currentStep);
                             document.getElementById('importModal').style.display = 'none';
                             fileInput.value = '';
                         } catch (error) {
                             alert('Error importing tasks: Invalid JSON file');
+                            console.error('[EventBinder] Error importing tasks', error);
                         }
                     };
                     reader.readAsText(file);
+                } else {
+                    console.warn('[EventBinder] No file selected for import');
                 }
             });
+        } else {
+            console.warn('[EventBinder] Import form not found');
         }
         // Task form submission (main modal)
         const taskForm = document.getElementById('taskForm');
@@ -98,8 +116,9 @@ export class EventBinder {
                 const description = document.getElementById('taskDescription').value;
                 const priority = document.getElementById('taskPriority').value;
                 if (title) {
+                    console.debug('[EventBinder] taskForm submit', { title, description, priority });
                     this.taskManager.addTask({
-                        title,
+                        name: title,
                         description,
                         priority,
                         group: this.app.currentStep,
@@ -108,14 +127,19 @@ export class EventBinder {
                     this.ui.renderCurrentStep(this.app.currentStep);
                     document.getElementById('taskModal').style.display = 'none';
                     taskForm.reset();
+                } else {
+                    console.warn('[EventBinder] Task title is empty');
                 }
             });
+        } else {
+            console.warn('[EventBinder] Task form not found');
         }
         // Export tasks button
         const exportBtn = document.getElementById('exportTasks');
         if (exportBtn) {
             exportBtn.addEventListener('click', () => {
                 const data = this.taskManager.exportTasks();
+                console.debug('[EventBinder] Exporting tasks', data);
                 // Download as file
                 const blob = new Blob([data], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -127,16 +151,21 @@ export class EventBinder {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             });
+        } else {
+            console.warn('[EventBinder] Export button not found');
         }
         // Clear all tasks button
         const clearBtn = document.getElementById('clearTasks');
         if (clearBtn) {
             clearBtn.addEventListener('click', () => {
                 if (confirm('Are you sure you want to clear all tasks?')) {
+                    console.debug('[EventBinder] Clearing all tasks');
                     this.taskManager.clearAllTasks();
                     this.ui.renderCurrentStep(this.app.currentStep);
                 }
             });
+        } else {
+            console.warn('[EventBinder] Clear button not found');
         }
         // Modal close buttons
         document.querySelectorAll('.close').forEach(button => {
@@ -144,19 +173,25 @@ export class EventBinder {
                 const modal = button.closest('.modal');
                 if (modal) {
                     modal.style.display = 'none';
+                    console.debug('[EventBinder] Modal closed');
                 }
             });
+        });
+        // Task list drag and drop
+        document.querySelectorAll('.task-list').forEach(list => {
+            if (list) {
+                this.dragDrop.initializeDragAndDrop(list);
+                console.debug('[EventBinder] Initialized drag-and-drop for', list);
+            } else {
+                console.warn('[EventBinder] Task list not found for drag-and-drop');
+            }
         });
         // Subscribe to task changes for warning updates
         this.taskManager.subscribe(() => {
             // If you have a warning rendering method, call it here
             // Example: this.ui.renderStepWarnings();
+            console.debug('[EventBinder] TaskManager observer triggered');
         });
-        // Task list drag and drop
-        document.querySelectorAll('.task-list').forEach(list => {
-            this.dragDrop.initializeDragAndDrop(list);
-        });
-        // TODO: Add more event bindings for forms, import/export, etc.
     }
     /**
      * Unbind all event listeners (for cleanup or re-binding).

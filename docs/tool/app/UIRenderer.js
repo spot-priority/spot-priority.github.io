@@ -13,6 +13,7 @@ export class UIRenderer {
      * Render the initial view of the app (first step, progress bar, etc.).
      */
     renderInitialView() {
+        console.debug('[UIRenderer] Rendering initial view');
         this.renderCurrentStep('survey');
         // TODO: Render progress bar, navigation, and any static UI elements
     }
@@ -29,6 +30,7 @@ export class UIRenderer {
      * Render the Prioritize step: shows tasks with survey 'primary', split by priority.
      */
     renderPrioritizeStep() {
+        console.debug('[UIRenderer] Rendering prioritize step');
         // Only show tasks with survey: 'primary' and not done
         const tasks = this.taskManager.getAllTasks().filter(t => t.survey === 'primary' && t.status !== 'done');
         // Set default priority to 'higher' if not set
@@ -86,6 +88,7 @@ export class UIRenderer {
      * Render the Optimize step: shows tasks with priority 'higher', split by optimize value.
      */
     renderOptimizeStep() {
+        console.debug('[UIRenderer] Rendering optimize step');
         // Only show tasks with priority: 'higher' and not done
         const tasks = this.taskManager.getAllTasks().filter(t => t.priority === 'higher' && t.status !== 'done');
         // Split by optimize value
@@ -136,10 +139,16 @@ export class UIRenderer {
      * Render the Survey step: shows tasks grouped by survey type.
      */
     renderSurveyStep() {
+        console.debug('[UIRenderer] Rendering survey step');
+        const primaryList = document.querySelector('.task-list[data-survey="primary"]');
+        const secondaryList = document.querySelector('.task-list[data-survey="secondary"]');
+        if (!primaryList || !secondaryList) {
+            console.warn('[UIRenderer] Survey task lists not found');
+            return;
+        }
         const primaryTasks = this.taskManager.getAllTasks().filter(t => t.survey === 'primary' && t.status !== 'done');
         const secondaryTasks = this.taskManager.getAllTasks().filter(t => t.survey === 'secondary' && t.status !== 'done');
         // Render primary
-        const primaryList = document.querySelector('.task-list[data-survey="primary"]');
         primaryList.innerHTML = '';
         if (primaryTasks.length === 0) {
             primaryList.innerHTML = '<div class="empty-state">No tasks in this group yet.</div>';
@@ -151,7 +160,6 @@ export class UIRenderer {
             });
         }
         // Render secondary
-        const secondaryList = document.querySelector('.task-list[data-survey="secondary"]');
         secondaryList.innerHTML = '';
         if (secondaryTasks.length === 0) {
             secondaryList.innerHTML = '<div class="empty-state">No tasks in this group yet.</div>';
@@ -183,12 +191,16 @@ export class UIRenderer {
      * Render the Action step: shows all tasks, grouped by status.
      */
     renderActionStep() {
+        console.debug('[UIRenderer] Rendering action step');
         const tasks = this.taskManager.getAllTasks();
         // Example: group by status
-        const statuses = ['pending', 'in-progress', 'blocked', 'completed'];
+        const statuses = ['todo', 'doing', 'blocked', 'done'];
         statuses.forEach(status => {
             const list = document.querySelector(`.task-list[data-status="${status}"]`);
-            if (!list) return;
+            if (!list) {
+                console.warn(`[UIRenderer] Action task list for status ${status} not found`);
+                return;
+            }
             const group = tasks.filter(t => t.status === status);
             list.innerHTML = '';
             if (group.length === 0) {
@@ -223,6 +235,7 @@ export class UIRenderer {
      * @param {string} step
      */
     renderCurrentStep(step) {
+        console.debug('[UIRenderer] Rendering current step:', step);
         if (step === 'survey') {
             this.renderSurveyStep();
         } else if (step === 'prioritize') {

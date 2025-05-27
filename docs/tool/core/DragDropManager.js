@@ -23,6 +23,10 @@ export class DragDropManager {
      * @param {string} [type] - e.g., 'survey', 'prioritize', etc.
      */
     initializeDragAndDrop(container, type) {
+        if (!container) {
+            console.warn('[DragDropManager] No container provided for drag-and-drop');
+            return;
+        }
         container.addEventListener('dragstart', this.handleDragStart.bind(this));
         container.addEventListener('dragend', this.handleDragEnd.bind(this));
         container.addEventListener('dragover', this.handleDragOver.bind(this));
@@ -33,6 +37,7 @@ export class DragDropManager {
         container.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
         container.addEventListener('touchend', this.handleTouchEnd.bind(this));
         container.addEventListener('touchcancel', this.handleTouchEnd.bind(this));
+        console.debug('[DragDropManager] Drag-and-drop initialized for', container, 'type:', type);
     }
 
     // ...additional initialization methods for survey, prioritize, optimize, etc. (see legacy for details)
@@ -45,12 +50,14 @@ export class DragDropManager {
         this.draggedItem = e.target;
         e.dataTransfer.effectAllowed = 'move';
         e.target.classList.add('dragging');
+        console.debug('[DragDropManager] Drag started', e.target);
     }
 
     handleDragEnd(e) {
         if (this.draggedItem) {
             this.draggedItem.classList.remove('dragging');
             this.draggedItem = null;
+            console.debug('[DragDropManager] Drag ended');
         }
     }
 
@@ -58,17 +65,19 @@ export class DragDropManager {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
         e.currentTarget.classList.add('drag-over');
+        console.debug('[DragDropManager] Drag over', e.currentTarget);
     }
 
     handleDragLeave(e) {
         e.currentTarget.classList.remove('drag-over');
+        console.debug('[DragDropManager] Drag leave', e.currentTarget);
     }
 
     handleDrop(e) {
         e.preventDefault();
         e.currentTarget.classList.remove('drag-over');
-        // Implement drop logic, update taskManager as needed
-        // (see legacy for details, e.g., moveTask, moveTaskToSurveyAndReorder, etc.)
+        // TODO: Implement drop logic, update taskManager as needed
+        console.debug('[DragDropManager] Drop event', e.currentTarget);
     }
 
     // =====================
@@ -76,13 +85,16 @@ export class DragDropManager {
     // =====================
 
     handleTouchStart(e) {
-        // Implement touch drag start logic
+        // TODO: Implement touch drag start logic
+        console.debug('[DragDropManager] Touch start', e.target);
     }
     handleTouchMove(e) {
-        // Implement touch drag move logic
+        // TODO: Implement touch drag move logic
+        console.debug('[DragDropManager] Touch move', e.target);
     }
     handleTouchEnd(e) {
-        // Implement touch drag end logic
+        // TODO: Implement touch drag end logic
+        console.debug('[DragDropManager] Touch end', e.target);
     }
 
     // ...additional methods for survey/prioritize/optimize drag-and-drop, as in legacy
