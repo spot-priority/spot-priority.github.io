@@ -29,31 +29,58 @@ export class EventBinder {
     bindAll() {
         // --- Navigation Buttons ---
         // Remove previous listeners by replacing the element (simple, robust for classic JS)
+        const steps = ['survey', 'prioritize', 'optimize', 'action'];
         const prevStepBtn = document.getElementById('prevStep');
         if (prevStepBtn) {
             const newPrev = prevStepBtn.cloneNode(true);
             prevStepBtn.parentNode.replaceChild(newPrev, prevStepBtn);
-            newPrev.addEventListener('click', () => {
-                const steps = ['survey', 'prioritize', 'optimize', 'action'];
-                const currentIndex = steps.indexOf(this.app.currentStep);
-                if (currentIndex > 0) {
-                    this.app.currentStep = steps[currentIndex - 1];
-                    this.ui.renderCurrentStep(this.app.currentStep);
-                }
-            });
+            const isFirst = this.app.currentStep === steps[0];
+            if (isFirst) {
+                newPrev.classList.add('disabled');
+                newPrev.setAttribute('aria-disabled', 'true');
+                newPrev.tabIndex = -1;
+                newPrev.style.pointerEvents = 'none';
+                newPrev.style.opacity = '0.5';
+            } else {
+                newPrev.classList.remove('disabled');
+                newPrev.removeAttribute('aria-disabled');
+                newPrev.tabIndex = 0;
+                newPrev.style.pointerEvents = '';
+                newPrev.style.opacity = '';
+                newPrev.addEventListener('click', () => {
+                    const currentIndex = steps.indexOf(this.app.currentStep);
+                    if (currentIndex > 0) {
+                        this.app.currentStep = steps[currentIndex - 1];
+                        this.ui.renderCurrentStep(this.app.currentStep);
+                    }
+                });
+            }
         }
         const nextStepBtn = document.getElementById('nextStep');
         if (nextStepBtn) {
             const newNext = nextStepBtn.cloneNode(true);
             nextStepBtn.parentNode.replaceChild(newNext, nextStepBtn);
-            newNext.addEventListener('click', () => {
-                const steps = ['survey', 'prioritize', 'optimize', 'action'];
-                const currentIndex = steps.indexOf(this.app.currentStep);
-                if (currentIndex < steps.length - 1) {
-                    this.app.currentStep = steps[currentIndex + 1];
-                    this.ui.renderCurrentStep(this.app.currentStep);
-                }
-            });
+            const isLast = this.app.currentStep === steps[steps.length - 1];
+            if (isLast) {
+                newNext.classList.add('disabled');
+                newNext.setAttribute('aria-disabled', 'true');
+                newNext.tabIndex = -1;
+                newNext.style.pointerEvents = 'none';
+                newNext.style.opacity = '0.5';
+            } else {
+                newNext.classList.remove('disabled');
+                newNext.removeAttribute('aria-disabled');
+                newNext.tabIndex = 0;
+                newNext.style.pointerEvents = '';
+                newNext.style.opacity = '';
+                newNext.addEventListener('click', () => {
+                    const currentIndex = steps.indexOf(this.app.currentStep);
+                    if (currentIndex < steps.length - 1) {
+                        this.app.currentStep = steps[currentIndex + 1];
+                        this.ui.renderCurrentStep(this.app.currentStep);
+                    }
+                });
+            }
         }
         // --- Step Navigation (Progress Bar) ---
         /**
