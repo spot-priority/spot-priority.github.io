@@ -88,6 +88,10 @@ export class UIRenderer {
         } catch (e) {
             console.error('[UIRenderer] Error in renderPrioritizeStep:', e);
         }
+        // Ensure event listeners are rebound
+        if (window.spotApp && window.spotApp.events && typeof window.spotApp.events.bindAll === 'function') {
+            window.spotApp.events.bindAll();
+        }
     }
 
     /**
@@ -146,6 +150,10 @@ export class UIRenderer {
             }
         } catch (e) {
             console.error('[UIRenderer] Error in renderOptimizeStep:', e);
+        }
+        // Ensure event listeners are rebound
+        if (window.spotApp && window.spotApp.events && typeof window.spotApp.events.bindAll === 'function') {
+            window.spotApp.events.bindAll();
         }
     }
 
@@ -207,6 +215,10 @@ export class UIRenderer {
         } catch (e) {
             console.error('[UIRenderer] Error in renderSurveyStep:', e);
         }
+        // Ensure event listeners are rebound
+        if (window.spotApp && window.spotApp.events && typeof window.spotApp.events.bindAll === 'function') {
+            window.spotApp.events.bindAll();
+        }
     }
 
     /**
@@ -257,6 +269,10 @@ export class UIRenderer {
             });
         } catch (e) {
             console.error('[UIRenderer] Error in renderActionStep:', e);
+        }
+        // Ensure event listeners are rebound
+        if (window.spotApp && window.spotApp.events && typeof window.spotApp.events.bindAll === 'function') {
+            window.spotApp.events.bindAll();
         }
     }
 
