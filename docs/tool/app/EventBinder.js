@@ -17,206 +17,214 @@ export class EventBinder {
      * Should be called once on app startup.
      */
     bindAll() {
-        console.log('[EventBinder] Starting to bind all event listeners...'); // Changed to console.log
-        // Navigation buttons
-        const prevStepBtn = document.getElementById('prevStep');
-        const nextStepBtn = document.getElementById('nextStep');
-        if (!prevStepBtn || !nextStepBtn) {
-            console.error('[EventBinder] CRITICAL: Main navigation buttons (prevStep or nextStep) not found in DOM!');
-        } else {
-            console.log('[EventBinder] Main navigation buttons (prevStep, nextStep) found.');
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', () => this.bindAll());
+            return;
         }
-        prevStepBtn?.addEventListener('click', () => {
-            console.debug('[EventBinder] prevStep clicked');
-            const steps = ['survey', 'prioritize', 'optimize', 'action'];
-            const currentIndex = steps.indexOf(this.app.currentStep);
-            if (currentIndex > 0) {
-                this.app.currentStep = steps[currentIndex - 1];
-                this.ui.renderCurrentStep(this.app.currentStep);
-            }
-        });
-        nextStepBtn?.addEventListener('click', () => {
-            console.debug('[EventBinder] nextStep clicked');
-            const steps = ['survey', 'prioritize', 'optimize', 'action'];
-            const currentIndex = steps.indexOf(this.app.currentStep);
-            if (currentIndex < steps.length - 1) {
-                this.app.currentStep = steps[currentIndex + 1];
-                this.ui.renderCurrentStep(this.app.currentStep);
-            }
-        });
-        // Step selector (progress bar) navigation
-        const stepBtns = document.querySelectorAll('.step-btn');
-        if (stepBtns.length === 0) {
-            console.error('[EventBinder] CRITICAL: No step-btn elements found for progress bar navigation!');
-        } else {
-            console.log(`[EventBinder] Found ${stepBtns.length} step-btn elements.`);
-        }
-        stepBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const step = btn.getAttribute('data-step');
-                console.debug('[EventBinder] step-btn clicked', step);
-                if (step) {
-                    this.app.currentStep = step;
-                    this.ui.renderCurrentStep(step);
-                }
-            });
-        });
-        // Survey step: add task forms for primary and secondary
-        const addTaskForms = document.querySelectorAll('.add-task-form');
-        if (addTaskForms.length === 0) {
-            console.warn('[EventBinder] No .add-task-form elements found. This might be normal if not on survey step or if survey step has no forms yet.');
-        } else {
-            console.log(`[EventBinder] Found ${addTaskForms.length} .add-task-form elements.`);
-        }
-        addTaskForms.forEach(form => {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const input = form.querySelector('.add-task-input');
-                let name = input.value.trim();
-                if (name.length > 64) name = name.slice(0, 64);
-                if (name) {
-                    const survey = form.getAttribute('data-survey');
-                    console.debug('[EventBinder] add-task-form submit', { name, survey });
-                    this.taskManager.addTask({
-                        name,
-                        survey,
-                        optimize: 'more',
-                        demo: false
-                    });
-                    input.value = '';
-                    this.ui.renderSurveyStep();
-                } else {
-                    console.warn('[EventBinder] Task name is empty');
-                }
-            });
-        });
-        // Import form submission
-        const importForm = document.getElementById('importForm');
-        if (importForm) {
-            importForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const fileInput = document.getElementById('importFile');
-                const file = fileInput.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        try {
-                            const tasks = JSON.parse(e.target.result);
-                            console.debug('[EventBinder] Importing tasks', tasks);
-                            this.taskManager.importTasks(tasks);
-                            this.ui.renderCurrentStep(this.app.currentStep);
-                            document.getElementById('importModal').style.display = 'none';
-                            fileInput.value = '';
-                        } catch (error) {
-                            alert('Error importing tasks: Invalid JSON file');
-                            console.error('[EventBinder] Error importing tasks', error);
-                        }
-                    };
-                    reader.readAsText(file);
-                } else {
-                    console.warn('[EventBinder] No file selected for import');
-                }
-            });
-        } else {
-            console.warn('[EventBinder] Import form (importForm) not found.');
-        }
-        // Task form submission (main modal)
-        const taskForm = document.getElementById('taskForm');
-        if (taskForm) {
-            taskForm.addEventListener('submit', (e) => {
-                console.log('[EventBinder] Main task modal form (taskForm) submitted.');
-                e.preventDefault();
-                let title = document.getElementById('taskTitle').value;
-                if (title.length > 64) title = title.slice(0, 64);
-                const description = document.getElementById('taskDescription').value;
-                const priority = document.getElementById('taskPriority').value;
-                if (title) {
-                    console.debug('[EventBinder] taskForm submit', { title, description, priority });
-                    this.taskManager.addTask({
-                        name: title,
-                        description,
-                        priority,
-                        group: this.app.currentStep,
-                        relatedTasks: []
-                    });
-                    this.ui.renderCurrentStep(this.app.currentStep);
-                    document.getElementById('taskModal').style.display = 'none';
-                    taskForm.reset();
-                } else {
-                    console.warn('[EventBinder] Task title is empty');
-                }
-            });
-        } else {
-            console.warn('[EventBinder] Main task modal form (taskForm) not found.');
-        }
-        // Export tasks button
-        const exportBtn = document.getElementById('exportTasks');
-        if (exportBtn) {
-            exportBtn.addEventListener('click', () => {
-                const data = this.taskManager.exportTasks();
-                console.debug('[EventBinder] Exporting tasks', data);
-                // Download as file
-                const blob = new Blob([data], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'spot-tasks.json';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            });
-        } else {
-            console.warn('[EventBinder] Export button (exportTasks) not found.');
-        }
-        // Clear all tasks button
-        const clearBtn = document.getElementById('clearTasks');
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear all tasks?')) {
-                    console.debug('[EventBinder] Clearing all tasks');
-                    this.taskManager.clearAllTasks();
-                    this.ui.renderCurrentStep(this.app.currentStep);
-                }
-            });
-        } else {
-            console.warn('[EventBinder] Clear button (clearTasks) not found.');
-        }
-        // Modal close buttons
-        const closeButtons = document.querySelectorAll('.close');
-        if (closeButtons.length === 0) {
-            console.warn('[EventBinder] No modal close buttons (.close) found.');
-        }
-        closeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                console.log('[EventBinder] Modal close button clicked.');
-                const modal = button.closest('.modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                    console.debug('[EventBinder] Modal closed');
-                }
-            });
-        });
-        // Task list drag and drop
-        const taskLists = document.querySelectorAll('.task-list');
-        if (taskLists.length === 0) {
-            console.warn('[EventBinder] No .task-list elements found for drag and drop initialization.');
-        }
-        taskLists.forEach(list => {
-            if (list) {
-                this.dragDrop.initializeDragAndDrop(list);
-                console.debug('[EventBinder] Initialized drag-and-drop for', list);
+        try {
+            console.log('[EventBinder] Starting to bind all event listeners...'); // Changed to console.log
+            // Navigation buttons
+            const prevStepBtn = document.getElementById('prevStep');
+            const nextStepBtn = document.getElementById('nextStep');
+            if (!prevStepBtn || !nextStepBtn) {
+                console.error('[EventBinder] CRITICAL: Main navigation buttons (prevStep or nextStep) not found in DOM!');
             } else {
-                console.warn('[EventBinder] Task list not found for drag-and-drop');
+                console.log('[EventBinder] Main navigation buttons (prevStep, nextStep) found.');
             }
-        });
-        // Subscribe to task changes for warning updates
-        this.taskManager.subscribe(() => {
-            // If you have a warning rendering method, call it here
-            // Example: this.ui.renderStepWarnings();
-            console.debug('[EventBinder] TaskManager observer triggered');
-        });
-        console.log('[EventBinder] Finished binding all event listeners.');
+            prevStepBtn?.addEventListener('click', () => {
+                console.debug('[EventBinder] prevStep clicked');
+                const steps = ['survey', 'prioritize', 'optimize', 'action'];
+                const currentIndex = steps.indexOf(this.app.currentStep);
+                if (currentIndex > 0) {
+                    this.app.currentStep = steps[currentIndex - 1];
+                    this.ui.renderCurrentStep(this.app.currentStep);
+                }
+            });
+            nextStepBtn?.addEventListener('click', () => {
+                console.debug('[EventBinder] nextStep clicked');
+                const steps = ['survey', 'prioritize', 'optimize', 'action'];
+                const currentIndex = steps.indexOf(this.app.currentStep);
+                if (currentIndex < steps.length - 1) {
+                    this.app.currentStep = steps[currentIndex + 1];
+                    this.ui.renderCurrentStep(this.app.currentStep);
+                }
+            });
+            // Step selector (progress bar) navigation
+            const stepBtns = document.querySelectorAll('.step-btn');
+            if (stepBtns.length === 0) {
+                console.error('[EventBinder] CRITICAL: No step-btn elements found for progress bar navigation!');
+            } else {
+                console.log(`[EventBinder] Found ${stepBtns.length} step-btn elements.`);
+            }
+            stepBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const step = btn.getAttribute('data-step');
+                    console.debug('[EventBinder] step-btn clicked', step);
+                    if (step) {
+                        this.app.currentStep = step;
+                        this.ui.renderCurrentStep(step);
+                    }
+                });
+            });
+            // Survey step: add task forms for primary and secondary
+            const addTaskForms = document.querySelectorAll('.add-task-form');
+            if (addTaskForms.length === 0) {
+                console.warn('[EventBinder] No .add-task-form elements found. This might be normal if not on survey step or if survey step has no forms yet.');
+            } else {
+                console.log(`[EventBinder] Found ${addTaskForms.length} .add-task-form elements.`);
+            }
+            addTaskForms.forEach(form => {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const input = form.querySelector('.add-task-input');
+                    let name = input.value.trim();
+                    if (name.length > 64) name = name.slice(0, 64);
+                    if (name) {
+                        const survey = form.getAttribute('data-survey');
+                        console.debug('[EventBinder] add-task-form submit', { name, survey });
+                        this.taskManager.addTask({
+                            name,
+                            survey,
+                            optimize: 'more',
+                            demo: false
+                        });
+                        input.value = '';
+                        this.ui.renderSurveyStep();
+                    } else {
+                        console.warn('[EventBinder] Task name is empty');
+                    }
+                });
+            });
+            // Import form submission
+            const importForm = document.getElementById('importForm');
+            if (importForm) {
+                importForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const fileInput = document.getElementById('importFile');
+                    const file = fileInput.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            try {
+                                const tasks = JSON.parse(e.target.result);
+                                console.debug('[EventBinder] Importing tasks', tasks);
+                                this.taskManager.importTasks(tasks);
+                                this.ui.renderCurrentStep(this.app.currentStep);
+                                document.getElementById('importModal').style.display = 'none';
+                                fileInput.value = '';
+                            } catch (error) {
+                                alert('Error importing tasks: Invalid JSON file');
+                                console.error('[EventBinder] Error importing tasks', error);
+                            }
+                        };
+                        reader.readAsText(file);
+                    } else {
+                        console.warn('[EventBinder] No file selected for import');
+                    }
+                });
+            } else {
+                console.warn('[EventBinder] Import form (importForm) not found.');
+            }
+            // Task form submission (main modal)
+            const taskForm = document.getElementById('taskForm');
+            if (taskForm) {
+                taskForm.addEventListener('submit', (e) => {
+                    console.log('[EventBinder] Main task modal form (taskForm) submitted.');
+                    e.preventDefault();
+                    let title = document.getElementById('taskTitle').value;
+                    if (title.length > 64) title = title.slice(0, 64);
+                    const description = document.getElementById('taskDescription').value;
+                    const priority = document.getElementById('taskPriority').value;
+                    if (title) {
+                        console.debug('[EventBinder] taskForm submit', { title, description, priority });
+                        this.taskManager.addTask({
+                            name: title,
+                            description,
+                            priority,
+                            group: this.app.currentStep,
+                            relatedTasks: []
+                        });
+                        this.ui.renderCurrentStep(this.app.currentStep);
+                        document.getElementById('taskModal').style.display = 'none';
+                        taskForm.reset();
+                    } else {
+                        console.warn('[EventBinder] Task title is empty');
+                    }
+                });
+            } else {
+                console.warn('[EventBinder] Main task modal form (taskForm) not found.');
+            }
+            // Export tasks button
+            const exportBtn = document.getElementById('exportTasks');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', () => {
+                    const data = this.taskManager.exportTasks();
+                    console.debug('[EventBinder] Exporting tasks', data);
+                    // Download as file
+                    const blob = new Blob([data], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'spot-tasks.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+            } else {
+                console.warn('[EventBinder] Export button (exportTasks) not found.');
+            }
+            // Clear all tasks button
+            const clearBtn = document.getElementById('clearTasks');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to clear all tasks?')) {
+                        console.debug('[EventBinder] Clearing all tasks');
+                        this.taskManager.clearAllTasks();
+                        this.ui.renderCurrentStep(this.app.currentStep);
+                    }
+                });
+            } else {
+                console.warn('[EventBinder] Clear button (clearTasks) not found.');
+            }
+            // Modal close buttons
+            const closeButtons = document.querySelectorAll('.close');
+            if (closeButtons.length === 0) {
+                console.warn('[EventBinder] No modal close buttons (.close) found.');
+            }
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    console.log('[EventBinder] Modal close button clicked.');
+                    const modal = button.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                        console.debug('[EventBinder] Modal closed');
+                    }
+                });
+            });
+            // Task list drag and drop
+            const taskLists = document.querySelectorAll('.task-list');
+            if (taskLists.length === 0) {
+                console.warn('[EventBinder] No .task-list elements found for drag and drop initialization.');
+            }
+            taskLists.forEach(list => {
+                if (list) {
+                    this.dragDrop.initializeDragAndDrop(list);
+                    console.debug('[EventBinder] Initialized drag-and-drop for', list);
+                } else {
+                    console.warn('[EventBinder] Task list not found for drag-and-drop');
+                }
+            });
+            // Subscribe to task changes for warning updates
+            this.taskManager.subscribe(() => {
+                // If you have a warning rendering method, call it here
+                // Example: this.ui.renderStepWarnings();
+                console.debug('[EventBinder] TaskManager observer triggered');
+            });
+            console.log('[EventBinder] Finished binding all event listeners.');
+        } catch (e) {
+            console.error('[EventBinder] Error in bindAll:', e);
+        }
     }
     /**
      * Unbind all event listeners (for cleanup or re-binding).

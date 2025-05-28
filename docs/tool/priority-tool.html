@@ -66,6 +66,12 @@
     </style>
 </head>
 <body>
+        <noscript>
+            <div style="background: #ffdddd; color: #900; padding: 1em; text-align: center; font-weight: bold;">
+                JavaScript is required for the SPOT Prioritization Tool to function. Please enable JavaScript in your browser.
+            </div>
+        </noscript>
+        <div id="global-error" style="display:none;background:#ffdddd;color:#900;padding:1em;text-align:center;font-weight:bold;"></div>
     <div class="dev-banner">
         🚧 This tool is currently under development. Some features may not work as expected. 🚧
     </div>
@@ -317,6 +323,14 @@
     <!-- Scripts -->
     <script type="module">
         import('./app/index.js');
+        // Show global error messages if any uncaught error occurs
+        window.addEventListener('error', function(event) {
+            const errorDiv = document.getElementById('global-error');
+            if (errorDiv) {
+                errorDiv.textContent = 'A critical error occurred: ' + (event.error ? event.error.message : event.message);
+                errorDiv.style.display = 'block';
+            }
+        });
     </script>
 </body>
 </html>

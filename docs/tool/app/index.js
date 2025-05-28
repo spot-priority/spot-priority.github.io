@@ -18,14 +18,48 @@ function initializeApp() {
     }
 }
 
+// Global error handler for uncaught errors
+window.addEventListener('error', (event) => {
+    console.error('[Global Error Handler] Uncaught error:', event.error || event.message);
+    // Optionally, show a user-friendly message or reload suggestion
+    // alert('A critical error occurred. Please reload the page.');
+});
+
+// Helper to check for critical DOM elements and warn if missing
+function checkCriticalElements() {
+    const requiredIds = ['prevStep', 'nextStep', 'taskForm', 'taskModal'];
+    let missing = [];
+    requiredIds.forEach(id => {
+        if (!document.getElementById(id)) missing.push(id);
+    });
+    if (missing.length > 0) {
+        console.warn('[index.js] Critical DOM elements missing after load:', missing);
+        // Optionally, show a warning to the user
+        // alert('Some features may not work until you reload the page.');
+    }
+}
+
+// Helper to re-initialize the app (for SPA reloads or dynamic DOM changes)
+window.reinitializeSPOTApp = function() {
+    console.info('[index.js] Re-initializing SPOTApp due to DOM update or reload.');
+    if (window.spotApp && window.spotApp.events && typeof window.spotApp.events.unbindAll === 'function') {
+        window.spotApp.events.unbindAll();
+    }
+    initializeApp();
+};
+
 // Bootstrap the app when DOM is ready
 if (document.readyState === 'loading') {
     // Loading hasn't finished yet
     console.log('[index.js] Document is loading. Adding DOMContentLoaded listener.');
-    window.addEventListener('DOMContentLoaded', initializeApp);
+    window.addEventListener('DOMContentLoaded', () => {
+        initializeApp();
+        checkCriticalElements();
+    });
 } else {
     // `DOMContentLoaded` has already fired or document is 'interactive' or 'complete'
     console.log(`[index.js] Document readyState is: ${document.readyState}. Initializing app directly.`);
     initializeApp();
+    checkCriticalElements();
 }
 

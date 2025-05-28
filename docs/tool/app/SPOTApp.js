@@ -13,22 +13,30 @@ import { EventBinder } from './EventBinder.js';
  */
 export class SPOTApp {
     constructor() {
-        console.log('[SPOTApp] Constructor entered.');
-        this.taskManager = new TaskManager();
-        this.taskManager.migrateTasks();
-        this.ui = new UIRenderer(this.taskManager);
-        this.dragDrop = new DragDropManager(this.taskManager, this.ui);
-        this.events = new EventBinder(this, this.ui, this.taskManager, this.dragDrop);
-        this.currentStep = 'survey';
-        window.spotApp = this; // for drag-drop callback
-        this.init();
-        console.log('[SPOTApp] Constructor finished.');
+        try {
+            console.log('[SPOTApp] Constructor entered.');
+            this.taskManager = new TaskManager();
+            this.taskManager.migrateTasks();
+            this.ui = new UIRenderer(this.taskManager);
+            this.dragDrop = new DragDropManager(this.taskManager, this.ui);
+            this.events = new EventBinder(this, this.ui, this.taskManager, this.dragDrop);
+            this.currentStep = 'survey';
+            window.spotApp = this; // for drag-drop callback
+            this.init();
+            console.log('[SPOTApp] Constructor finished.');
+        } catch (e) {
+            console.error('[SPOTApp] Error in constructor:', e);
+        }
     }
     init() {
-        console.info('[SPOTApp] Initializing application...');
-        this.ui.renderInitialView();
-        console.info('[SPOTApp] UI initial view rendered.');
-        this.events.bindAll();
-        console.info('[SPOTApp] All events bound.');
+        try {
+            console.info('[SPOTApp] Initializing application...');
+            this.ui.renderInitialView();
+            console.info('[SPOTApp] UI initial view rendered.');
+            this.events.bindAll();
+            console.info('[SPOTApp] All events bound.');
+        } catch (e) {
+            console.error('[SPOTApp] Error in init:', e);
+        }
     }
 }

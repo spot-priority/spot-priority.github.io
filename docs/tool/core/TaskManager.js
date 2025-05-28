@@ -10,12 +10,16 @@ export class TaskManager {
      * Initializes the TaskManager, loads tasks from storage, and migrates as needed.
      */
     constructor() {
-        /** @type {Array<Object>} */
-        this.tasks = [];
-        /** @type {Array<Function>} */
-        this.observers = [];
-        this.loadTasks();
-        this.migrateTasks();
+        try {
+            /** @type {Array<Object>} */
+            this.tasks = [];
+            /** @type {Array<Function>} */
+            this.observers = [];
+            this.loadTasks();
+            this.migrateTasks();
+        } catch (e) {
+            console.error('[TaskManager] Error in constructor:', e);
+        }
     }
 
     // =====================
@@ -28,19 +32,23 @@ export class TaskManager {
      * @returns {Object} The newly added task
      */
     addTask(task) {
-        const newTask = {
-            id: this.generateId(),
-            name: task.name,
-            survey: task.survey,
-            priority: task.priority,
-            optimize: task.optimize || 'more',
-            demo: !!task.demo,
-            status: task.status || 'todo'
-        };
-        this.tasks.push(newTask);
-        this.notifyObservers();
-        this.saveTasks();
-        return newTask;
+        try {
+            const newTask = {
+                id: this.generateId(),
+                name: task.name,
+                survey: task.survey,
+                priority: task.priority,
+                optimize: task.optimize || 'more',
+                demo: !!task.demo,
+                status: task.status || 'todo'
+            };
+            this.tasks.push(newTask);
+            this.notifyObservers();
+            this.saveTasks();
+            return newTask;
+        } catch (e) {
+            console.error('[TaskManager] Error in addTask:', e);
+        }
     }
 
     /**
@@ -50,18 +58,22 @@ export class TaskManager {
      * @returns {Object|null} The updated task or null if not found
      */
     updateTask(id, updates) {
-        const index = this.tasks.findIndex(task => task.id === id);
-        if (index !== -1) {
-            this.tasks[index] = {
-                ...this.tasks[index],
-                ...updates,
-                updatedAt: new Date().toISOString()
-            };
-            this.notifyObservers();
-            this.saveTasks();
-            return this.tasks[index];
+        try {
+            const index = this.tasks.findIndex(task => task.id === id);
+            if (index !== -1) {
+                this.tasks[index] = {
+                    ...this.tasks[index],
+                    ...updates,
+                    updatedAt: new Date().toISOString()
+                };
+                this.notifyObservers();
+                this.saveTasks();
+                return this.tasks[index];
+            }
+            return null;
+        } catch (e) {
+            console.error('[TaskManager] Error in updateTask:', e);
         }
-        return null;
     }
 
     /**
@@ -70,14 +82,18 @@ export class TaskManager {
      * @returns {boolean} True if deleted, false if not found
      */
     deleteTask(id) {
-        const index = this.tasks.findIndex(task => task.id === id);
-        if (index !== -1) {
-            this.tasks.splice(index, 1);
-            this.notifyObservers();
-            this.saveTasks();
-            return true;
+        try {
+            const index = this.tasks.findIndex(task => task.id === id);
+            if (index !== -1) {
+                this.tasks.splice(index, 1);
+                this.notifyObservers();
+                this.saveTasks();
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error('[TaskManager] Error in deleteTask:', e);
         }
-        return false;
     }
 
     // =====================
@@ -91,15 +107,19 @@ export class TaskManager {
      * @returns {boolean} True if moved, false if not found
      */
     moveTask(id, newGroup) {
-        const task = this.tasks.find(task => task.id === id);
-        if (task) {
-            task.group = newGroup;
-            task.updatedAt = new Date().toISOString();
-            this.notifyObservers();
-            this.saveTasks();
-            return true;
+        try {
+            const task = this.tasks.find(task => task.id === id);
+            if (task) {
+                task.group = newGroup;
+                task.updatedAt = new Date().toISOString();
+                this.notifyObservers();
+                this.saveTasks();
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error('[TaskManager] Error in moveTask:', e);
         }
-        return false;
     }
 
     /**
@@ -109,16 +129,20 @@ export class TaskManager {
      * @param {number} newIndex
      */
     moveTaskToSurveyAndReorder(taskId, newSurvey, newIndex) {
-        const idx = this.tasks.findIndex(t => t.id === taskId);
-        if (idx === -1) return;
-        const [task] = this.tasks.splice(idx, 1);
-        task.survey = newSurvey;
-        const groupTasks = this.tasks.filter(t => t.survey === newSurvey);
-        let insertIdx = this.tasks.findIndex((t, i) => t.survey === newSurvey && groupTasks.indexOf(t) === newIndex);
-        if (insertIdx === -1) insertIdx = this.tasks.length;
-        this.tasks.splice(insertIdx, 0, task);
-        this.notifyObservers();
-        this.saveTasks();
+        try {
+            const idx = this.tasks.findIndex(t => t.id === taskId);
+            if (idx === -1) return;
+            const [task] = this.tasks.splice(idx, 1);
+            task.survey = newSurvey;
+            const groupTasks = this.tasks.filter(t => t.survey === newSurvey);
+            let insertIdx = this.tasks.findIndex((t, i) => t.survey === newSurvey && groupTasks.indexOf(t) === newIndex);
+            if (insertIdx === -1) insertIdx = this.tasks.length;
+            this.tasks.splice(insertIdx, 0, task);
+            this.notifyObservers();
+            this.saveTasks();
+        } catch (e) {
+            console.error('[TaskManager] Error in moveTaskToSurveyAndReorder:', e);
+        }
     }
 
     /**
@@ -128,16 +152,20 @@ export class TaskManager {
      * @param {number} newIndex
      */
     moveTaskToPriorityAndReorder(taskId, newPriority, newIndex) {
-        const idx = this.tasks.findIndex(t => t.id === taskId && t.survey === 'primary');
-        if (idx === -1) return;
-        const [task] = this.tasks.splice(idx, 1);
-        task.priority = newPriority;
-        const groupTasks = this.tasks.filter(t => t.survey === 'primary' && t.priority === newPriority);
-        let insertIdx = this.tasks.findIndex((t, i) => t.survey === 'primary' && t.priority === newPriority && groupTasks.indexOf(t) === newIndex);
-        if (insertIdx === -1) insertIdx = this.tasks.length;
-        this.tasks.splice(insertIdx, 0, task);
-        this.notifyObservers();
-        this.saveTasks();
+        try {
+            const idx = this.tasks.findIndex(t => t.id === taskId && t.survey === 'primary');
+            if (idx === -1) return;
+            const [task] = this.tasks.splice(idx, 1);
+            task.priority = newPriority;
+            const groupTasks = this.tasks.filter(t => t.survey === 'primary' && t.priority === newPriority);
+            let insertIdx = this.tasks.findIndex((t, i) => t.survey === 'primary' && t.priority === newPriority && groupTasks.indexOf(t) === newIndex);
+            if (insertIdx === -1) insertIdx = this.tasks.length;
+            this.tasks.splice(insertIdx, 0, task);
+            this.notifyObservers();
+            this.saveTasks();
+        } catch (e) {
+            console.error('[TaskManager] Error in moveTaskToPriorityAndReorder:', e);
+        }
     }
 
     /**
@@ -147,16 +175,20 @@ export class TaskManager {
      * @param {number} newIndex
      */
     moveTaskToOptimizeAndReorder(taskId, newOptimize, newIndex) {
-        const idx = this.tasks.findIndex(t => t.id === taskId && t.priority === 'higher');
-        if (idx === -1) return;
-        const [task] = this.tasks.splice(idx, 1);
-        task.optimize = newOptimize;
-        const groupTasks = this.tasks.filter(t => t.priority === 'higher' && t.optimize === newOptimize);
-        let insertIdx = this.tasks.findIndex((t, i) => t.priority === 'higher' && t.optimize === newOptimize && groupTasks.indexOf(t) === newIndex);
-        if (insertIdx === -1) insertIdx = this.tasks.length;
-        this.tasks.splice(insertIdx, 0, task);
-        this.notifyObservers();
-        this.saveTasks();
+        try {
+            const idx = this.tasks.findIndex(t => t.id === taskId && t.priority === 'higher');
+            if (idx === -1) return;
+            const [task] = this.tasks.splice(idx, 1);
+            task.optimize = newOptimize;
+            const groupTasks = this.tasks.filter(t => t.priority === 'higher' && t.optimize === newOptimize);
+            let insertIdx = this.tasks.findIndex((t, i) => t.priority === 'higher' && t.optimize === newOptimize && groupTasks.indexOf(t) === newIndex);
+            if (insertIdx === -1) insertIdx = this.tasks.length;
+            this.tasks.splice(insertIdx, 0, task);
+            this.notifyObservers();
+            this.saveTasks();
+        } catch (e) {
+            console.error('[TaskManager] Error in moveTaskToOptimizeAndReorder:', e);
+        }
     }
 
     /**
@@ -166,16 +198,20 @@ export class TaskManager {
      * @param {number} newIndex
      */
     moveTaskToStatusAndReorder(taskId, newStatus, newIndex) {
-        const idx = this.tasks.findIndex(t => t.id === taskId);
-        if (idx === -1) return;
-        const [task] = this.tasks.splice(idx, 1);
-        task.status = newStatus;
-        const groupTasks = this.tasks.filter(t => t.status === newStatus);
-        let insertIdx = this.tasks.findIndex((t, i) => t.status === newStatus && groupTasks.indexOf(t) === newIndex);
-        if (insertIdx === -1) insertIdx = this.tasks.length;
-        this.tasks.splice(insertIdx, 0, task);
-        this.notifyObservers();
-        this.saveTasks();
+        try {
+            const idx = this.tasks.findIndex(t => t.id === taskId);
+            if (idx === -1) return;
+            const [task] = this.tasks.splice(idx, 1);
+            task.status = newStatus;
+            const groupTasks = this.tasks.filter(t => t.status === newStatus);
+            let insertIdx = this.tasks.findIndex((t, i) => t.status === newStatus && groupTasks.indexOf(t) === newIndex);
+            if (insertIdx === -1) insertIdx = this.tasks.length;
+            this.tasks.splice(insertIdx, 0, task);
+            this.notifyObservers();
+            this.saveTasks();
+        } catch (e) {
+            console.error('[TaskManager] Error in moveTaskToStatusAndReorder:', e);
+        }
     }
 
     // =====================
@@ -296,8 +332,8 @@ export class TaskManager {
     saveTasks() {
         try {
             localStorage.setItem('spot-tasks', JSON.stringify(this.tasks));
-        } catch (error) {
-            console.error('Error saving tasks:', error);
+        } catch (e) {
+            console.error('[TaskManager] Error in saveTasks:', e);
         }
     }
 
@@ -310,8 +346,8 @@ export class TaskManager {
             if (savedTasks) {
                 this.tasks = JSON.parse(savedTasks);
             }
-        } catch (error) {
-            console.error('Error loading tasks:', error);
+        } catch (e) {
+            console.error('[TaskManager] Error in loadTasks:', e);
             this.tasks = [];
         }
     }
@@ -402,14 +438,18 @@ export class TaskManager {
      * @param {Array<Object>} tasks
      */
     importTasks(tasks) {
-        this.tasks = tasks.map(task => ({
-            ...task,
-            id: this.generateId(),
-            createdAt: task.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        }));
-        this.notifyObservers();
-        this.saveTasks();
+        try {
+            this.tasks = tasks.map(task => ({
+                ...task,
+                id: this.generateId(),
+                createdAt: task.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            }));
+            this.notifyObservers();
+            this.saveTasks();
+        } catch (e) {
+            console.error('[TaskManager] Error in importTasks:', e);
+        }
     }
 
     /**

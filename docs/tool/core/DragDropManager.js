@@ -23,21 +23,29 @@ export class DragDropManager {
      * @param {string} [type] - e.g., 'survey', 'prioritize', etc.
      */
     initializeDragAndDrop(container, type) {
-        if (!container) {
-            console.warn('[DragDropManager] No container provided for drag-and-drop');
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', () => this.initializeDragAndDrop(container, type));
             return;
         }
-        container.addEventListener('dragstart', this.handleDragStart.bind(this));
-        container.addEventListener('dragend', this.handleDragEnd.bind(this));
-        container.addEventListener('dragover', this.handleDragOver.bind(this));
-        container.addEventListener('dragleave', this.handleDragLeave.bind(this));
-        container.addEventListener('drop', this.handleDrop.bind(this));
-        // Mobile touch events
-        container.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
-        container.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
-        container.addEventListener('touchend', this.handleTouchEnd.bind(this));
-        container.addEventListener('touchcancel', this.handleTouchEnd.bind(this));
-        console.debug('[DragDropManager] Drag-and-drop initialized for', container, 'type:', type);
+        try {
+            if (!container) {
+                console.warn('[DragDropManager] No container provided for drag-and-drop');
+                return;
+            }
+            container.addEventListener('dragstart', this.handleDragStart.bind(this));
+            container.addEventListener('dragend', this.handleDragEnd.bind(this));
+            container.addEventListener('dragover', this.handleDragOver.bind(this));
+            container.addEventListener('dragleave', this.handleDragLeave.bind(this));
+            container.addEventListener('drop', this.handleDrop.bind(this));
+            // Mobile touch events
+            container.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+            container.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+            container.addEventListener('touchend', this.handleTouchEnd.bind(this));
+            container.addEventListener('touchcancel', this.handleTouchEnd.bind(this));
+            console.debug('[DragDropManager] Drag-and-drop initialized for', container, 'type:', type);
+        } catch (e) {
+            console.error('[DragDropManager] Error in initializeDragAndDrop:', e);
+        }
     }
 
     // ...additional initialization methods for survey, prioritize, optimize, etc. (see legacy for details)
