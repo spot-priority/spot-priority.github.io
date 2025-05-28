@@ -86,13 +86,42 @@ export class DragDropManager {
     handleDrop(e) {
         e.preventDefault();
         e.currentTarget.classList.remove('drag-over');
-        // TODO: Implement drop logic, update taskManager as needed
-        console.debug('[DragDropManager] Drop event', e.currentTarget);
+        // --- IMPLEMENTATION: Move task in TaskManager and re-render UI ---
+        try {
+            const dropList = e.currentTarget;
+            const draggedItem = this.draggedItem || document.querySelector('.task-item.dragging');
+            if (!draggedItem || !dropList) return;
+            const taskId = draggedItem.dataset.taskId;
+            // Determine context by data attributes
+            if (dropList.hasAttribute('data-survey')) {
+                // Survey step: move between primary/secondary
+                const newSurvey = dropList.getAttribute('data-survey');
+                const newIndex = Array.from(dropList.children).indexOf(draggedItem);
+                this.taskManager.moveTaskToSurveyAndReorder(taskId, newSurvey, newIndex);
+                if (this.ui && this.ui.renderSurveyStep) this.ui.renderSurveyStep();
+            } else if (dropList.hasAttribute('data-priority')) {
+                // Prioritize step: move between higher/lower
+                const newPriority = dropList.getAttribute('data-priority');
+                const newIndex = Array.from(dropList.children).indexOf(draggedItem);
+                this.taskManager.moveTaskToPriorityAndReorder(taskId, newPriority, newIndex);
+                if (this.ui && this.ui.renderPrioritizeStep) this.ui.renderPrioritizeStep();
+            } else if (dropList.hasAttribute('data-optimize')) {
+                // Optimize step: move between more/less
+                const newOptimize = dropList.getAttribute('data-optimize');
+                const newIndex = Array.from(dropList.children).indexOf(draggedItem);
+                this.taskManager.moveTaskToOptimizeAndReorder(taskId, newOptimize, newIndex);
+                if (this.ui && this.ui.renderOptimizeStep) this.ui.renderOptimizeStep();
+            } else if (dropList.hasAttribute('data-status')) {
+                // Action step: move between statuses
+                const newStatus = dropList.getAttribute('data-status');
+                const newIndex = Array.from(dropList.children).indexOf(draggedItem);
+                this.taskManager.moveTaskToStatusAndReorder(taskId, newStatus, newIndex);
+                if (this.ui && this.ui.renderActionStep) this.ui.renderActionStep();
+            }
+        } catch (err) {
+            console.error('[DragDropManager] Error in handleDrop:', err);
+        }
     }
-
-    // =====================
-    // Touch Event Handlers (for mobile)
-    // =====================
 
     handleTouchStart(e) {
         if (e.touches.length !== 1) return;
@@ -132,7 +161,6 @@ export class DragDropManager {
     }
     handleTouchEnd(e) {
         if (!this.touchDragging || !this.draggedItem) return;
-        // Find the drop zone under the touch
         let dropTarget = null;
         const touch = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]);
         if (touch) {
@@ -149,12 +177,37 @@ export class DragDropManager {
                 list.classList.remove('drag-over');
             });
         }
-        // Move the item in the DOM if dropped in a valid zone
-        if (dropTarget && dropTarget !== this.originalParent) {
-            dropTarget.appendChild(this.draggedItem);
-            // TODO: update taskManager with new group/status if needed
-        } else if (this.originalParent && this.draggedItem) {
-            this.originalParent.insertBefore(this.draggedItem, this.originalNextSibling);
+        // --- IMPLEMENTATION: Move task in TaskManager and re-render UI ---
+        try {
+            if (dropTarget && dropTarget !== this.originalParent) {
+                const draggedItem = this.draggedItem;
+                const taskId = draggedItem.dataset.taskId;
+                if (dropTarget.hasAttribute('data-survey')) {
+                    const newSurvey = dropTarget.getAttribute('data-survey');
+                    const newIndex = Array.from(dropTarget.children).indexOf(draggedItem);
+                    this.taskManager.moveTaskToSurveyAndReorder(taskId, newSurvey, newIndex);
+                    if (this.ui && this.ui.renderSurveyStep) this.ui.renderSurveyStep();
+                } else if (dropTarget.hasAttribute('data-priority')) {
+                    const newPriority = dropTarget.getAttribute('data-priority');
+                    const newIndex = Array.from(dropTarget.children).indexOf(draggedItem);
+                    this.taskManager.moveTaskToPriorityAndReorder(taskId, newPriority, newIndex);
+                    if (this.ui && this.ui.renderPrioritizeStep) this.ui.renderPrioritizeStep();
+                } else if (dropTarget.hasAttribute('data-optimize')) {
+                    const newOptimize = dropTarget.getAttribute('data-optimize');
+                    const newIndex = Array.from(dropTarget.children).indexOf(draggedItem);
+                    this.taskManager.moveTaskToOptimizeAndReorder(taskId, newOptimize, newIndex);
+                    if (this.ui && this.ui.renderOptimizeStep) this.ui.renderOptimizeStep();
+                } else if (dropTarget.hasAttribute('data-status')) {
+                    const newStatus = dropTarget.getAttribute('data-status');
+                    const newIndex = Array.from(dropTarget.children).indexOf(draggedItem);
+                    this.taskManager.moveTaskToStatusAndReorder(taskId, newStatus, newIndex);
+                    if (this.ui && this.ui.renderActionStep) this.ui.renderActionStep();
+                }
+            } else if (this.originalParent && this.draggedItem) {
+                this.originalParent.insertBefore(this.draggedItem, this.originalNextSibling);
+            }
+        } catch (err) {
+            console.error('[DragDropManager] Error in handleTouchEnd:', err);
         }
         // Reset styles
         this.draggedItem.classList.remove('touch-dragging');
