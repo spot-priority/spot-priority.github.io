@@ -21,41 +21,39 @@ export class EventBinder {
         const prevStepBtn = document.getElementById('prevStep');
         const nextStepBtn = document.getElementById('nextStep');
         if (prevStepBtn) {
-            prevStepBtn.onclick = () => {
+            prevStepBtn.addEventListener('click', () => {
                 const steps = ['survey', 'prioritize', 'optimize', 'action'];
                 const currentIndex = steps.indexOf(this.app.currentStep);
                 if (currentIndex > 0) {
                     this.app.currentStep = steps[currentIndex - 1];
                     this.ui.renderCurrentStep(this.app.currentStep);
                 }
-            };
+            });
         }
         if (nextStepBtn) {
-            nextStepBtn.onclick = () => {
+            nextStepBtn.addEventListener('click', () => {
                 const steps = ['survey', 'prioritize', 'optimize', 'action'];
                 const currentIndex = steps.indexOf(this.app.currentStep);
                 if (currentIndex < steps.length - 1) {
                     this.app.currentStep = steps[currentIndex + 1];
                     this.ui.renderCurrentStep(this.app.currentStep);
                 }
-            };
+            });
         }
-        // Event delegation for step navigation
-        const stepSelector = document.querySelector('.step-selector');
-        if (stepSelector) {
-            stepSelector.onclick = (e) => {
-                const btn = e.target.closest('.step-btn');
-                if (btn && btn.hasAttribute('data-step')) {
-                    const step = btn.getAttribute('data-step');
+        // Step navigation
+        document.querySelectorAll('.step-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const step = btn.getAttribute('data-step');
+                if (step) {
                     this.app.currentStep = step;
                     this.ui.renderCurrentStep(step);
                 }
-            };
-        }
+            });
+        });
         // Bind static control buttons
         const toggleFullControl = document.getElementById('toggleFullControl');
         if (toggleFullControl) {
-            toggleFullControl.onclick = () => {
+            toggleFullControl.addEventListener('click', () => {
                 const fullControl = document.querySelector('.full-control-view');
                 const contentArea = document.querySelector('.content-area');
                 if (fullControl && contentArea) {
@@ -63,17 +61,17 @@ export class EventBinder {
                     fullControl.style.display = isVisible ? 'none' : 'block';
                     contentArea.style.display = isVisible ? 'block' : 'none';
                 }
-            };
+            });
         }
         const importTasks = document.getElementById('importTasks');
         if (importTasks) {
-            importTasks.onclick = () => {
+            importTasks.addEventListener('click', () => {
                 document.getElementById('importModal').style.display = 'block';
-            };
+            });
         }
         const exportTasks = document.getElementById('exportTasks');
         if (exportTasks) {
-            exportTasks.onclick = () => {
+            exportTasks.addEventListener('click', () => {
                 const data = this.taskManager.exportTasks();
                 const blob = new Blob([data], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -84,29 +82,27 @@ export class EventBinder {
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-            };
+            });
         }
         const clearTasks = document.getElementById('clearTasks');
         if (clearTasks) {
-            clearTasks.onclick = () => {
+            clearTasks.addEventListener('click', () => {
                 if (confirm('Are you sure you want to clear all tasks?')) {
                     this.taskManager.clearAllTasks();
                     this.ui.renderCurrentStep(this.app.currentStep);
                 }
-            };
+            });
         }
-        // Modal close buttons (delegation)
-        document.body.onclick = (e) => {
-            const closeBtn = e.target.closest('.close');
-            if (closeBtn) {
-                const modal = closeBtn.closest('.modal');
+        // Modal close buttons
+        document.querySelectorAll('.close').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
                 if (modal) modal.style.display = 'none';
-            }
-        };
-        // Add-task forms (delegation)
-        document.body.addEventListener('submit', (e) => {
-            const form = e.target.closest('.add-task-form');
-            if (form) {
+            });
+        });
+        // Add-task forms
+        document.querySelectorAll('.add-task-form').forEach(form => {
+            form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const input = form.querySelector('.add-task-input');
                 let name = input.value.trim();
@@ -117,12 +113,12 @@ export class EventBinder {
                     input.value = '';
                     this.ui.renderSurveyStep();
                 }
-            }
+            });
         });
         // Main task modal form
         const taskForm = document.getElementById('taskForm');
         if (taskForm) {
-            taskForm.onsubmit = (e) => {
+            taskForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 let title = document.getElementById('taskTitle').value;
                 if (title.length > 64) title = title.slice(0, 64);
@@ -134,12 +130,12 @@ export class EventBinder {
                     document.getElementById('taskModal').style.display = 'none';
                     taskForm.reset();
                 }
-            };
+            });
         }
         // Import form
         const importForm = document.getElementById('importForm');
         if (importForm) {
-            importForm.onsubmit = (e) => {
+            importForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const fileInput = document.getElementById('importFile');
                 const file = fileInput.files[0];
@@ -158,9 +154,12 @@ export class EventBinder {
                     };
                     reader.readAsText(file);
                 }
-            };
+            });
         }
-        // Drag and drop is handled by DragDropManager, which should use delegation or be re-initialized after render if needed.
+        // Drag and drop: always re-initialize after render
+        document.querySelectorAll('.task-list').forEach(list => {
+            this.dragDrop.initializeDragAndDrop(list);
+        });
         // Subscribe to task changes for warning updates
         this.taskManager.subscribe(() => {
             // Example: this.ui.renderStepWarnings();
