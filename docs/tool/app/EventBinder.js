@@ -22,6 +22,7 @@ export class EventBinder {
             return;
         }
         try {
+            this.unbindAll(); // Unbind previous listeners before binding new ones
             console.log('[EventBinder] Starting to bind all event listeners...'); // Changed to console.log
             // Navigation buttons
             const prevStepBtn = document.getElementById('prevStep');
@@ -228,10 +229,31 @@ export class EventBinder {
     }
     /**
      * Unbind all event listeners (for cleanup or re-binding).
-     * NOTE: Implement as needed for dynamic re-binding or SPA navigation.
+     * NOTE: This implementation only unbinds main navigation and control buttons for now.
      */
     unbindAll() {
-        // TODO: Implement event unbinding logic if needed
+        // Unbind navigation buttons
+        const prevStepBtn = document.getElementById('prevStep');
+        const nextStepBtn = document.getElementById('nextStep');
+        if (prevStepBtn) prevStepBtn.replaceWith(prevStepBtn.cloneNode(true));
+        if (nextStepBtn) nextStepBtn.replaceWith(nextStepBtn.cloneNode(true));
+        // Unbind control buttons
+        ['toggleFullControl', 'importTasks', 'exportTasks', 'clearTasks'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.replaceWith(btn.cloneNode(true));
+        });
+        // Unbind step-btns
+        document.querySelectorAll('.step-btn').forEach(btn => btn.replaceWith(btn.cloneNode(true)));
+        // Unbind modal close buttons
+        document.querySelectorAll('.close').forEach(btn => btn.replaceWith(btn.cloneNode(true)));
+        // Unbind add-task forms
+        document.querySelectorAll('.add-task-form').forEach(form => form.replaceWith(form.cloneNode(true)));
+        // Unbind task form
+        const taskForm = document.getElementById('taskForm');
+        if (taskForm) taskForm.replaceWith(taskForm.cloneNode(true));
+        // Unbind import form
+        const importForm = document.getElementById('importForm');
+        if (importForm) importForm.replaceWith(importForm.cloneNode(true));
     }
     // ...other event binding helpers
 }

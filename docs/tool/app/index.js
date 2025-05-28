@@ -8,13 +8,22 @@ console.log('[index.js] Script start. This should appear if the file is parsed a
 import { SPOTApp } from './SPOTApp.js';
 console.log('[index.js] SPOTApp imported. If this does not appear, there was an issue importing SPOTApp.js or its dependencies.');
 
+let appInitialized = false;
+
 function initializeApp() {
+    if (appInitialized) return;
+    appInitialized = true;
     console.log('[index.js] initializeApp function called. Attempting to initialize SPOTApp...');
     try {
         new SPOTApp();
         console.log('[index.js] SPOTApp instantiation successful.');
     } catch (e) {
         console.error('[index.js] Error during SPOTApp instantiation or init:', e);
+        const errorDiv = document.getElementById('global-error');
+        if (errorDiv) {
+            errorDiv.textContent = 'A critical error occurred: ' + (e.message || e);
+            errorDiv.style.display = 'block';
+        }
     }
 }
 
@@ -55,7 +64,7 @@ if (document.readyState === 'loading') {
     window.addEventListener('DOMContentLoaded', () => {
         initializeApp();
         checkCriticalElements();
-    });
+    }, { once: true });
 } else {
     // `DOMContentLoaded` has already fired or document is 'interactive' or 'complete'
     console.log(`[index.js] Document readyState is: ${document.readyState}. Initializing app directly.`);
