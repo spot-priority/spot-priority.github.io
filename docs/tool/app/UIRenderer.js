@@ -295,6 +295,10 @@ export class UIRenderer {
             } else if (step === 'action') {
                 this.renderActionStep();
             }
+            // --- Ensure all event listeners are rebound after render ---
+            if (window.spotApp && window.spotApp.events && typeof window.spotApp.events.bindAll === 'function') {
+                window.spotApp.events.bindAll();
+            }
         } catch (e) {
             console.error('[UIRenderer] Error in renderCurrentStep:', e);
         }
