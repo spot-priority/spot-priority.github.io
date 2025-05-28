@@ -93,16 +93,78 @@ export class DragDropManager {
     // =====================
 
     handleTouchStart(e) {
-        // TODO: Implement touch drag start logic
-        console.debug('[DragDropManager] Touch start', e.target);
+        if (e.touches.length !== 1) return;
+        this.touchDragging = true;
+        this.touchStartY = e.touches[0].clientY;
+        this.touchStartX = e.touches[0].clientX;
+        this.draggedItem = e.target.closest('.task-item');
+        if (!this.draggedItem) return;
+        this.draggedItem.classList.add('touch-dragging');
+        this.draggedItem.style.zIndex = 1000;
+        this.draggedItem.style.position = 'relative';
+        this.draggedItem.style.pointerEvents = 'none';
+        this.originalParent = this.draggedItem.parentNode;
+        this.originalNextSibling = this.draggedItem.nextSibling;
+        e.preventDefault();
     }
     handleTouchMove(e) {
-        // TODO: Implement touch drag move logic
-        console.debug('[DragDropManager] Touch move', e.target);
+        if (!this.touchDragging || !this.draggedItem) return;
+        const touch = e.touches[0];
+        // Move the dragged item visually
+        this.draggedItem.style.transform = `translate(${touch.clientX - this.touchStartX}px, ${touch.clientY - this.touchStartY}px)`;
+        // Highlight drop zones
+        document.querySelectorAll('.task-list').forEach(list => {
+            const rect = list.getBoundingClientRect();
+            if (
+                touch.clientX > rect.left &&
+                touch.clientX < rect.right &&
+                touch.clientY > rect.top &&
+                touch.clientY < rect.bottom
+            ) {
+                list.classList.add('drag-over');
+            } else {
+                list.classList.remove('drag-over');
+            }
+        });
+        e.preventDefault();
     }
     handleTouchEnd(e) {
-        // TODO: Implement touch drag end logic
-        console.debug('[DragDropManager] Touch end', e.target);
+        if (!this.touchDragging || !this.draggedItem) return;
+        // Find the drop zone under the touch
+        let dropTarget = null;
+        const touch = (e.changedTouches && e.changedTouches[0]) || (e.touches && e.touches[0]);
+        if (touch) {
+            document.querySelectorAll('.task-list').forEach(list => {
+                const rect = list.getBoundingClientRect();
+                if (
+                    touch.clientX > rect.left &&
+                    touch.clientX < rect.right &&
+                    touch.clientY > rect.top &&
+                    touch.clientY < rect.bottom
+                ) {
+                    dropTarget = list;
+                }
+                list.classList.remove('drag-over');
+            });
+        }
+        // Move the item in the DOM if dropped in a valid zone
+        if (dropTarget && dropTarget !== this.originalParent) {
+            dropTarget.appendChild(this.draggedItem);
+            // TODO: update taskManager with new group/status if needed
+        } else if (this.originalParent && this.draggedItem) {
+            this.originalParent.insertBefore(this.draggedItem, this.originalNextSibling);
+        }
+        // Reset styles
+        this.draggedItem.classList.remove('touch-dragging');
+        this.draggedItem.style.transform = '';
+        this.draggedItem.style.zIndex = '';
+        this.draggedItem.style.position = '';
+        this.draggedItem.style.pointerEvents = '';
+        this.touchDragging = false;
+        this.draggedItem = null;
+        this.originalParent = null;
+        this.originalNextSibling = null;
+        e.preventDefault();
     }
 
     // ...additional methods for survey/prioritize/optimize drag-and-drop, as in legacy

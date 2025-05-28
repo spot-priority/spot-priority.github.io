@@ -404,6 +404,26 @@ main {
         margin: 20% auto;
         width: 95%;
     }
+
+    .task-item {
+        min-height: 48px;
+        min-width: 44px;
+        font-size: 1.1em;
+        margin-bottom: 12px;
+        touch-action: none;
+    }
+
+    .task-list {
+        min-height: 80px;
+        padding: 16px 8px;
+        font-size: 1.1em;
+    }
+
+    .btn, button {
+        min-height: 44px;
+        min-width: 44px;
+        font-size: 1.1em;
+    }
 }
 
 /* Animations */
@@ -826,6 +846,26 @@ footer a:active {
 
     .full-control-view {
         grid-template-columns: 1fr;
+    }
+
+    .task-item {
+        min-height: 48px;
+        min-width: 44px;
+        font-size: 1.1em;
+        margin-bottom: 12px;
+        touch-action: none;
+    }
+
+    .task-list {
+        min-height: 80px;
+        padding: 16px 8px;
+        font-size: 1.1em;
+    }
+
+    .btn, button {
+        min-height: 44px;
+        min-width: 44px;
+        font-size: 1.1em;
     }
 }
 
