@@ -249,6 +249,28 @@ export class EventBinder {
         this.taskManager.subscribe(() => {
             // Example: this.ui.renderStepWarnings();
         });
+        // --- Action Step Task Buttons (Delete/Done) ---
+        if (this.app.currentStep === 'action') {
+            document.querySelectorAll('.task-list .task-item').forEach(item => {
+                const taskId = item.dataset.taskId;
+                const doneBtn = item.querySelector('.done-btn');
+                const deleteBtn = item.querySelector('.delete-btn');
+                if (doneBtn) {
+                    doneBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.taskManager.moveTaskToStatusAndReorder(taskId, 'done', 0);
+                        this.ui.renderCurrentStep(this.app.currentStep);
+                    });
+                }
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.taskManager.deleteTask(taskId);
+                        this.ui.renderCurrentStep(this.app.currentStep);
+                    });
+                }
+            });
+        }
     }
     // ...other event binding helpers
 }

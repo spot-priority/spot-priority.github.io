@@ -277,7 +277,7 @@ export class UIRenderer {
     }
 
     /**
-     * Create a DOM element for an action task.
+     * Create a DOM element for an action task (with delete/done buttons).
      * @param {Object} task
      * @param {number} idx
      * @returns {HTMLElement}
@@ -287,7 +287,12 @@ export class UIRenderer {
         div.className = 'task-item';
         div.draggable = true;
         div.dataset.taskId = task.id;
-        div.innerHTML = `<span class="task-rank">${idx + 1}.</span> <span class="task-name">${task.name}</span>`;
+        div.innerHTML = `
+            <span class="task-rank">${idx + 1}.</span>
+            <span class="task-name">${task.name}</span>
+            <button class="done-btn" title="Mark as done" aria-label="Mark as done">✔️</button>
+            <button class="delete-btn" title="Delete task" aria-label="Delete task">🗑️</button>
+        `;
         return div;
     }
 
