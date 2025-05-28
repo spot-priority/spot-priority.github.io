@@ -28,12 +28,12 @@ export class EventBinder {
      */
     bindAll() {
         // --- Navigation Buttons ---
-        /**
-         * Previous step button: moves to the previous step in the workflow.
-         */
+        // Remove previous listeners by replacing the element (simple, robust for classic JS)
         const prevStepBtn = document.getElementById('prevStep');
         if (prevStepBtn) {
-            prevStepBtn.addEventListener('click', () => {
+            const newPrev = prevStepBtn.cloneNode(true);
+            prevStepBtn.parentNode.replaceChild(newPrev, prevStepBtn);
+            newPrev.addEventListener('click', () => {
                 const steps = ['survey', 'prioritize', 'optimize', 'action'];
                 const currentIndex = steps.indexOf(this.app.currentStep);
                 if (currentIndex > 0) {
@@ -42,12 +42,11 @@ export class EventBinder {
                 }
             });
         }
-        /**
-         * Next step button: moves to the next step in the workflow.
-         */
         const nextStepBtn = document.getElementById('nextStep');
         if (nextStepBtn) {
-            nextStepBtn.addEventListener('click', () => {
+            const newNext = nextStepBtn.cloneNode(true);
+            nextStepBtn.parentNode.replaceChild(newNext, nextStepBtn);
+            newNext.addEventListener('click', () => {
                 const steps = ['survey', 'prioritize', 'optimize', 'action'];
                 const currentIndex = steps.indexOf(this.app.currentStep);
                 if (currentIndex < steps.length - 1) {
@@ -61,8 +60,10 @@ export class EventBinder {
          * Step selector buttons: allow direct navigation to a step.
          */
         document.querySelectorAll('.step-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const step = btn.getAttribute('data-step');
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', () => {
+                const step = newBtn.getAttribute('data-step');
                 if (step) {
                     this.app.currentStep = step;
                     this.ui.renderCurrentStep(step);
