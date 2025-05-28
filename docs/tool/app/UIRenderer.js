@@ -292,6 +292,43 @@ export class UIRenderer {
     }
 
     /**
+     * Show only the current step's content, hide others.
+     * @param {string} step
+     */
+    showStepContent(step) {
+        const steps = ['survey', 'prioritize', 'optimize', 'action'];
+        steps.forEach(s => {
+            const el = document.getElementById(s);
+            if (el) el.style.display = (s === step) ? 'block' : 'none';
+        });
+        // Always hide full control view when in step mode
+        const fc = document.querySelector('.full-control-view');
+        if (fc) fc.style.display = 'none';
+        const ca = document.querySelector('.content-area');
+        if (ca) ca.style.display = 'block';
+    }
+
+    /**
+     * Show the full control view, hide step content.
+     */
+    showFullControlView() {
+        const fc = document.querySelector('.full-control-view');
+        if (fc) fc.style.display = 'block';
+        const ca = document.querySelector('.content-area');
+        if (ca) ca.style.display = 'none';
+    }
+
+    /**
+     * Hide the full control view, show step content for the given step.
+     * @param {string} step
+     */
+    hideFullControlView(step) {
+        const fc = document.querySelector('.full-control-view');
+        if (fc) fc.style.display = 'none';
+        this.showStepContent(step);
+    }
+
+    /**
      * Render the current step based on the provided step name.
      * @param {string} step
      */
@@ -301,7 +338,7 @@ export class UIRenderer {
             return;
         }
         try {
-            console.debug('[UIRenderer] Rendering current step:', step);
+            this.showStepContent(step);
             if (step === 'survey') {
                 this.renderSurveyStep();
             } else if (step === 'prioritize') {
@@ -311,7 +348,6 @@ export class UIRenderer {
             } else if (step === 'action') {
                 this.renderActionStep();
             }
-            // --- Ensure all event listeners are rebound after render ---
             if (window.spotApp && window.spotApp.events && typeof window.spotApp.events.bindAll === 'function') {
                 window.spotApp.events.bindAll();
             }

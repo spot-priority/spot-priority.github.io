@@ -77,11 +77,11 @@ export class EventBinder {
         if (toggleFullControl) {
             toggleFullControl.addEventListener('click', () => {
                 const fullControl = document.querySelector('.full-control-view');
-                const contentArea = document.querySelector('.content-area');
-                if (fullControl && contentArea) {
-                    const isVisible = fullControl.style.display === 'block';
-                    fullControl.style.display = isVisible ? 'none' : 'block';
-                    contentArea.style.display = isVisible ? 'block' : 'none';
+                const isVisible = fullControl && fullControl.style.display === 'block';
+                if (isVisible) {
+                    this.ui.hideFullControlView(this.app.currentStep);
+                } else {
+                    this.ui.showFullControlView();
                 }
             });
         }
