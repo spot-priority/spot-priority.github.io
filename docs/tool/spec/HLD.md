@@ -1,5 +1,10 @@
 # High-Level Design (HLD) for SPOT Prioritization Tool
 
+# Purpose
+# -------
+# This document provides a high-level overview of the architecture and main modules of the SPOT Prioritization Tool.
+# It is intended for developers and maintainers.
+
 ## Overview
 
 This document describes the high-level design and architecture for the refactored SPOT Prioritization Tool, following SOLID principles and modular structure.

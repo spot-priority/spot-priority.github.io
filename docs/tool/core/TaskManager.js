@@ -2,8 +2,10 @@
 // Handles all task CRUD, filtering, and persistence for the SPOT Prioritization Tool
 
 /**
- * Handles all task CRUD, filtering, and persistence.
- * Exposes a clean API for task operations.
+ * TaskManager class
+ * Handles all task CRUD, filtering, and persistence for the SPOT Prioritization Tool.
+ * Follows SOLID principles: single responsibility (task management),
+ * and is decoupled from UI and event binding.
  */
 export class TaskManager {
     /**

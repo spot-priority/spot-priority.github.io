@@ -1,3 +1,10 @@
+# SPOT Prioritization Tool - App Directory
+
+# Purpose
+# -------
+# This directory contains the main application logic, UI rendering, and event binding for the SPOT Prioritization Tool.
+# Each file is documented for clarity and maintainability.
+
 # SPOT Prioritization Tool App Layer
 
 This folder contains the main application controller and UI modules for the SPOT Prioritization Tool.

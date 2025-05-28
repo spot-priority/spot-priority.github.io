@@ -1,3 +1,9 @@
+/* SPOT Prioritization Tool Main CSS */
+/*
+  This file contains all styles for the SPOT Prioritization Tool UI.
+  Each section is documented for clarity and maintainability.
+*/
+
 /* Base Styles */
 :root {
     --primary-color: #4CAF50;
@@ -1280,4 +1286,690 @@ footer a:active {
     border-top: 2.5px solid #b0bec5;
     margin: 1.5em 0 1.5em 0;
     opacity: 0.5;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        background-color: #444;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        padding: 10px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .nav-links.show {
+        display: flex;
+    }
+
+    .nav-links li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-links li a {
+        padding: 12px 20px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .step-nav {
+        flex-direction: column;
+    }
+
+    .control-panel,
+    .full-control {
+        flex-direction: column;
+    }
+
+    .modal-content {
+        margin: 20% auto;
+        width: 95%;
+    }
+
+    .task-item {
+        min-height: 48px;
+        min-width: 44px;
+        font-size: 1.1em;
+        margin-bottom: 12px;
+        touch-action: none;
+    }
+
+    .task-list {
+        min-height: 80px;
+        padding: 16px 8px;
+        font-size: 1.1em;
+    }
+
+    .btn, button {
+        min-height: 44px;
+        min-width: 44px;
+        font-size: 1.1em;
+    }
+}
+
+/* Main Content Area Styles */
+main {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Full Control View Styles */
+.full-control-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.step-section {
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.step-section h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+/* Step Navigation Styles */
+.step-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.step-navigation .btn.disabled,
+.step-navigation .btn:disabled {
+    background: #eee !important;
+    color: #bbb !important;
+    cursor: not-allowed !important;
+    border-color: #eee !important;
+    pointer-events: none;
+}
+
+.step-btn.active {
+    background: #1976d2;
+    color: #fff;
+}
+
+/* Task Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 10% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Import Modal Styles */
+.import-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+}
+
+.import-modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.import-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.import-header {
+    margin-bottom: 20px;
+}
+
+.import-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--primary-color);
+}
+
+.import-header p {
+    margin: 5px 0 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.import-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.import-footer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.import-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.import-btn:hover {
+    background-color: #45a049;
+}
+
+.import-cancel-btn {
+    background-color: #f44336;
+}
+
+.import-cancel-btn:hover {
+    background-color: #e53935;
+}
+
+/* Drag and Drop Styles */
+.task-list {
+    min-height: 200px;
+    padding: 20px;
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.task-item {
+    background-color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: move;
+    transition: all 0.3s ease;
+}
+
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.task-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.task-item .priority {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    margin-left: 10px;
+}
+
+.task-item .priority.high {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.task-item .priority.medium {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.task-item .priority.low {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.task-content {
+    flex-grow: 1;
+}
+
+.task-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.task-description {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.task-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.task-actions button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.task-actions .edit-btn {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.task-actions .delete-btn {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.task-actions button:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+}
+
+/* Step Navigation */
+.step-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Full Control Panel */
+.full-control {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.control-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Priority Groups */
+.priority-group {
+    margin-bottom: 20px;
+}
+
+.priority-group h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.priority-group h3 i {
+    color: var(--accent-color);
+}
+
+/* Status Indicators */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.status-pending {
+    background-color: var(--warning-color);
+}
+
+.status-in-progress {
+    background-color: var(--secondary-color);
+}
+
+.status-blocked {
+    background-color: var(--error-color);
+}
+
+.status-completed {
+    background-color: var(--success-color);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .step-nav {
+        flex-direction: column;
+    }
+
+    .control-panel,
+    .full-control {
+        flex-direction: column;
+    }
+
+    .modal-content {
+        margin: 20% auto;
+        width: 95%;
+    }
+
+    .task-item {
+        min-height: 48px;
+        min-width: 44px;
+        font-size: 1.1em;
+        margin-bottom: 12px;
+        touch-action: none;
+    }
+
+    .task-list {
+        min-height: 80px;
+        padding: 16px 8px;
+        font-size: 1.1em;
+    }
+
+    .btn, button {
+        min-height: 44px;
+        min-width: 44px;
+        font-size: 1.1em;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step-content {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Decision Guide Styles */
+.decision-guide {
+    position: relative;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.decision-help {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    z-index: 1000;
+    display: none;
+}
+
+.decision-guide:hover .decision-help {
+    display: block;
+}
+
+/* Priority Visualization */
+.priority-high {
+    border-left: 4px solid var(--error-color);
+}
+
+.priority-medium {
+    border-left: 4px solid var(--warning-color);
+}
+
+.priority-low {
+    border-left: 4px solid var(--success-color);
+}
+
+/* Task Relationships */
+.task-relationship {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.task-relationship i {
+    color: var(--secondary-color);
+}
+
+/* Group Headers */
+.group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.group-header h3 {
+    margin: 0;
+}
+
+.group-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 10% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Import Modal Styles */
+.import-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+}
+
+.import-modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.import-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.import-header {
+    margin-bottom: 20px;
+}
+
+.import-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: var(--primary-color);
+}
+
+.import-header p {
+    margin: 5px 0 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.import-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.import-footer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.import-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.import-btn:hover {
+    background-color: #45a049;
+}
+
+.import-cancel-btn {
+    background-color: #f44336;
+}
+
+.import-cancel-btn:hover {
+    background-color: #e53935;
 }

@@ -1,3 +1,10 @@
+# SPOT Prioritization Tool Requirements
+
+# Purpose
+# -------
+# This document lists the functional and non-functional requirements for the SPOT Prioritization Tool.
+# It is intended for developers and maintainers.
+
 # Requirements for SPOT Prioritization Tool (Refactored)
 
 ## Functional Requirements

@@ -1,6 +1,9 @@
-// index.js
-// Entry point for the SPOT Prioritization Tool app
-// Bootstraps the main app controller
+/**
+ * Entry point for the SPOT Prioritization Tool app.
+ * Handles bootstrapping and global error handling.
+ * Follows SOLID principles: single responsibility (only app startup),
+ * and is decoupled from business logic and rendering.
+ */
 
 console.log('[index.js] Script start. This should appear if the file is parsed and executed.');
 
@@ -10,6 +13,10 @@ console.log('[index.js] SPOTApp imported. If this does not appear, there was an 
 
 let appInitialized = false;
 
+/**
+ * Initializes the SPOTApp. Ensures only one initialization occurs.
+ * Shows a visible error if initialization fails.
+ */
 function initializeApp() {
     if (appInitialized) return;
     appInitialized = true;
@@ -34,7 +41,10 @@ window.addEventListener('error', (event) => {
     // alert('A critical error occurred. Please reload the page.');
 });
 
-// Helper to check for critical DOM elements and warn if missing
+/**
+ * Checks for critical DOM elements and warns if any are missing.
+ * Helps catch issues with incomplete or broken markup.
+ */
 function checkCriticalElements() {
     const requiredIds = ['prevStep', 'nextStep', 'taskForm', 'taskModal'];
     let missing = [];
@@ -48,7 +58,10 @@ function checkCriticalElements() {
     }
 }
 
-// Helper to re-initialize the app (for SPA reloads or dynamic DOM changes)
+/**
+ * Helper to re-initialize the app (for SPA reloads or dynamic DOM changes).
+ * Calls unbindAll if available, then re-initializes.
+ */
 window.reinitializeSPOTApp = function() {
     console.info('[index.js] Re-initializing SPOTApp due to DOM update or reload.');
     if (window.spotApp && window.spotApp.events && typeof window.spotApp.events.unbindAll === 'function') {

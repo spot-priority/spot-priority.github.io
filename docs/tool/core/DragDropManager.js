@@ -2,13 +2,15 @@
 // Handles all drag-and-drop logic for the SPOT Prioritization Tool
 
 /**
- * Handles all drag-and-drop logic.
- * UI-agnostic where possible (uses callbacks for UI updates).
+ * DragDropManager class
+ * Handles all drag-and-drop logic for the SPOT Prioritization Tool.
+ * Follows SOLID principles: single responsibility (drag-and-drop),
+ * and is decoupled from business logic and rendering.
  */
 export class DragDropManager {
     /**
-     * @param {TaskManager} taskManager
-     * @param {UIRenderer} [ui] Optional UI renderer for callbacks
+     * @param {object} taskManager - The task manager (TaskManager instance)
+     * @param {object} [ui] - Optional UI renderer for callbacks
      */
     constructor(taskManager, ui) {
         this.taskManager = taskManager;

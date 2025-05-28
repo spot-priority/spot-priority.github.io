@@ -2,15 +2,21 @@
 // Handles all DOM rendering and updates for the SPOT Prioritization Tool
 
 /**
- * Handles all DOM rendering and updates.
- * Should not contain business logic or event binding.
+ * UIRenderer class
+ * Handles all DOM rendering and updates for the SPOT Prioritization Tool.
+ * Follows SOLID principles: single responsibility (only rendering),
+ * and is decoupled from business logic and event binding.
  */
 export class UIRenderer {
+    /**
+     * @param {object} taskManager - The task manager (TaskManager instance)
+     */
     constructor(taskManager) {
         this.taskManager = taskManager;
     }
     /**
      * Render the initial view of the app (first step, progress bar, etc.).
+     * Only runs after DOM is ready.
      */
     renderInitialView() {
         if (document.readyState === 'loading') {

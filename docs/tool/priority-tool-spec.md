@@ -1,4 +1,9 @@
-# SPOT Framework Prioritization Tool Specification
+# SPOT Prioritization Tool Specification
+
+# Purpose
+# --------
+# This document describes the requirements, features, and design of the SPOT Prioritization Tool.
+# It is intended for developers and maintainers.
 
 ## Overview
 

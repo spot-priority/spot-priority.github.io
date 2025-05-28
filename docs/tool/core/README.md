@@ -1,3 +1,10 @@
+# SPOT Prioritization Tool - Core Directory
+
+# Purpose
+# -------
+# This directory contains the core business logic for the SPOT Prioritization Tool, including task management and drag-and-drop logic.
+# Each file is documented for clarity and maintainability.
+
 # SPOT Prioritization Tool Core Layer
 
 This folder contains the business logic modules for the SPOT Prioritization Tool.
