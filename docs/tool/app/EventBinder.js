@@ -103,6 +103,16 @@ export class EventBinder {
          */
         const toggleFullControl = document.getElementById('toggleFullControl');
         if (toggleFullControl) {
+            // Update label based on state
+            const updateToggleLabel = () => {
+                const fullControl = document.querySelector('.full-control-view');
+                const isVisible = fullControl && fullControl.style.display === 'block';
+                toggleFullControl.innerHTML = isVisible
+                    ? '<i class="fas fa-th-large"></i> Exit Full Control'
+                    : '<i class="fas fa-th-large"></i> Full Control';
+            };
+            // Initial label
+            updateToggleLabel();
             toggleFullControl.addEventListener('click', () => {
                 const fullControl = document.querySelector('.full-control-view');
                 const isVisible = fullControl && fullControl.style.display === 'block';
@@ -111,8 +121,44 @@ export class EventBinder {
                 } else {
                     this.ui.showFullControlView();
                 }
+                updateToggleLabel();
             });
         }
+        // --- Navigation Buttons ---
+        // When navigating steps, always exit full control mode and update label
+        const exitFullControlIfNeeded = () => {
+            const fullControl = document.querySelector('.full-control-view');
+            if (fullControl && fullControl.style.display === 'block') {
+                this.ui.hideFullControlView(this.app.currentStep);
+                const toggleFullControl = document.getElementById('toggleFullControl');
+                if (toggleFullControl) {
+                    toggleFullControl.innerHTML = '<i class="fas fa-th-large"></i> Full Control';
+                }
+            }
+        };
+        // Patch prevStepBtn and nextStepBtn event listeners to also exit full control
+        if (prevStepBtn) {
+            const isFirst = this.app.currentStep === steps[0];
+            if (!isFirst) {
+                prevStepBtn.addEventListener('click', () => {
+                    exitFullControlIfNeeded();
+                });
+            }
+        }
+        if (nextStepBtn) {
+            const isLast = this.app.currentStep === steps[steps.length - 1];
+            if (!isLast) {
+                nextStepBtn.addEventListener('click', () => {
+                    exitFullControlIfNeeded();
+                });
+            }
+        }
+        // Step selector buttons
+        document.querySelectorAll('.step-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                exitFullControlIfNeeded();
+            });
+        });
         /**
          * Show import modal.
          */
