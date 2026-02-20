@@ -19,19 +19,13 @@ export class TaskManager {
         return newTask;
     }
 
-    updateTask(id, updates) {
-        const index = this.tasks.findIndex(task => task.id === id);
-        if (index !== -1) {
-            this.tasks[index] = {
-                ...this.tasks[index],
-                ...updates,
-                updatedAt: new Date().toISOString()
-            };
+    updateTask(taskId, updatedFields) {
+        const task = this.tasks.find(task => task.id === taskId);
+        if (task) {
+            Object.assign(task, updatedFields);
             this.notifyObservers();
             this.saveTasks();
-            return this.tasks[index];
         }
-        return null;
     }
 
     deleteTask(id) {
@@ -106,7 +100,7 @@ export class TaskManager {
     // Persistence
     saveTasks() {
         try {
-            localStorage.setItem('spot-tasks', JSON.stringify(this.tasks));
+            localStorage.setItem('tasks', JSON.stringify(this.tasks));
         } catch (error) {
             console.error('Error saving tasks:', error);
         }
@@ -114,7 +108,7 @@ export class TaskManager {
 
     loadTasks() {
         try {
-            const savedTasks = localStorage.getItem('spot-tasks');
+            const savedTasks = localStorage.getItem('tasks');
             if (savedTasks) {
                 this.tasks = JSON.parse(savedTasks);
             }
@@ -128,32 +122,76 @@ export class TaskManager {
     addDemoTasks() {
         const demoTasks = [
             {
-                title: 'Review project requirements',
-                description: 'Go through all project documentation and requirements',
-                priority: 'high',
-                group: 'survey',
-                relatedTasks: []
+                name: 'Demo Task 1',
+                status: 'not started',
+                survey: 'primary',
+                prioritize: 'high',
+                optimize: 'more',
+                rank: 1,
+                demo_task: true
             },
             {
-                title: 'Create project timeline',
-                description: 'Develop a detailed project schedule with milestones',
-                priority: 'medium',
-                group: 'prioritize',
-                relatedTasks: []
+                name: 'Demo Task 2',
+                status: 'not started',
+                survey: 'primary',
+                prioritize: 'low',
+                optimize: 'less',
+                rank: 2,
+                demo_task: true
             },
             {
-                title: 'Set up development environment',
-                description: 'Configure all necessary tools and dependencies',
-                priority: 'high',
-                group: 'optimize',
-                relatedTasks: []
+                name: 'Demo Task 3',
+                status: 'not started',
+                survey: 'secondary',
+                prioritize: 'high',
+                optimize: 'more',
+                rank: 3,
+                demo_task: true
             },
             {
-                title: 'Start coding core features',
-                description: 'Begin implementing the main functionality',
-                priority: 'high',
-                group: 'action',
-                relatedTasks: []
+                name: 'Demo Task 4',
+                status: 'not started',
+                survey: 'secondary',
+                prioritize: 'low',
+                optimize: 'less',
+                rank: 4,
+                demo_task: true
+            },
+            {
+                name: 'Demo Task 5',
+                status: 'not started',
+                survey: 'primary',
+                prioritize: 'high',
+                optimize: 'more',
+                rank: 5,
+                demo_task: true
+            },
+            {
+                name: 'Demo Task 6',
+                status: 'not started',
+                survey: 'primary',
+                prioritize: 'low',
+                optimize: 'less',
+                rank: 6,
+                demo_task: true
+            },
+            {
+                name: 'Demo Task 7',
+                status: 'not started',
+                survey: 'secondary',
+                prioritize: 'high',
+                optimize: 'more',
+                rank: 7,
+                demo_task: true
+            },
+            {
+                name: 'Demo Task 8',
+                status: 'not started',
+                survey: 'secondary',
+                prioritize: 'low',
+                optimize: 'less',
+                rank: 8,
+                demo_task: true
             }
         ];
 
