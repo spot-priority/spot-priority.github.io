@@ -4,6 +4,8 @@
   "description": "SPOT Framework - Swift Prioritization of Tasks for DevOps, SRE, and Incident Management",
   "type": "module",
   "scripts": {
+    "start": "npx http-server docs -p 8000 -c-1 -o",
+    "dev": "npx http-server docs -p 8000 -c-1 -o",
     "test": "node --test tests/*.test.js"
   },
   "keywords": [

@@ -19,6 +19,24 @@ Instead of calculating exhaustive scoring matrixes during an active outage, SPOT
 
 ---
 
+## 💻 Local Development & Viewing
+
+To preview the documentation and interactive studio locally on your machine:
+
+```bash
+# 1. Start the local server (opens automatically in your browser):
+npm start
+
+# Or with Python:
+python -m http.server 8000 --directory docs
+```
+
+The site will be available at: **`http://localhost:8000`**
+
+For complete instructions and alternative setups (VS Code Live Server, npx), see the [Local Development Guide](DEVELOPMENT.md).
+
+---
+
 ## 🧪 SPOT Interactive Triage Studio
 
 Explore the framework in action via the interactive web studio:
@@ -47,7 +65,7 @@ node --test tests/*.test.js
 ```
 
 ### In-Browser Visual Test Runner
-Open `docs/tests/runner.html` in any modern web browser to execute and view all state machine, scenario, and quiz validation tests live.
+Open `docs/tests/runner.html` in any modern web browser (or `http://localhost:8000/tests/runner.html` locally) to execute and view all state machine, scenario, and quiz validation tests live.
 
 ---
 
