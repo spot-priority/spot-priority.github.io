@@ -1,128 +1,37 @@
-# SPOT Framework Prioritization Tool Specification
+# SPOT Interactive Triage Studio Specification
 
 ## Overview
-The SPOT Framework Prioritization Tool is a web-based application designed to help users prioritize tasks using the SPOT (Survey, Prioritize, Optimize, Take Action) framework. The tool provides an intuitive interface for managing tasks through these four key steps.
+The SPOT Interactive Triage Studio is a web application designed to demonstrate, practice, and execute task prioritization using the **SPOT (Survey, Prioritize, Optimize, Take Action)** framework. The studio provides three dedicated modes: Guided Walkthrough, Triage Challenge (Quiz), and Live Incident Sandbox.
 
-## Core Features
+## Core Features & Modes
 
-### 1. Task Management
-- Create, edit, and delete tasks
-- Assign priorities (high, medium, low)
-- Add descriptions and related tasks
-- Track task status and progress
+### 1. Mode 1: Guided Walkthrough (Autoplay)
+- Automated step-by-step playback through Survey, Prioritize, Optimize, and Take Action.
+- Full playback controls: Play/Pause, Step Forward/Back, Restart, and Speed multipliers (1.0x, 1.5x, 2.0x).
+- Live SRE Coach Narration Drawer detailing the engineering rationale behind every triage decision.
+- Interactive multi-alert scenarios with up to 8 simultaneous alerts.
 
-### 2. SPOT Framework Steps
-- **Survey**: Quickly assess all tasks to identify critical issues.
-- **Prioritize**: Focus on tasks with the highest urgency.
-- **Optimize**: Choose tasks that offer the greatest return on effort.
-- **Take Action**: Act immediately on the most important tasks.
+### 2. Mode 2: Triage Challenge (Quiz Mode)
+- Interactive incident simulation where the user makes triage choices at each stage.
+- Instant right vs. wrong feedback explaining SRE anti-patterns (e.g. alert distractions, attempting deep debugging during outages).
+- Final Incident Triage Debrief Card with accuracy percentage, time taken, key takeaways, and stage review.
 
-### 3. Drag and Drop Interface
-- Intuitive drag-and-drop functionality
-- Mobile-friendly touch support
-- Visual feedback during drag operations
-- Smooth animations and transitions
+### 3. Mode 3: Live Incident Sandbox
+- Allows on-call engineers to input real-time production alerts.
+- Interactive triage filtering across Survey, Prioritize, Optimize, and Take Action.
+- "Copy Action Plan": Generates a clean Markdown-formatted incident summary ready to paste into Slack or incident bridges.
 
-### 4. Data Persistence
-- Local storage for task data
-- Import/export functionality
-- Demo data for quick start
+## Technical Architecture
 
-## Technical Requirements
+### Core Modules (`docs/tool/modules/`)
+1. **`TriageEngine.js`**: Pure ES6 state machine managing task models, SPOT stage transitions, filtering (Primary vs Secondary, High vs Low Urgency, High vs Low Impact), and Markdown report generation.
+2. **`Scenarios.js`**: Library of incident presets (4-alert basic Sev-1, 6-alert cascading DB deadlock, 8-alert Black Friday traffic surge, 5-alert security containment).
+3. **`WalkthroughEngine.js`**: Autoplay controller with step progression timers, speed toggles, and live narration.
+4. **`QuizEngine.js`**: Interactive quiz evaluator validating user choices against scenario answer keys.
+5. **`SandboxEngine.js`**: Custom alert entry, sample loading, and clipboard export.
+6. **`UIRenderer.js`**: UI rendering, animations, status badges, and DOM event handling.
+7. **`app.js`**: Application coordinator and URL routing.
 
-### Browser Support
-- Modern browsers (Chrome, Firefox, Safari, Edge)
-- Mobile browsers (iOS Safari, Android Chrome)
-- ES6+ JavaScript support
-
-### Performance
-- Smooth animations (60fps)
-- Responsive design
-- Touch-friendly interface
-- Offline capability
-
-### Accessibility
-- Keyboard navigation
-- Screen reader support
-- High contrast mode
-- Focus management
-
-## User Interface
-
-### Layout
-- Clean, modern design
-- Responsive grid system
-- Clear visual hierarchy
-- Intuitive navigation
-
-### Components
-- Task cards
-- Priority indicators
-- Progress bars
-- Modal dialogs
-- Control panels
-
-### Visual Feedback
-- Hover states
-- Active states
-- Loading indicators
-- Success/error messages
-
-## Data Structure
-
-### Task Object
-```javascript
-{
-    "name": "Task Name",
-    "status": "in progress",
-    "survey": "primary",
-    "prioritize": "high",
-    "optimize": "more",
-    "rank": 1
-}
-```
-
-### Possible Values for Task Object Fields
-- **status**: "in progress", "not started", "blocked", "completed"
-- **survey**: "primary", "secondary"
-- **prioritize**: "high", "low"
-- **optimize**: "more", "less"
-- **rank**: Any positive integer (1, 2, 3, ...)
-
-### State Management
-- Centralized task management
-- Observer pattern for updates
-- Local storage persistence
-- Import/export functionality
-
-## Implementation Details
-
-### Core Classes
-1. **SPOTApp**
-   - Main application class
-   - UI management
-   - Event handling
-   - State coordination
-
-2. **TaskManager**
-   - Task CRUD operations
-   - Data persistence
-   - State management
-   - Import/export
-
-3. **DragDropManager**
-   - Drag and drop handling
-   - Touch event support
-   - Visual feedback
-   - Position management
-
-### File Structure
-```
-docs/tool/
-├── priority-tool.html
-├── priority-tool.css
-├── priority-tool-app.js
-├── priority-tool-tasks.js
-├── priority-tool-drag.js
-└── priority-tool-spec.md
-```
+### Automated Testing (`tests/` & `docs/tests/`)
+- CLI test suite running natively via Node (`npm test`).
+- In-browser visual test runner at `docs/tests/runner.html`.
