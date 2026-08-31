@@ -3,274 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SPOT Framework Prioritization Tool - A systematic approach to task prioritization and management">
-    <meta name="keywords" content="SPOT Framework, Task Prioritization, DevOps, SRE, Workflow Optimization">
+    <meta name="description" content="SPOT Interactive Triage Studio - Practice and demonstrate the SPOT Framework with Guided Autoplay and Incident Practice Challenges.">
+    <meta name="keywords" content="SPOT Framework, Incident Triage, SRE, DevOps, Task Prioritization, Microservices Failure Simulator">
     <meta name="author" content="Inbar Rose">
     
-    <title>SPOT Framework - Prioritization Tool</title>
+    <title>SPOT Interactive Triage Studio</title>
 
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="priority-tool.css">
     <link rel="canonical" href="https://spot-priority.github.io/tool/priority-tool.html">
     <link rel="icon" href="../images/spot_icon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* Drag and Drop Styles */
-        .task-item {
-            cursor: grab;
-            user-select: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .task-item.dragging {
-            cursor: grabbing;
-            opacity: 0.8;
-            transform: scale(1.02);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .task-item.touch-dragging {
-            cursor: grabbing;
-            opacity: 0.8;
-        }
-
-        .task-item.drag-over {
-            border: 2px dashed #4CAF50;
-            margin: -2px;
-        }
-
-        .drop-zone {
-            min-height: 50px;
-            border: 2px dashed #ccc;
-            border-radius: 4px;
-            margin: 8px 0;
-            transition: border-color 0.2s ease, background-color 0.2s ease;
-        }
-
-        .drop-zone.drag-over {
-            border-color: #4CAF50;
-            background-color: rgba(76, 175, 80, 0.1);
-        }
-
-        /* Mobile-specific styles */
-        @media (max-width: 768px) {
-            .task-item {
-                touch-action: none;
-            }
-
-            .task-item.dragging {
-                transform: scale(1.05);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <div class="dev-banner">
-        🚧 This tool is currently under development. Some features may not work as expected. 🚧
-    </div>
-    <div class="container">
-        <header>
-            <div class="banner">
-                <h1>SPOT Framework Prioritization Tool</h1>
+<body class="studio-body">
+    <!-- Header Section -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="../index.html" class="brand-link">
+                    <span class="brand-icon"><i class="fas fa-crosshairs"></i></span>
+                    <span class="brand-text">SPOT <strong>Framework</strong></span>
+                </a>
+                <span class="app-badge"><i class="fas fa-flask"></i> Interactive Studio</span>
             </div>
-            <nav class="navbar">
-                <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+            <nav class="studio-nav">
                 <ul class="nav-links">
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="../pages/spot_documentation.html">SPOT Documentation</a></li>
-                    <li><a href="../pdf/SPOT_Framework_Documentation.pdf" download>Download PDF</a></li>
+                    <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="../index.html?page=spot_documentation"><i class="fas fa-book-open"></i> SPOT Docs</a></li>
+                    <li><a href="../tests/runner.html" target="_blank" title="Run In-Browser Tests"><i class="fas fa-vial"></i> Engine Tests</a></li>
+                    <li><a href="../pdf/SPOT_Framework_Documentation.pdf" download><i class="fas fa-file-pdf"></i> Download PDF</a></li>
                     <li>
-                        <div class="github-stars">
-                            <a href="https://github.com/spot-priority/spot-priority.github.io" target="_blank" rel="noopener noreferrer">
-                                <img src="https://img.shields.io/github/stars/spot-priority/spot-priority.github.io?style=social"
-                                    alt="GitHub Stars">
-                            </a>
-                        </div>
+                        <a href="https://github.com/spot-priority/spot-priority.github.io" target="_blank" rel="noopener noreferrer" class="github-btn">
+                            <i class="fab fa-github"></i> Star
+                        </a>
                     </li>
                 </ul>
             </nav>
-        </header>
-
-        <main>
-            <section class="tool-section">
-                <h2>Prioritization Tool</h2>
-                <div class="tool-container">
-                    <!-- Control Area -->
-                    <div class="control-area">
-                        <div class="control-buttons">
-                            <button id="toggleFullControl" class="btn">
-                                <i class="fas fa-th-large"></i> Toggle Full Control
-                            </button>
-                            <button id="importTasks" class="btn">
-                                <i class="fas fa-file-import"></i> Import Tasks
-                            </button>
-                            <button id="exportTasks" class="btn">
-                                <i class="fas fa-file-export"></i> Export Tasks
-                            </button>
-                            <button id="clearTasks" class="btn">
-                                <i class="fas fa-trash"></i> Clear All Tasks
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Progress Bar / Steps Selector -->
-                    <div class="progress-area">
-                        <div class="progress-meter">
-                            <div class="progress-fill"></div>
-                        </div>
-                        <div class="step-selector">
-                            <button class="step-btn" data-step="survey">
-                                <i class="fas fa-arrow-right step-arrow"></i>
-                                <span class="step-name">Survey</span>
-                            </button>
-                            <button class="step-btn" data-step="prioritize">
-                                <i class="fas fa-arrow-right step-arrow"></i>
-                                <span class="step-name">Prioritize</span>
-                            </button>
-                            <button class="step-btn" data-step="optimize">
-                                <i class="fas fa-arrow-right step-arrow"></i>
-                                <span class="step-name">Optimize</span>
-                            </button>
-                            <button class="step-btn" data-step="action">
-                                <span class="step-name">Take Action</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Main Content Area -->
-                    <div class="content-area">
-                        <!-- Step Views -->
-                        <div class="step-content" id="survey">
-                            <h3>Survey</h3>
-                            <div class="task-list" data-group="survey">
-                                <!-- Tasks will be added here -->
-                            </div>
-                        </div>
-
-                        <div class="step-content" id="prioritize" style="display: none;">
-                            <h3>Prioritize</h3>
-                            <div class="task-list" data-group="prioritize">
-                                <!-- Tasks will be added here -->
-                            </div>
-                        </div>
-
-                        <div class="step-content" id="optimize" style="display: none;">
-                            <h3>Optimize</h3>
-                            <div class="task-list" data-group="optimize">
-                                <!-- Tasks will be added here -->
-                            </div>
-                        </div>
-
-                        <div class="step-content" id="action" style="display: none;">
-                            <h3>Take Action</h3>
-                            <div class="task-list" data-group="action">
-                                <!-- Tasks will be added here -->
-                            </div>
-                        </div>
-
-                        <!-- Full Control View -->
-                        <div class="full-control-view" style="display: none;">
-                            <div class="all-steps">
-                                <div class="step-section">
-                                    <h3>Survey</h3>
-                                    <div class="task-list" data-group="survey"></div>
-                                </div>
-                                <div class="step-section">
-                                    <h3>Prioritize</h3>
-                                    <div class="task-list" data-group="prioritize"></div>
-                                </div>
-                                <div class="step-section">
-                                    <h3>Optimize</h3>
-                                    <div class="task-list" data-group="optimize"></div>
-                                </div>
-                                <div class="step-section">
-                                    <h3>Take Action</h3>
-                                    <div class="task-list" data-group="action"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Step Navigation -->
-                        <div class="step-navigation">
-                            <button id="prevStep" class="btn">
-                                <i class="fas fa-arrow-left"></i> Previous
-                            </button>
-                            <button id="nextStep" class="btn">
-                                Next <i class="fas fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>Contact: spot.prioritize@gmail.com </p>
-            <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title"
-                    rel="cc:attributionURL" href="https://github.com/spot-priority/spot-priority.github.io">SPOT Framework
-                    Documentation</a> by <a rel="cc:attributionURL dct:creator" property="cc:attributionName"
-                    href="https://www.linkedin.com/in/inbarrose/">Inbar Rose</a> is licensed under <a
-                    href="https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank"
-                    rel="license noopener noreferrer" style="display:inline-block;">Creative Commons
-                    Attribution-NonCommercial-ShareAlike 4.0 International<img
-                        style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
-                        src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img
-                        style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
-                        src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img
-                        style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
-                        src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1" alt=""><img
-                        style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
-                        src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1" alt=""></a></p>
-        </footer>
-    </div>
-
-    <!-- Task Modal -->
-    <div id="taskModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modalTitle">Add New Task</h2>
-            <form id="taskForm">
-                <div class="form-group">
-                    <label for="taskTitle">Title:</label>
-                    <input type="text" id="taskTitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="taskDescription">Description:</label>
-                    <textarea id="taskDescription"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="taskPriority">Priority:</label>
-                    <select id="taskPriority">
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn">Save Task</button>
-            </form>
         </div>
-    </div>
+    </header>
 
-    <!-- Import Modal -->
-    <div id="importModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Import Tasks</h2>
-            <form id="importForm">
-                <div class="form-group">
-                    <label for="importFile">Select JSON file:</label>
-                    <input type="file" id="importFile" accept=".json" required>
-                </div>
-                <button type="submit" class="btn">Import</button>
-            </form>
+    <!-- Main Interactive Studio Mount Point -->
+    <main class="studio-main">
+        <div id="appRoot" class="studio-container">
+            <!-- Rendered by UIRenderer.js / app.js -->
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Initializing SPOT Triage Studio...</p>
+            </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Scripts -->
-    <script type="module">
-        import { SPOTApp } from './priority-tool-app.js';
-        new SPOTApp();
-    </script>
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>SPOT Framework & Interactive Studio &copy; by <a href="https://www.linkedin.com/in/inbarrose/" target="_blank" rel="noopener noreferrer">Inbar Rose</a>. Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>.</p>
+            <p class="footer-contact">Contact: <a href="mailto:spot.prioritize@gmail.com">spot.prioritize@gmail.com</a></p>
+        </div>
+    </footer>
+
+    <!-- App Module -->
+    <script type="module" src="./modules/app.js"></script>
 </body>
-</html> 
+</html>
