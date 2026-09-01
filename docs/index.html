@@ -1,102 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SPOT Framework - Swift Prioritization of Tasks. A rapid, medical-triage-inspired framework for DevOps, SRE, and on-call engineers.">
+    <meta name="keywords" content="SPOT Framework, Task Prioritization, DevOps, SRE, Incident Management, Incident Triage, Workflow Optimization">
+    <meta name="author" content="Inbar Rose">
+    
+    <title>SPOT Framework - Swift Prioritization of Tasks</title>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Explore SPOT Framework - a structured task prioritization guide for DevOps and SRE professionals. Learn dynamic workflows and task optimization.">
-        <meta name="keywords" content="SPOT Framework, Task Prioritization, DevOps, SRE, Workflow Optimization, Incident Handling">
-        <meta name="author" content="Inbar Rose">
-        
-        <title>SPOT Framework Documentation</title>
-
-        <link rel="stylesheet" href="styles.css">
-        <link rel="canonical" href="https://spot-priority.github.io/">
-        <link rel="icon" href="images/spot_icon.ico" type="image/x-icon">
-    </head>
-
-    <body>
-        <!-- Header/Banner Section -->
-        <header>
-            <div class="banner">
-                <h1>SPOT Framework Documentation</h1>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="canonical" href="https://spot-priority.github.io/">
+    <link rel="icon" href="images/spot_icon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="?page=home" class="brand-link" data-page="home">
+                    <span class="brand-icon"><i class="fas fa-crosshairs"></i></span>
+                    <span class="brand-text">SPOT <strong>Framework</strong></span>
+                </a>
             </div>
 
             <!-- Navigation Bar -->
             <nav class="navbar">
                 <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
                 <ul class="nav-links">
-                    <li><a href="?page=home" data-page="home">Home</a></li>
-                    <li><a href="?page=spot_documentation" data-page="spot_documentation">SPOT Documentation</a></li>
-                    <li><a href="tool/priority-tool.html" target="_blank" rel="noopener noreferrer">Prioritization Tool</a></li>
-                    <li><a href="pdf/SPOT_Framework_Documentation.pdf" download>Download PDF</a></li>
+                    <li><a href="?page=home" data-page="home"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="?page=spot_documentation" data-page="spot_documentation"><i class="fas fa-book-open"></i> SPOT Documentation</a></li>
+                    <li><a href="tool/priority-tool.html" class="nav-studio-btn"><i class="fas fa-play-circle"></i> Interactive Studio</a></li>
+                    <li><a href="tests/runner.html" target="_blank" title="Run In-Browser Tests"><i class="fas fa-vial"></i> Engine Tests</a></li>
+                    <li><a href="pdf/SPOT_Framework_Documentation.pdf" download><i class="fas fa-file-pdf"></i> Download PDF</a></li>
                     <li>
-                        <div class="github-stars">
-                            <a href="https://github.com/spot-priority/spot-priority.github.io" target="_blank" rel="noopener noreferrer">
-                                <img src="https://img.shields.io/github/stars/spot-priority/spot-priority.github.io?style=social"
-                                    alt="GitHub Stars">
-                            </a>
-                        </div>
+                        <a href="https://github.com/spot-priority/spot-priority.github.io" target="_blank" rel="noopener noreferrer" class="github-btn">
+                            <i class="fab fa-github"></i> Star
+                        </a>
                     </li>
                 </ul>
             </nav>
-        </header>
+        </div>
+    </header>
 
-        <!-- Main Content Area -->
-        <main>
-            <!-- Placeholder for the embedded content -->
-            <section id="content"></section>
-        </main>
+    <!-- Main Content Area -->
+    <main>
+        <!-- Injected page content -->
+        <section id="content"></section>
+    </main>
 
-        <!-- Footer Section -->
-        <footer>
-            <p>Contact: spot.prioritize@gmail.com </p>
-            <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title"
-                    rel="cc:attributionURL" href="https://github.com/spot-priority/spot-priority.github.io">SPOT Framework
-                    Documentation</a> by <a rel="cc:attributionURL dct:creator" property="cc:attributionName"
-                    href="https://www.linkedin.com/in/inbarrose/">Inbar Rose</a> is licensed under <a
-                    href="https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank"
-                    rel="license noopener noreferrer" style="display:inline-block;">Creative Commons
-                    Attribution-NonCommercial-ShareAlike 4.0 International<img
-                        style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
-                        src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img
-                        style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
-                        src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img
-                        style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
-                        src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1" alt=""><img
-                        style="height:22px!important;margin-left:3px;vertical-align:text-bottom;"
-                        src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1" alt=""></a></p>
-        </footer>
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div>
+                <p>SPOT Framework Documentation &copy; by <a href="https://www.linkedin.com/in/inbarrose/" target="_blank" rel="noopener noreferrer">Inbar Rose</a>.</p>
+                <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>.</p>
+            </div>
+            <div>
+                <p>Contact: <a href="mailto:spot.prioritize@gmail.com">spot.prioritize@gmail.com</a></p>
+            </div>
+        </div>
+    </footer>
 
-        <!-- Link to external JavaScript -->
-        <script src="scripts.js"></script>
+    <!-- Client Router & Dynamic TOC Script -->
+    <script src="scripts.js"></script>
 
-        <script type="application/ld+json">
-            {
-            "@context": "https://schema.org",
-            "@type": "TechArticle",
-            "headline": "SPOT Framework Documentation",
-            "description": "A comprehensive guide to the SPOT Framework, designed to help with task prioritization in SRE and DevOps.",
-            "image": "https://spot-priority.github.io/images/spot_icon.jpg",
-            "author": {
-                "@type": "Person",
-                "name": "Inbar Rose",
-                "url": "https://www.linkedin.com/in/inbarrose/"
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "SPOT Priority",
-                "url": "https://github.com/spot-priority",
-                "logo": {
-                "@type": "ImageObject",
-                "url": "https://spot-priority.github.io/images/spot_icon.jpg"
-                }
-            },
-            "datePublished": "2024-11-15",
-            "url": "https://github.com/spot-priority/spot-priority.github.io"
-            }
-        </script>
-
-    </body>
-
+    <!-- JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "SPOT Framework Documentation",
+      "description": "A rapid decision-making task prioritization framework inspired by medical triage for SRE and DevOps teams.",
+      "author": {
+        "@type": "Person",
+        "name": "Inbar Rose",
+        "url": "https://www.linkedin.com/in/inbarrose/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "SPOT Priority",
+        "url": "https://spot-priority.github.io"
+      },
+      "datePublished": "2024-11-15",
+      "url": "https://spot-priority.github.io"
+    }
+    </script>
+</body>
 </html>

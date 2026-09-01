@@ -1,534 +1,227 @@
-<body>
-    <h1>Introduction: When Every Second Counts</h1>
-    <p>In high-stakes environments, especially in tech and engineering, the
-        pressure to act quickly without losing sight
-        of what matters most is a constant challenge. When multiple issues
-        arise, knowing where to focus can mean the
-        difference between a minor disruption and a full-blown incident.
-        Engineers need a prioritization framework that
-        provides clarity in these high-pressure moments---something quick,
-        reliable, and easy to apply on the fly.</p>
-    <p>Imagine, for instance, that you're on call as an SRE when multiple alerts
-        fire off at once. One warns of degraded
-        authentication, another flags delayed data processing, and a third
-        signals server capacity nearing critical
-        limits. Each alert has the potential to disrupt the user experience, but
-        which one should you tackle first? Traditional
-        methods like RICE may require too much time to analyze each task's
-        impact and priority when every second counts.
-        With SPOT, however, you're equipped to quickly filter and rank issues in
-        real time, moving from survey to action
-        without the burden of excessive calculations or deliberation.</p>
-    <p>That's where the SPOT Framework comes in. SPOT (Survey, Prioritize,
-        Optimize, Take Action) is a lightweight yet
-        effective tool designed for engineers who need to cut through ambiguity
-        and make high-impact decisions fast.
-        Inspired by the medical triage system, SPOT focuses on sequentially
-        assessing issues, filtering tasks at each
-        step until only the highest priority remains. This structure empowers
-        engineers to focus on what truly matters,
-        minimizing delays and maximizing response effectiveness.</p>
-    <p>This article walks through SPOT's essential steps, offers practical
-        guidance on applying it in high-pressure
-        scenarios, and provides real-world examples that showcase its strengths
-        over conventional prioritization techniques like RICE.</p>
-    <h1>How to Use SPOT Effectively: A Guide for Engineers</h1>
-    <p>The SPOT Framework---short for Survey, Prioritize, Optimize, and Take
-        Action---is a structured, rapid decision-making process designed for
-        high-pressure situations, specifically tailored to help engineers
-        triage, prioritize, and execute tasks effectively. Much like medical
-        triage, the SPOT framework enables engineers to quickly assess and
-        categorize tasks, moving from step to step only until the critical
-        action becomes clear. The goal is not to create a
-        fully prioritized list but to identify and execute the next essential
-        task with confidence, leaving secondary tasks to be handled as time
-        permits or as new information becomes available.</p>
-    <h1>Framework Steps and Instructions for Use</h1>
-    <h2>Step 1: Survey (S) --- Assess the Situation</h2>
-    <p>Objective: Quickly scan and understand the scope and context of all
-        tasks.</p>
-    <p>In this initial step, the aim is to gain a rapid overview of all tasks at
-        hand, identifying those with the
-        highest
-        stakes or the broadest impact. In emergencies, gathering a high-level
-        understanding of the tasks enables
-        engineers
-        to move directly to tasks with the most immediate, pressing needs.</p>
-    <p>Key Points:</p>
-    <ul>
-        <li>
-            <p>Identify primary tasks: Those that affect mission-critical
-                systems, major services, or have direct
-                customer
-                impact.</p>
-        </li>
-        <li>
-            <p>Identify secondary tasks: Tasks that are important but can wait
-                or have a smaller scope.</p>
-        </li>
-    </ul>
-    <p>Example: A critical authentication failure affecting all users would be
-        identified as a primary task, whereas a
-        backend service affecting a secondary feature would be marked as
-        secondary.</p>
-    <h2>Step 2: Prioritize (P) --- Address Urgency</h2>
-    <p>Objective: Determine which tasks demand immediate attention based on
-        urgency.</p>
-    <p>Once the situation is surveyed, the next step is to focus on tasks with
-        the highest urgency. Tasks that, if
-        delayed,
-        could result in widespread failure or customer impact should be
-        addressed first. This ensures that you are
-        focused
-        on stopping any immediate issues or damage.</p>
-    <p>Key Points:</p>
-    <ul>
-        <li>
-            <p>High Urgency: Tasks that could significantly disrupt customer
-                experience, system stability, or critical
-                service uptime.</p>
-        </li>
-        <li>
-            <p>Lower Urgency: Tasks that can be deferred without immediate harm
-                to core functionality.</p>
-        </li>
-    </ul>
-    <p>Example: In a scenario where a major authentication service is down, it's
-        clear this should take precedence over
-        less
-        urgent maintenance tasks, even if they're important.</p>
-    <h2>Step 3: Optimize (O) --- Maximize Impact</h2>
-    <p>Objective: Select tasks that offer the greatest return on time and
-        effort, restoring system health or user
-        experience
-        most effectively.</p>
-    <p>In the Optimize step, focus shifts from urgency to impact---the tasks
-        that can have the greatest positive effect
-        with
-        the available resources and time. While urgency dictates the immediate
-        next step, optimization helps you ensure
-        that
-        your actions provide meaningful, lasting solutions and avoid recurring
-        issues.</p>
-    <p>Key Points:</p>
-    <ul>
-        <li>
-            <p>High Impact: Tasks that address root causes, restore major
-                services, or prevent large-scale failures.</p>
-        </li>
-        <li>
-            <p>Lower Impact: Tasks that have minimal effect on overall
-                performance or don't prevent significant future
-                issues.</p>
-        </li>
-    </ul>
-    <p>Example: A database issue causing critical service downtime would be
-        optimized to prevent system-wide issues,
-        whereas
-        investigating a low-severity, isolated bug would not offer as much value
-        during an incident.</p>
-    <h2>Step 4: Take Action (T) --- Execute with Precision</h2>
-    <p>Objective: Act immediately on tasks that have been clearly prioritized
-        and optimized.</p>
-    <p>Once a task is surveyed, prioritized for urgency, and assessed for
-        impact, it's time to act. The goal is swift
-        and
-        precise execution on the most essential tasks. If at any stage you
-        encounter ambiguity or uncertainty about
-        which
-        task should come next, move back through the steps until clarity is
-        reached. However, once it's clear which task
-        demands immediate action, proceed without hesitation.</p>
-    <p>Key Points:</p>
-    <ul>
-        <li>
-            <p>Immediate Action: Tasks that have been clearly prioritized and
-                optimized should be addressed without
-                delay.
-            </p>
-        </li>
-        <li>
-            <p>Defer or Escalate: Tasks that require additional input or
-                resources may be escalated, deferred, or added
-                back
-                to the task list.</p>
-        </li>
-    </ul>
-    <p>Example: Restarting a downed service might be the immediate action needed
-        to restore functionality, while more
-        complex debugging or analysis can be postponed until service stability
-        is achieved.</p>
-    <h1>How to Use the SPOT Framework</h1>
-    <ul>
-        <li>
-            <p>Approach with Triage in Mind: Similar to medical triage, SPOT
-                allows you to make quick decisions by
-                moving
-                step-by-step through each task until it's clear which one
-                demands immediate action. Stop at any point
-                where
-                you identify an actionable task; don't continue through the
-                entire list.</p>
-        </li>
-        <li>
-            <p>Unsorted List Approach: The SPOT framework is not intended to
-                prioritize every task fully or create a
-                comprehensive ranking. Rather, it's designed to highlight the
-                next highest-priority item and then repeat
-                as
-                necessary. This approach ensures swift action without
-                overthinking or unnecessary sorting.</p>
-        </li>
-        <li>
-            <p>Repeat as Needed: Once a task is completed, repeat the SPOT steps
-                on the remaining tasks, continuing to
-                triage and act until the urgent tasks are resolved.</p>
-        </li>
-        <li>
-            <p>Avoid Perfection: The focus is on action over perfection. If at
-                any step there's a task that can be
-                immediately acted upon, proceed without hesitation. This
-                framework is designed for rapid response,
-                especially under time constraints.</p>
-        </li>
-    </ul>
-    <h2>In Summary</h2>
-    <ol>
-        <li>
-            <p>Survey and Triage -- Scan all tasks, identifying critical versus
-                secondary.</p>
-        </li>
-        <li>
-            <p>Prioritize for Urgency -- Identify the most immediate risks.</p>
-        </li>
-        <li>
-            <p>Optimize for Maximum Impact -- Focus on actions that stabilize
-                the system quickly.</p>
-        </li>
-        <li>
-            <p>Act Decisively -- Execute the top-priority task until it's
-                resolved.</p>
-        </li>
-    </ol>
-    <h1>Example of Using SPOT</h1>
-    <p>Below are three scenarios that illustrate SPOT's application across
-        varied incident complexities. Each scenario
-        demonstrates how SPOT filters tasks, handles ambiguity, and helps
-        engineers prioritize effectively in
-        high-pressure
-        situations.</p>
-    <h2>Scenario 1: Straightforward Triage</h2>
-    <p>Tasks:</p>
-    <ol>
-        <li>
-            <p>Authentication failure for 70% of users.</p>
-        </li>
-        <li>
-            <p>Backend processing delay affecting data availability.</p>
-        </li>
-        <li>
-            <p>Server health warnings, with no current impact.</p>
-        </li>
-    </ol>
-    <p>SPOT Walkthrough:</p>
-    <ul>
-        <li>
-            <p>Survey: The authentication failure and backend delay are
-                identified as primary tasks, while the server
-                health
-                warning is deemed secondary due to no current user impact.</p>
-        </li>
-        <li>
-            <p>Prioritize: The authentication issue takes priority over the
-                backend delay, as it directly affects user
-                access.</p>
-        </li>
-        <li>
-            <p>Optimize: A temporary fix is available to restore login
-                functionality quickly, so the engineer implements
-                this action.</p>
-        </li>
-        <li>
-            <p>Take Action: The authentication fix is deployed, restoring core
-                functionality for most users. With this
-                issue
-                addressed, the engineer moves on to the backend processing delay
-                and server health warning in order of
-                assessed impact.</p>
-        </li>
-    </ul>
-    <p>Outcome: SPOT enabled the engineer to address the most pressing issue
-        with minimal delay, maintaining user access
-        before shifting focus to lower-priority tasks.</p>
-    <h2>Scenario 2: Clear Primary, Then Assess Secondary</h2>
-    <p>Tasks:</p>
-    <ol>
-        <li>
-            <p>Payment processing errors affecting 40% of users.</p>
-        </li>
-        <li>
-            <p>Increased memory usage on a primary server.</p>
-        </li>
-        <li>
-            <p>Slow customer support portal response, with minor user
-                impact.</p>
-        </li>
-    </ol>
-    <p>SPOT Walkthrough:</p>
-    <ul>
-        <li>
-            <p>Survey: The payment processing error is identified as the most
-                critical task, as it impacts revenue and
-                user
-                transactions directly. The increased memory usage on the primary
-                server and slower customer support
-                portal
-                response are secondary.</p>
-        </li>
-        <li>
-            <p>Prioritize &amp; Optimize: Given that the payment issue directly
-                impacts a core business function, the
-                engineer immediately deploys a quick fix to restore
-                processing.</p>
-        </li>
-        <li>
-            <p>Take Action: With payment restored, the engineer revisits the
-                secondary issues. The memory usage on the
-                server is assessed as potentially impactful, so monitoring and a
-                potential reboot are scheduled. The
-                customer support portal is assessed last, given its lower
-                priority and minor impact.</p>
-        </li>
-    </ul>
-    <p>Outcome: SPOT's ability to single out the primary issue first and
-        deprioritize secondary issues saved time,
-        restoring
-        a critical function without delay while ensuring that secondary issues
-        were not overlooked.</p>
-    <h2>Scenario 3: Ambiguity Until the Final Stage</h2>
-    <p>Tasks:</p>
-    <ol>
-        <li>
-            <p>File upload failures for 50% of users.</p>
-        </li>
-        <li>
-            <p>Admin dashboard outage impacting internal users only.</p>
-        </li>
-        <li>
-            <p>Third-party integration timeouts for fewer than 5% of users.</p>
-        </li>
-        <li>
-            <p>Email notification delays affecting 10% of users.</p>
-        </li>
-    </ol>
-    <p>SPOT Walkthrough:</p>
-    <ul>
-        <li>
-            <p>Survey: File upload failures and the admin dashboard outage are
-                identified as primary, while integration
-                timeouts and email delays are secondary due to their limited
-                impact.</p>
-        </li>
-        <li>
-            <p>Prioritize: File upload failures and the admin dashboard are
-                assessed for priority. The file upload issue
-                impacts more users and is deemed more urgent than the internal
-                admin dashboard issue, though both are
-                significant.</p>
-        </li>
-        <li>
-            <p>Optimize: While working on a partial fix for file uploads, the
-                engineer evaluates the admin dashboard
-                issue
-                and finds that it will need further input from another team.</p>
-        </li>
-        <li>
-            <p>Take Action: The engineer applies the file upload fix immediately
-                while notifying the internal team to
-                address the admin dashboard issue. This approach ensures that
-                high user impact is handled promptly,
-                while
-                less immediately actionable tasks are effectively escalated.</p>
-        </li>
-    </ul>
-    <p>Outcome: SPOT helped the engineer work through ambiguity, enabling a
-        clear decision based on impact, urgency, and
-        feasibility. By focusing first on external impacts, the engineer
-        maintained user experience while escalating
-        internal-only issues effectively.</p>
-    <h1>Comparison: SPOT vs. RICE in High-Pressure Scenarios</h1>
-    <p>Unlike SPOT, which is designed for speed and simplicity, the RICE
-        framework (Reach, Impact, Confidence, Effort)
-        can
-        be inefficient in high-pressure scenarios where rapid decision-making is
-        essential. RICE works well for project
-        planning and prioritization under normal conditions, where time is
-        available to calculate and consider each
-        aspect.
-        However, when facing multiple simultaneous incidents, the RICE model
-        falls short in several ways:</p>
-    <ol>
-        <li>
-            <p>Complexity in Calculation: RICE requires engineers to estimate
-                the reach, impact, and effort of each
-                task,
-                with adjustments based on confidence. Each task or issue needs a
-                ranking that reflects these multiple
-                dimensions, which, while useful in structured planning, becomes
-                impractical during time-sensitive
-                incidents.
-                This often means critical minutes are lost in assessments rather
-                than taking immediate, high-impact
-                action.
-            </p>
-        </li>
-        <li>
-            <p>Dependence on Precise Information: RICE demands accurate data on
-                reach and impact, which may not be fully
-                available when systems are down or users are impacted. Engineers
-                can be forced to make estimations
-                without
-                sufficient context, which can lead to inaccurate prioritization
-                and further delays. This framework also
-                presumes that metrics will be available and meaningful, an
-                assumption that can break down when
-                monitoring
-                tools are also impacted by a widespread issue.</p>
-        </li>
-        <li>
-            <p>Collaborative Input Requirements: RICE often benefits from input
-                across roles, including business,
-                product,
-                and engineering perspectives, to weigh the importance of each
-                factor. During an emergency, there is
-                rarely
-                time to gather this input, leaving engineers in a bind. SPOT
-                sidesteps this need for extensive
-                collaboration, allowing engineers to act on well-defined steps
-                without additional input.</p>
-        </li>
-        <li>
-            <p>Inefficiency in Crisis Mode: With RICE, each task must be
-                evaluated against others to build a priority
-                list.
-                This is time-consuming in crisis mode, where engineers need a
-                more direct path to action. SPOT's
-                streamlined
-                triage approach, by contrast, allows engineers to continuously
-                narrow down tasks until the immediate
-                priority is clear, meaning less time ranking and more time
-                resolving critical issues. SPOT's efficiency
-                allows for high-priority tasks to emerge naturally, without
-                ranking all tasks exhaustively.</p>
-        </li>
-    </ol>
-    <p>In an environment where minutes matter, SPOT ensures that engineers focus
-        on impact immediately and take
-        meaningful
-        actions without the need for exhaustive calculations or extended
-        deliberation, addressing both urgency and
-        high-stakes impact in a way that RICE cannot.</p>
-    <h1>Acknowledgements</h1>
-    <p>In creating the SPOT framework, I recognize its role within a larger
-        ecosystem of incident management,
-        reliability
-        engineering, and organizational maturity. Effective use of SPOT depends
-        on many contributing factors, from
-        service-level objectives to empowered engineers. Below, I acknowledge
-        the essential elements that complement
-        SPOT
-        and provide the necessary context for it to succeed as a fast and
-        effective prioritization tool.</p>
-    <h2>The Role of SLOs and SLAs in Guiding Prioritization</h2>
-    <p>Service-level objectives (SLOs) and service-level agreements (SLAs) are
-        critical metrics for aligning engineering
-        priorities with business needs. SLOs and SLAs define clear performance
-        and availability expectations for
-        different
-        systems, providing a framework for assessing impact even before an
-        incident occurs. In high-stakes scenarios,
-        well-defined SLOs can serve as an initial guide for SPOT, indicating
-        which systems require immediate attention.
-        For
-        example, if two services are experiencing disruptions, engineers can
-        quickly compare their SLA budgets to
-        understand
-        which downtime is more costly from a business perspective.</p>
-    <p>However, even the most comprehensive SLOs cannot account for every
-        incident. During complex or cascading
-        failures,
-        engineers may need to consider additional factors, such as user impact,
-        revenue implications, and core
-        functionality. In these cases, SPOT acts as a flexible layer atop SLOs
-        and SLAs, guiding engineers to prioritize
-        based on real-time context. This added layer allows teams to respond
-        efficiently when established metrics alone
-        don't clarify the path forward.</p>
-    <h2>Adapting to Real-World Constraints and Incident Complexities</h2>
-    <p>SPOT is intentionally designed for the unpredictability of real-world
-        scenarios. Traditional prioritization
-        frameworks often rely on a controlled environment where data is complete
-        and analysis can be thorough. In a
-        high-pressure production incident, however, these assumptions fall
-        apart. Engineers face incomplete information,
-        rapidly evolving conditions, and constraints on time and resources.</p>
-    <p>SPOT is meant to bridge these gaps by focusing on fast, adaptive
-        decision-making. The framework is lightweight
-        and
-        actionable, so engineers can cut through ambiguity and make swift
-        prioritization decisions based on the severity
-        and
-        impact of each issue. SPOT is a pragmatic solution, specifically crafted
-        to handle the messy realities of
-        on-the-ground incident management. By prioritizing simplicity and speed,
-        SPOT enables engineers to take
-        effective
-        action without getting bogged down by rigid, time-consuming
-        analysis.</p>
-    <h2>Empowering Engineers to Make Decisions in High-Pressure Scenarios</h2>
-    <p>For SPOT to function effectively, engineers must be empowered to make
-        critical decisions autonomously. In a
-        mature
-        organization, the power to prioritize and act without excessive
-        oversight reflects a high level of trust and a
-        culture that values rapid response. Engineers who are closest to the
-        technical details often have the best
-        insight
-        into what actions need to be taken, and SPOT supports this by providing
-        a clear, sequential method that empowers
-        these decisions in real-time.</p>
-    <p>Empowering engineers with the autonomy to prioritize and act within the
-        SPOT framework also underscores an
-        organization's resilience. With SPOT, engineers are not simply following
-        orders or waiting for approvals;
-        they're
-        executing triage-based prioritization, taking ownership of issues that
-        affect both user experience and
-        operational
-        stability. This empowerment aligns with best practices in DevOps and
-        SRE, where decentralized decision-making is
-        a
-        cornerstone of agile, responsive teams.</p>
-    <h2>SPOT as a Scalable and Adaptable Framework for Incident Management</h2>
-    <p>SPOT is designed to be both simple and adaptable. Its four steps are
-        structured to be easily remembered and
-        applied,
-        yet they are broad enough to adapt to various incident types and
-        organizational needs. The framework's
-        simplicity is
-        its strength---it allows teams to quickly internalize its principles and
-        apply them to complex scenarios without
-        extensive training or customization.</p>
-    <p>Organizations can also use SPOT as a starting point for evolving their
-        incident management practices. By
-        implementing
-        SPOT, teams can identify recurring points of ambiguity or areas of
-        weakness in their existing workflows. This
-        process can surface insights that drive continuous improvement and
-        refinement of prioritization practices across
-        the
-        organization. SPOT, therefore, serves not only as a fast-response tool
-        but also as a catalyst for organizational
-        learning, helping teams proactively address areas where incident
-        response may be suboptimal.</p>
-</body>
+<div class="docs-layout">
+    <!-- Sticky Sidebar Table of Contents -->
+    <aside class="docs-sidebar">
+        <h4><i class="fas fa-list-ul"></i> Table of Contents</h4>
+        <ul id="docsTocList" class="docs-toc-list">
+            <!-- Dynamically populated by scripts.js -->
+        </ul>
+
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+            <a href="tool/priority-tool.html?mode=walkthrough" class="btn-try-demo" style="width: 100%; justify-content: center;">
+                <i class="fas fa-flask"></i> Interactive Studio
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Documentation Article Body -->
+    <article class="docs-body">
+        <h1>SPOT Framework: Swift Prioritization of Tasks</h1>
+        <p style="font-size: 1.1rem; color: #94a3b8; margin-bottom: 24px;">
+            A structured, rapid decision-making methodology inspired by medical triage, specifically tailored for engineers, SREs, and DevOps professionals facing high-pressure production incidents.
+        </p>
+
+        <div class="callout callout-info">
+            <div class="callout-icon"><i class="fas fa-info-circle"></i></div>
+            <div class="callout-content">
+                <p><strong>Core Philosophy:</strong> The goal of SPOT is not to create an exhaustively ranked list of all 20 incoming alerts. The goal is to rapidly filter out secondary noise and identify the single next essential action with high confidence.</p>
+            </div>
+        </div>
+
+        <h2>1. Introduction: When Every Second Counts</h2>
+        <p>
+            In modern cloud-native architectures, an initial fault rarely stays isolated. A slow query on an unindexed database table can quickly cascade: connection pools fill up, upstream API gateways return 504 timeouts, async message queues balloon, and alerting systems flood on-call engineers with dozens of simultaneous notifications.
+        </p>
+        <p>
+            In these high-pressure moments, engineers face severe cognitive overload. Traditional prioritization frameworks like <strong>RICE</strong> (Reach, Impact, Confidence, Effort) require detailed cross-functional scoring that is impractical during an active Sev-1 outage. Engineers need a lightweight, intuitive mental model to cut through ambiguity, stop active bleeding, and execute effective mitigations immediately.
+        </p>
+        <p>
+            That is where the <strong>SPOT Framework (Survey, Prioritize, Optimize, Take Action)</strong> comes in. Inspired by emergency medical triage, SPOT uses sequential elimination to narrow down multiple competing issues until the single highest-leverage action is clear.
+        </p>
+
+        <h2>2. Framework Steps and Instructions for Use</h2>
+
+        <h3>Step 1: Survey (S) — Scan and Categorize Scope</h3>
+        <p><strong>Objective:</strong> Rapidly scan all incoming alerts and categorize them into <em>Primary</em> vs. <em>Secondary</em> buckets.</p>
+        <p>In the Survey phase, the engineer quickly takes in the big picture without diving into deep debugging. The aim is to separate alerts with catastrophic user-facing impact from secondary background warnings.</p>
+        <ul>
+            <li><strong>Primary Tasks:</strong> Alerts directly degrading core customer journeys (e.g., authentication failing, checkout returning 500s, data loss).</li>
+            <li><strong>Secondary Tasks:</strong> Tasks that are important but deferrable without immediate harm to core uptime (e.g., ETL pipeline delays, internal dashboards, isolated memory warnings).</li>
+        </ul>
+
+        <div class="callout callout-tip">
+            <div class="callout-icon"><i class="fas fa-lightbulb"></i></div>
+            <div class="callout-content">
+                <p><strong>Triage Rule:</strong> In an active incident, if an alert does not block live customer transactions or core business continuity, immediately tag it as Secondary and buffer it for later.</p>
+            </div>
+        </div>
+
+        <h3>Step 2: Prioritize (P) — Address Urgency</h3>
+        <p><strong>Objective:</strong> Among the primary tasks, determine which represents the most immediate, critical urgency or root bottleneck.</p>
+        <p>Once non-critical noise is filtered out, the engineer assesses urgency among the remaining primary candidates. The focus is on arresting active damage and unlocking cascading bottlenecks.</p>
+        <ul>
+            <li><strong>High Urgency:</strong> The root cause or foundational bottleneck holding other services hostage (e.g., a locked database connection pool causing 504s across payments).</li>
+            <li><strong>Lower Urgency:</strong> Primary issues that can tolerate a few minutes of buffering while the foundational blocker is stabilized.</li>
+        </ul>
+
+        <h3>Step 3: Optimize (O) — Maximize Return on Effort</h3>
+        <p><strong>Objective:</strong> Select the mitigation strategy that provides the fastest, highest-impact recovery with available resources.</p>
+        <p>Optimize shifts focus from <em>what</em> is broken to <em>how</em> to fix it fastest. During an active crisis, prioritize rapid stabilization over deep root-cause troubleshooting.</p>
+        <ul>
+            <li><strong>High-Leverage Mitigation:</strong> Actions like rolling back a suspect release, terminating blocking queries, scaling pod replicas, or enabling circuit breakers to serve cached fallbacks.</li>
+            <li><strong>Low-Leverage Actions:</strong> SSHing into individual nodes for memory profiling, hard reboots of stateful databases, or live code patching.</li>
+        </ul>
+
+        <h3>Step 4: Take Action (T) — Execute with Decisive Precision</h3>
+        <p><strong>Objective:</strong> Execute the locked-in mitigation immediately, confirm recovery, and buffer secondary items.</p>
+        <p>Once a task has passed through Survey, Prioritize, and Optimize, the engineer executes the mitigation decisively. Secondary tasks remain buffered in a triage backlog to be revisited once the primary issue is resolved.</p>
+
+        <h2>3. Rules of Engagement for SPOT Triage</h2>
+        <ul>
+            <li><strong>Approach with Triage in Mind:</strong> Stop as soon as an actionable primary task is clear. Do not waste minutes categorizing items that will not be worked on during the first response cycle.</li>
+            <li><strong>Action Over Perfection:</strong> In incident response, a good mitigation executed in 60 seconds is vastly superior to a perfect fix that takes 45 minutes to design.</li>
+            <li><strong>Buffer and Revisit (Repeat as Needed):</strong> Once the immediate action stabilizes the critical system, repeat SPOT on the remaining secondary tasks in order of priority.</li>
+            <li><strong>Single Incident Commander:</strong> One engineer should drive the SPOT funnel to prevent conflicting commands and duplicate investigation paths.</li>
+        </ul>
+
+        <h2>4. Real-World Incident Scenarios</h2>
+
+        <!-- Scenario 1 Box -->
+        <div class="doc-scenario-box">
+            <div class="doc-scenario-header">
+                <div>
+                    <span class="incident-badge badge-beginner">Beginner</span>
+                    <span class="incident-badge badge-alerts">4 Alerts</span>
+                    <h3>Scenario 1: Authentication Gateway Degraded</h3>
+                </div>
+                <a href="tool/priority-tool.html?mode=walkthrough&scenario=scenario-1-auth-outage" class="btn-try-demo">
+                    <i class="fas fa-play"></i> Watch Walkthrough
+                </a>
+            </div>
+            <p><strong>Context:</strong> At 09:05 AM, OAuth servers begin returning 502 Bad Gateway to 70% of users. Simultaneously, background ETL ingestion reports an 18-minute lag, and worker node-08 logs an 84% disk warning.</p>
+            <p><strong>SPOT Triage Flow:</strong></p>
+            <ul>
+                <li><em>Survey:</em> Auth 502 is Primary (blocks all users). ETL lag and node disk warning are Secondary.</li>
+                <li><em>Prioritize:</em> Auth 502 is Top Urgency.</li>
+                <li><em>Optimize:</em> Release v2.14 was deployed 10 minutes ago. Immediate canary rollback takes 90s vs. deep pod debugging.</li>
+                <li><em>Take Action:</em> Canary rollback triggered. Session success rate restored to 99.8%. Secondary ETL tasks reviewed post-recovery.</li>
+            </ul>
+        </div>
+
+        <!-- Scenario 2 Box -->
+        <div class="doc-scenario-box">
+            <div class="doc-scenario-header">
+                <div>
+                    <span class="incident-badge badge-intermediate">Intermediate</span>
+                    <span class="incident-badge badge-alerts">6 Alerts • Cascading Failure</span>
+                    <h3>Scenario 2: Database Connection Pool Exhaustion & Cascading Lockup</h3>
+                </div>
+                <a href="tool/priority-tool.html?mode=walkthrough&scenario=scenario-2-cascading-db-deadlock" class="btn-try-demo">
+                    <i class="fas fa-play"></i> Watch Walkthrough
+                </a>
+            </div>
+            <p><strong>Context:</strong> A rogue analytics query locks the orders table on PostgreSQL, saturating 500/500 connection pool slots. Payments begin timing out with 504s, RabbitMQ accumulates 45k unconfirmed emails, Redis evictions rise, and CRM chat slows down.</p>
+            <p><strong>SPOT Triage Flow:</strong></p>
+            <ul>
+                <li><em>Survey:</em> DB Connection Exhaustion and Payment 504s are Primary. Email queue, Redis cache, and CRM chat are secondary symptoms.</li>
+                <li><em>Prioritize:</em> DB Connection Exhaustion is the foundational bottleneck causing Payment failure.</li>
+                <li><em>Optimize:</em> Terminate idle-in-transaction queries via <code>pg_cancel_backend</code> and set statement timeouts (avoids hard DB restart).</li>
+                <li><em>Take Action:</em> Blocking queries cancelled. Connections drop from 500 to 42. Payments recover immediately; email queue drains naturally.</li>
+            </ul>
+        </div>
+
+        <!-- Scenario 3 Box -->
+        <div class="doc-scenario-box">
+            <div class="doc-scenario-header">
+                <div>
+                    <span class="incident-badge badge-advanced">Advanced</span>
+                    <span class="incident-badge badge-alerts">8 Alerts • Black Friday Collapse</span>
+                    <h3>Scenario 3: Peak Traffic Surge & Microservice Collapse</h3>
+                </div>
+                <a href="tool/priority-tool.html?mode=walkthrough&scenario=scenario-3-black-friday-collapse" class="btn-try-demo">
+                    <i class="fas fa-play"></i> Watch Walkthrough
+                </a>
+            </div>
+            <p><strong>Context:</strong> During peak 8x traffic, Ingress 503s spike to 35%, Inventory lock threads starve, Recommendation service times out, Elasticsearch cluster turns RED, Fraud API slows down, Logstash overflows, and support tickets spike by 400%.</p>
+            <p><strong>SPOT Triage Flow:</strong></p>
+            <ul>
+                <li><em>Survey:</em> Ingress 503s and Inventory thread starvation are Primary (revenue-blocking checkout path). All other 6 alerts are Secondary.</li>
+                <li><em>Prioritize:</em> Relieving Inventory thread saturation is critical to unblock Ingress connections.</li>
+                <li><em>Optimize:</em> Activate circuit breaker on non-essential Recommendation engine to serve static fallback + autoscale Ingress pods.</li>
+                <li><em>Take Action:</em> Recommendation compute shed immediately frees thread capacity. Ingress 503s drop to 0.02%. Checkout restored.</li>
+            </ul>
+        </div>
+
+        <h2>5. Comparison: SPOT vs. Traditional Frameworks</h2>
+        <div class="comparison-table-wrapper">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Dimension</th>
+                        <th class="col-spot">SPOT Framework</th>
+                        <th>RICE Framework</th>
+                        <th>Eisenhower Matrix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Primary Use Case</strong></td>
+                        <td class="col-spot">Live production incidents, Sev-1 outages, alert floods</td>
+                        <td>Quarterly roadmap & feature backlog planning</td>
+                        <td>Personal daily task organization</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Decision Speed</strong></td>
+                        <td class="col-spot"><strong>Sub-2 minutes (Real-time)</strong></td>
+                        <td>Hours to days (Calculations required)</td>
+                        <td>15 - 30 minutes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Dependency</strong></td>
+                        <td class="col-spot">Qualitative triage heuristics</td>
+                        <td>Exact metric estimations (Reach, Effort)</td>
+                        <td>Subjective importance</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Team Requirement</strong></td>
+                        <td class="col-spot">Single on-call engineer or incident commander</td>
+                        <td>Cross-functional alignment (Product + Eng)</td>
+                        <td>Individual</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Multi-Alert Handling</strong></td>
+                        <td class="col-spot">Elimination funnel (Filters out secondary noise)</td>
+                        <td>Exhaustive scoring (Evaluates all items)</td>
+                        <td>2x2 Grid placement</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>6. Printable Incident Triage Cheat Sheet</h2>
+        <div style="background: #020617; border: 2px dashed var(--teal-500); border-radius: var(--radius-md); padding: 24px; margin: 20px 0; font-family: var(--font-mono);">
+            <div style="text-align: center; margin-bottom: 16px;">
+                <h3 style="color: #5eead4; margin: 0;">⚡ 30-SECOND SPOT TRIAGE PROTOCOL</h3>
+                <span style="font-size: 0.8rem; color: #64748b;">Keep this checklist pinned during active on-call shifts</span>
+            </div>
+            <p><strong>[S] SURVEY:</strong> Scan alerts. Ask: <em>"Is this actively failing live customer transactions right now?"</em></p>
+            <p style="margin-left: 20px; color: #34d399;">→ YES: Primary | NO: Secondary (Buffer to backlog)</p>
+            
+            <p style="margin-top: 10px;"><strong>[P] PRIORITIZE:</strong> Among Primaries, ask: <em>"Which alert is the foundational root bottleneck causing upstream failures?"</em></p>
+            <p style="margin-left: 20px; color: #fb7185;">→ Lock in Top Urgency candidate</p>
+
+            <p style="margin-top: 10px;"><strong>[O] OPTIMIZE:</strong> Ask: <em>"What is the fastest stabilization action with minimal blast radius?"</em></p>
+            <p style="margin-left: 20px; color: #38bdf8;">→ Prefer Rollback / Autoscale / Circuit Breakers over Live Debugging</p>
+
+            <p style="margin-top: 10px;"><strong>[T] TAKE ACTION:</strong> Execute command, verify metrics, and notify incident bridge.</p>
+            <p style="margin-left: 20px; color: #fbbf24;">→ Repeat SPOT on buffered secondary items once green</p>
+        </div>
+
+        <h2>7. Summary & License</h2>
+        <p>
+            The SPOT Framework empowers engineering organizations to build high-reliability incident response cultures by replacing panic with structured triage discipline.
+        </p>
+        <p>
+            The documentation and interactive studio are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a>.
+        </p>
+    </article>
+</div>
